@@ -32,14 +32,15 @@ const MissionButton = styled.button`
 const DayIcon = styled.div`
   display: flex;
   padding: 5px 6px;
-  height: 40px;
-  width: 75px;
+  height: 30px;
+  width: 63px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   border-radius: 100px;
   background: var(--Qrumble-Ivory1, #f7eed3);
+  white-space: nowrap;
 `;
 
 const StarIcon = styled.img`
@@ -59,6 +60,7 @@ const Text = styled.span`
   font-weight: 600;
   line-height: 26px;
   color: var(--Qrumble-error, #dd4e3e);
+  padding-right: 4px;
 `;
 
 const FortuneButton = styled.button`
