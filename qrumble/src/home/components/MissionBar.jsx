@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import MissionIcon from "../../assets/MissionButton.png";
+import missionIcon from "../../assets/MissionButton.png";
+import fireIcon from "../../assets/fire.svg";
 
 const Bar = styled.div`
   display: flex;
@@ -33,13 +34,22 @@ const DayIcon = styled.div`
   background: var(--Qrumble-Ivory1, #f7eed3);
 `;
 
+const FireIcon = styled.img`
+  width: 30px;
+  height: 30px;
+`;
+
 const MissionBar = () => {
   return (
     <Bar>
       <Left>
         <MissionButton>
-          <img src={MissionIcon} alt="미션 버튼" />
+          <img src={missionIcon} alt="미션 버튼" />
         </MissionButton>
+        <DayIcon>
+          <FireIcon src={fireIcon} alt="fire" />
+          <Text>7일</Text>
+        </DayIcon>
       </Left>
     </Bar>
   );
