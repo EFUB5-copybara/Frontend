@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import starIcon from "../../assets/star.svg";
-import fireIcon from "../../assets/fire.svg";
-import fortunecookieIcon from "../../assets/fortunecookie.svg";
-
+import starIcon from "../../assets/image/star.svg";
+import fireIcon from "../../assets/image/fire.svg";
+import fortunecookieIcon from "../../assets/image/fortunecookie.svg";
 const Bar = styled.div`
   display: flex;
   justify-content: space-between;
@@ -33,7 +32,9 @@ const MissionButton = styled.button`
 const DayIcon = styled.div`
   display: flex;
   padding: 5px 6px;
-  flex-direction: column;
+  height: 40px;
+  width: 75px;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   gap: 8px;
@@ -88,10 +89,10 @@ const MissionBar = () => {
           <FireIcon src={fireIcon} alt="fire" />
           <Text>7일</Text>
         </DayIcon>
-        <FortuneButton>
-          <CookieIcon src={fortunecookieIcon} alt="포춘쿠키 버튼" />
-        </FortuneButton>
       </Left>
+      <FortuneButton>
+        <CookieIcon src={fortunecookieIcon} alt="포춘쿠키 버튼" />
+      </FortuneButton>
     </Bar>
   );
 };
