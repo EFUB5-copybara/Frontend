@@ -3,6 +3,28 @@ import styled from "styled-components";
 import starIcon from "../../assets/image/star.svg";
 import fireIcon from "../../assets/image/fire.svg";
 import fortunecookieIcon from "../../assets/image/fortunecookie.svg";
+
+function MissionBar() {
+  return (
+    <Bar>
+      <Left>
+        <MissionButton>
+          <StarIcon src={starIcon} alt="미션 버튼" />
+        </MissionButton>
+        <DayIcon>
+          <FireIcon src={fireIcon} alt="fire" />
+          <Text>7일</Text>
+        </DayIcon>
+      </Left>
+      <FortuneButton>
+        <CookieIcon src={fortunecookieIcon} alt="포춘쿠키 버튼" />
+      </FortuneButton>
+    </Bar>
+  );
+}
+
+export default MissionBar;
+
 const Bar = styled.div`
   display: flex;
   justify-content: space-between;
@@ -79,24 +101,3 @@ const CookieIcon = styled.img`
   height: 30px;
   flex-shrink: 0;
 `;
-
-const MissionBar = () => {
-  return (
-    <Bar>
-      <Left>
-        <MissionButton>
-          <StarIcon src={starIcon} alt="미션 버튼" />
-        </MissionButton>
-        <DayIcon>
-          <FireIcon src={fireIcon} alt="fire" />
-          <Text>7일</Text>
-        </DayIcon>
-      </Left>
-      <FortuneButton>
-        <CookieIcon src={fortunecookieIcon} alt="포춘쿠키 버튼" />
-      </FortuneButton>
-    </Bar>
-  );
-};
-
-export default MissionBar;
