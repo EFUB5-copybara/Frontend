@@ -19,7 +19,7 @@ function HomePage() {
       <MissionBar />
       <MonthSelector year={year} month={month} onClick={handleMonthClick} />
       <Calendar year={year} month={month} />
-      <DailyQuestion onClick={() => console.log("답변 페이지로 이동")} />;
+      <DailyQuestion onClick={() => console.log("답변 페이지로 이동")} />
     </Container>
   );
 }
