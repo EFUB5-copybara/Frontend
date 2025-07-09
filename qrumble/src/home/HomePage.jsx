@@ -3,6 +3,7 @@ import styled from "styled-components";
 import MissionBar from "./components/MissionBar";
 import MonthSelector from "./components/MonthSelector";
 import Calendar from "./components/Calendar";
+import DailyQuestion from "./components/DailyQuestion";
 
 function HomePage() {
   const [year, setYear] = useState(2025);
@@ -18,6 +19,7 @@ function HomePage() {
       <MissionBar />
       <MonthSelector year={year} month={month} onClick={handleMonthClick} />
       <Calendar year={year} month={month} />
+      <DailyQuestion onClick={() => console.log("답변 페이지로 이동")} />;
     </Container>
   );
 }
