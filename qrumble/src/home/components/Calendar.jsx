@@ -42,15 +42,13 @@ function Calendar({ year, month }) {
           return (
             <DayCell key={idx}>
               {date && (
-                <>
+                <DateBox $isToday={isToday}>
                   {isCookieDate ? (
                     <CookieIcon src={cookieImg} alt="cookie" />
                   ) : (
-                    <DateBox $isToday={isToday}>
-                      <DateText $isSunday={idx % 7 === 0}>{date}</DateText>
-                    </DateBox>
+                    <DateText $isToday={isToday}>{date}</DateText>
                   )}
-                </>
+                </DateBox>
               )}
             </DayCell>
           );
@@ -82,7 +80,7 @@ const WeekDay = styled.div`
 const DaysGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  row-gap: 10px;
+  gap: 8px;
 `;
 
 const DayCell = styled.div`
@@ -106,16 +104,17 @@ const DateBox = styled.div`
     $isToday &&
     `
     background-color: ${theme.colors.primary};
-    color: white;
   `}
 `;
 
 const DateText = styled.div`
   ${({ theme }) => theme.typography.nunitoSubtitle14SB};
+  color: ${({ $isToday, theme }) =>
+    $isToday ? theme.colors.white : theme.colors.primary};
 `;
 
 const CookieIcon = styled.img`
-  width: 39px;
-  height: 39px;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
 `;

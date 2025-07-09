@@ -29,5 +29,5 @@ const Container = styled.div`
   flex-direction: column;
   padding: 50px 19px 0 19px;
   background-color: ${({ theme }) => theme.colors.ivory3};
-  gap: 20px;
+  gap: 14px;
 `;
