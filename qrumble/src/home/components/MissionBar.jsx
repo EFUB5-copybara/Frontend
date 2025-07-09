@@ -48,7 +48,7 @@ const MissionButton = styled.button`
   justify-content: center;
   align-items: center;
   border-radius: 100px;
-  background: var(--Qrumble-Primary, #543310);
+  background: ${({ theme }) => theme.colors.primary};
 `;
 
 const DayIcon = styled.div`
@@ -61,7 +61,7 @@ const DayIcon = styled.div`
   align-items: center;
   gap: 6px;
   border-radius: 100px;
-  background: var(--Qrumble-Ivory1, #f7eed3);
+  background: ${({ theme }) => theme.colors.ivory1};
   white-space: nowrap;
 `;
 
@@ -76,12 +76,8 @@ const FireIcon = styled.img`
 `;
 
 const Text = styled.span`
-  font-family: Pretendard;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 26px;
-  color: var(--Qrumble-error, #dd4e3e);
+  ${({ theme }) => theme.typography.subtitle16SB};
+  color: ${({ theme }) => theme.colors.error};
   padding-right: 4px;
 `;
 
@@ -93,7 +89,7 @@ const FortuneButton = styled.button`
   justify-content: center;
   align-items: center;
   border-radius: 100px;
-  background: var(--Qrumble-Green, #aab396);
+  background: ${({ theme }) => theme.colors.green};
 `;
 
 const CookieIcon = styled.img`
