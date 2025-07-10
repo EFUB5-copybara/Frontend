@@ -45,7 +45,7 @@ const AnswerButton = styled.button`
   background: none;
   padding: 0;
   border: none;
-  ${({ theme }) => theme.typography.caption12M};
+  font-family: ${({ theme }) => theme.typography.caption12M};
   color: ${({ theme }) => theme.colors.brown1};
   font-size: 14px;
   font-weight: 600;

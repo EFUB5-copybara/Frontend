@@ -98,6 +98,7 @@ const Wrapper = styled.div`
 `;
 
 const WeekRow = styled.div`
+  font-family: ${({ theme }) => theme.typography.nunitoSubtitle14SB};
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   margin-bottom: 20px;
