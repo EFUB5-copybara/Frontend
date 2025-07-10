@@ -5,21 +5,43 @@ import MonthSelector from "./components/MonthSelector";
 import Calendar from "./components/Calendar";
 import DailyQuestion from "./components/DailyQuestion";
 import Cookiejar from "./components/Cookiejar";
+import MonthPickerModal from "./components/MonthPickerModal";
 
 function HomePage() {
   const [year, setYear] = useState(2025);
   const [month, setMonth] = useState(3);
+  const [date, setDate] = useState(11);
 
-  const handleMonthClick = () => {
-    // 추후 Month Picker 모달 열기용
-    console.log("월 선택 모달 열기");
+  const [isMonthSelectorOpen, setIsMonthSelectorOpen] = useState(false);
+
+  const handleSelect = (newYear, newMonth, newDate) => {
+    setYear(newYear);
+    setMonth(newMonth);
+    setDate(newDate);
+    setIsMonthSelectorOpen(false);
   };
 
   return (
     <Container>
       <MissionBar />
       <CalendarContainer>
-        <MonthSelector year={year} month={month} onClick={handleMonthClick} />
+        <SelectorWrapper>
+          <MonthSelector
+            year={year}
+            month={month}
+            date={date}
+            onClick={() => setIsMonthSelectorOpen(true)}
+          />
+          {isMonthSelectorOpen && (
+            <MonthPickerModal
+              selectedYear={year}
+              selectedMonth={month}
+              selectedDate={date}
+              onSelect={handleSelect}
+              onClose={() => setIsMonthSelectorOpen(false)}
+            />
+          )}
+        </SelectorWrapper>
         <Calendar year={year} month={month} />
       </CalendarContainer>
       <DailyQuestion onClick={() => console.log("답변 페이지로 이동")} />
@@ -39,6 +61,11 @@ const Container = styled.div`
 `;
 
 const CalendarContainer = styled.div`
+  position: relative;
   gap: 0;
   min-height: 322px;
+`;
+
+const SelectorWrapper = styled.div`
+  position: relative;
 `;

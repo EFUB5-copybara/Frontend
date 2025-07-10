@@ -41,7 +41,7 @@ const MonthButton = styled.button`
 `;
 
 const DateText = styled.span`
-  ${({ theme }) => theme.typography.nunitoDisplay18SB};
+  font-family: ${({ theme }) => theme.typography.nunitoDisplay18SB};
   color: ${({ theme }) => theme.colors.black};
 `;
 
