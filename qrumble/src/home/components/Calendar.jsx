@@ -5,23 +5,34 @@ import cookieImg from "../../assets/image/cookie.png";
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function Calendar({ year, month }) {
-  const today = new Date();
-  const currentDate = new Date(year, month - 1);
+  const today = new Date(2025, 2, 11); // 테스트용 오늘 (2025.03.09)
+  const currentFirstDate = new Date(year, month - 1, 1);
+  const currentLastDate = new Date(year, month, 0).getDate();
+  const firstDay = currentFirstDate.getDay();
 
-  const firstDay = new Date(year, month - 1, 1).getDay(); // 시작 요일
-  const lastDate = new Date(year, month, 0).getDate(); // 마지막 날짜
+  const totalCellsNeeded = firstDay + currentLastDate;
+  const displayCells = totalCellsNeeded <= 35 ? 35 : 42;
+  const nextMonthPreviewCount = displayCells - totalCellsNeeded;
 
   const days = [];
 
-  // 빈 칸 채우기
-  for (let i = 0; i < firstDay; i++) {
-    days.push(null);
+  // 현재 월 날짜들
+  for (let i = 1; i <= currentLastDate; i++) {
+    days.push({
+      date: i,
+      type: "current",
+    });
   }
 
-  // 날짜 채우기
-  for (let i = 1; i <= lastDate; i++) {
-    days.push(i);
+  // 다음 달 날짜들
+  for (let i = 1; i <= nextMonthPreviewCount; i++) {
+    days.push({
+      date: i,
+      type: "next",
+    });
   }
+
+  const attendedDates = [4, 5, 6, 7, 8];
 
   return (
     <Wrapper>
@@ -31,23 +42,45 @@ function Calendar({ year, month }) {
         ))}
       </WeekRow>
       <DaysGrid>
-        {days.map((date, idx) => {
+        {Array(firstDay)
+          .fill(null)
+          .map((_, idx) => (
+            <DayCell key={`empty-${idx}`} />
+          ))}
+        {days.map((item, idx) => {
           const isToday =
+            item.type === "current" &&
             today.getFullYear() === year &&
             today.getMonth() === month - 1 &&
-            today.getDate() === date;
+            today.getDate() === item.date;
 
-          const isCookieDate = [3, 4, 5, 6, 7, 9].includes(date); // 출석 날짜 예시
+          const isPast =
+            item.type === "current" &&
+            new Date(year, month - 1, item.date) < today;
+
+          const isCookie =
+            item.type === "current" &&
+            attendedDates.includes(item.date) &&
+            isPast;
+
+          const isMissed =
+            item.type === "current" &&
+            isPast &&
+            !attendedDates.includes(item.date);
 
           return (
-            <DayCell key={idx}>
-              {date && (
+            <DayCell key={`day-${idx}`}>
+              {item.type === "next" ? (
+                <DateText $color="brown3">{item.date}</DateText>
+              ) : isCookie ? (
+                <CookieIcon src={cookieImg} alt="cookie" />
+              ) : (
                 <DateBox $isToday={isToday}>
-                  {isCookieDate ? (
-                    <CookieIcon src={cookieImg} alt="cookie" />
-                  ) : (
-                    <DateText $isToday={isToday}>{date}</DateText>
-                  )}
+                  <DateText
+                    $color={isToday ? "white" : isMissed ? "error" : "primary"}
+                  >
+                    {item.date}
+                  </DateText>
                 </DateBox>
               )}
             </DayCell>
@@ -62,13 +95,12 @@ export default Calendar;
 
 const Wrapper = styled.div`
   width: 100%;
-  padding-top: 8px;
 `;
 
 const WeekRow = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  margin-bottom: 8px;
+  margin-bottom: 20px;
 `;
 
 const WeekDay = styled.div`
@@ -86,11 +118,9 @@ const DaysGrid = styled.div`
 const DayCell = styled.div`
   width: 39px;
   height: 39px;
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
 `;
 
 const DateBox = styled.div`
@@ -109,8 +139,7 @@ const DateBox = styled.div`
 
 const DateText = styled.div`
   ${({ theme }) => theme.typography.nunitoSubtitle14SB};
-  color: ${({ $isToday, theme }) =>
-    $isToday ? theme.colors.white : theme.colors.primary};
+  color: ${({ $color, theme }) => theme.colors[$color || "primary"]};
 `;
 
 const CookieIcon = styled.img`

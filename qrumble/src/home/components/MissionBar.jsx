@@ -31,7 +31,7 @@ const Bar = styled.div`
   align-items: center;
   width: 322px;
   height: 40px;
-  padding-bottom: 14px;
+  padding: none;
 `;
 
 const Left = styled.div`
