@@ -2,17 +2,20 @@ import React from "react";
 import styled from "styled-components";
 import arrowbackImg from "../../assets/image/arrow_back.svg";
 import checkImg from "../../assets/image/check.svg";
+import browncheckImg from "../../assets/image/browncheck.svg";
 
-function WriteTopBar() {
+function WriteTopBar({ onCheck, textLength }) {
+  const isActive = textLength > 0;
+
   return (
     <Bar>
       <Button>
         <ArrowIcon src={arrowbackImg} alt="arrow back" />
       </Button>
       <Date>2025.04.02</Date>
-      <Button>
-        <CheckIcon src={checkImg} alt="check" />
-      </Button>
+      <CheckButton onClick={onCheck} disabled={!isActive}>
+        <CheckIcon src={isActive ? browncheckImg : checkImg} alt="check" />
+      </CheckButton>
     </Bar>
   );
 }
@@ -25,6 +28,7 @@ const Bar = styled.div`
   align-items: center;
   width: 320px;
   height: 30px;
+  margin-bottom: 19px;
   padding: none;
 `;
 
@@ -44,6 +48,9 @@ const CheckButton = styled.button`
   padding: 0px;
   justify-content: center;
   align-items: center;
+  background: none;
+  border: none;
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
 `;
 
 const ArrowIcon = styled.img`
