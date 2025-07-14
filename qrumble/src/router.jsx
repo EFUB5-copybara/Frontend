@@ -4,6 +4,10 @@ import HomePage from './home/HomePage';
 
 const router = createBrowserRouter([
   {
+    path: '/',
+    element: <Navigate to='/login' replace />,
+  },
+  {
     path: '/login',
     element: <Login />,
   },
