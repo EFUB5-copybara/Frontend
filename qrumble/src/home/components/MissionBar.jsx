@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import starIcon from "../../assets/image/star.svg";
-import fireIcon from "../../assets/image/fire.svg";
-import fortunecookieIcon from "../../assets/image/fortunecookie.svg";
+import starIcon from "../assets/svgs/star.svg";
+import fireIcon from "../assets/svgs/fire.svg";
+import fortunecookieIcon from "../assets/svgs/fortunecookie.svg";
 
 function MissionBar() {
   return (

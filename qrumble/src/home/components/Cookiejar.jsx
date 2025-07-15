@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import cookiejar0Img from "../../assets/image/cookie_jar0.png";
+import cookiejar0Img from "../assets/images/cookie_jar0.png";
 
 function Cookiejar() {
   return (

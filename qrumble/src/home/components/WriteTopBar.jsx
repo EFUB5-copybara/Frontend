@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import arrowbackImg from "../../assets/image/arrow_back.svg";
-import checkImg from "../../assets/image/check.svg";
-import browncheckImg from "../../assets/image/browncheck.svg";
+import arrowbackImg from "../assets/svgs/arrow_back.svg";
+import checkImg from "../assets/svgs/check.svg";
+import browncheckImg from "../assets/svgs/browncheck.svg";
 
 function WriteTopBar({ onCheck, textLength }) {
   const isActive = textLength > 0;

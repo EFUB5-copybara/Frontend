@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import beforehintImg from "../../assets/image/beforehint.svg";
-import afterhintImg from "../../assets/image/afterhint.svg";
+import beforehintImg from "../assets/svgs/pbeforehint.svg";
+import afterhintImg from "../assets/svgs/afterhint.svg";
 
 function WriteButtonBar({ hintActive, setHintActive }) {
   const [isPublic, setIsPublic] = useState(true);

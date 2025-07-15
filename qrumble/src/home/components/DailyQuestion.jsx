@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import arrowIcon from "../../assets/image/chevronright.svg";
+import arrowIcon from "../assets/svgs/chevronright.svg";
 
 function DailyQuestion({
   question = "Q. How was your relationship with your friends?",

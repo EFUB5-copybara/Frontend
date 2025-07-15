@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import polygonIcon from "../../assets/image/polygon.svg";
+import polygonIcon from "../assets/svgs/polygon.svg";
 
 function MonthSelector({ year, month, onClick }) {
   return (
