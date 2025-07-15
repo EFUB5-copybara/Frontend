@@ -8,7 +8,7 @@ export default function LoginSupportLinks() {
       <Divider> | </Divider>
       <Link href='/reset-password'>비밀번호 변경</Link>
       <Divider> | </Divider>
-      <Link href='/signup'>회원가입</Link>
+      <Link href='/sign-up'>회원가입</Link>
     </div>
   );
 }
