@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Login from "./login/pages/Login";
 import HomePage from "./home/pages/HomePage";
@@ -9,6 +10,17 @@ import NewPassword from "./login/pages/NewPassword";
 import WritePage from "./home/pages/WritePage";
 import ChartPage from "./home/pages/ChartPage";
 import FortuneCookiePage from "./home/pages/FortuneCookiePage";
+=======
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+import Login from './login/pages/Login';
+import HomePage from './home/HomePage';
+import Splash from './Splash';
+import FindId from './login/pages/FindId';
+import ResetPassword from './login/pages/ResetPassword';
+import SignUp from './login/pages/SignUp';
+import NewPassword from './login/pages/NewPassword';
+import CommunityPopular from './community/pages/CommunityPopular';
+>>>>>>> dev
 
 const router = createBrowserRouter([
   {
@@ -36,7 +48,11 @@ const router = createBrowserRouter([
     element: <SignUp />,
   },
   {
-    path: "/home",
+    path: '/community',
+    element: <CommunityPopular />,
+  },
+  {
+    path: '/home',
     element: <HomePage />,
   },
   {

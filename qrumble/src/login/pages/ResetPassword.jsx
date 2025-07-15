@@ -6,6 +6,7 @@ import Input from '../components/Input';
 import LoginSupportLinks from '../components/LoginSupportLinks';
 import LogoImg from '../components/Logo';
 import { useNavigate } from 'react-router-dom';
+import BackButton from '../components/BackButton';
 
 export default function ResetPassword() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -82,12 +83,12 @@ const TitleWrapper = styled.div`
 
 const Title = styled.p`
   color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.typography.display32SB};
+  font-size: ${({ theme }) => theme.fonts.d32SB};
 `;
 
 const SubTitle = styled.p`
   color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.typography.display24SB};
+  font-size: ${({ theme }) => theme.fonts.d24SB};
 `;
 
 const InputButtonWrapper = styled.div`
@@ -96,15 +97,9 @@ const InputButtonWrapper = styled.div`
   gap: 1.875rem;
 `;
 
-const BackButton = styled(BackIcon)`
-  width: 46px;
-  height: 46px;
-  cursor: pointer;
-`;
-
 const Subtitle = styled.p`
   margin-top: 1rem;
-  font-size: ${({ theme }) => theme.typography.body18M};
+  font-size: ${({ theme }) => theme.fonts.b18M};
   color: ${({ theme }) => theme.colors.brown1};
   text-align: center;
 `;

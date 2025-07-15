@@ -5,6 +5,7 @@ import BackIcon from '../assets/svgs/btn_back.svg?react';
 import styled from 'styled-components';
 import SignUpForm from '../components/SignUpForm';
 import ConfirmButton from '../components/ConfirmButton';
+import BackButton from '../components/BackButton';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -30,11 +31,7 @@ const Container = styled.div`
   align-items: center;
   margin: 0 1.25rem;
 `;
-const BackButton = styled(BackIcon)`
-  width: 46px;
-  height: 46px;
-  cursor: pointer;
-`;
+
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: start;
