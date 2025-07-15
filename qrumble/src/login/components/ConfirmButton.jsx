@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 const ConfirmButton = styled.button`
   padding: 0.75rem 8.375rem;
   border-radius: 10px;
-  font-size: ${({ theme }) => theme.typography.title20SB};
+  font-size: ${({ theme }) => theme.fonts.t20SB};
   white-space: nowrap;
   cursor: pointer;
   outline: none;

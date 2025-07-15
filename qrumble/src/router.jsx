@@ -6,6 +6,7 @@ import FindId from './login/pages/FindId';
 import ResetPassword from './login/pages/ResetPassword';
 import SignUp from './login/pages/SignUp';
 import NewPassword from './login/pages/NewPassword';
+import CommunityPopular from './community/pages/CommunityPopular';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: '/sign-up',
     element: <SignUp />,
+  },
+  {
+    path: '/community',
+    element: <CommunityPopular />,
   },
   {
     path: '/home',

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import LogoImg from '../components/Logo';
-import styled from 'styled-components';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PasswordInput from '../components/PasswordInput';
-import BackIcon from '../assets/svgs/btn_back.svg?react';
+import styled from 'styled-components';
 import ConfirmButton from '../components/ConfirmButton';
+import LogoImg from '../components/Logo';
+import PasswordInput from '../components/PasswordInput';
+import BackButton from '../components/BackButton';
 
 export default function NewPassword() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -58,12 +58,6 @@ const ButtonWrapper = styled.div`
   margin-bottom: 2.4375rem;
 `;
 
-const BackButton = styled(BackIcon)`
-  width: 46px;
-  height: 46px;
-  cursor: pointer;
-`;
-
 const FormWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -79,6 +73,6 @@ const InputWrapper = styled.div`
 
 const CompleteMessage = styled.p`
   text-align: center;
-  font-size: ${({ theme }) => theme.typography.body18M};
+  font-size: ${({ theme }) => theme.fonts.b18M};
   color: ${({ theme }) => theme.colors.primary};
 `;
