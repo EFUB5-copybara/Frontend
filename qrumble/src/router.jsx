@@ -1,26 +1,15 @@
-<<<<<<< HEAD
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import Login from "./login/pages/Login";
-import HomePage from "./home/pages/HomePage";
-import Splash from "./Splash";
-import FindId from "./login/pages/FindId";
-import ResetPassword from "./login/pages/ResetPassword";
-import SignUp from "./login/pages/SignUp";
-import NewPassword from "./login/pages/NewPassword";
-import WritePage from "./home/pages/WritePage";
+import { createBrowserRouter } from "react-router-dom";
+import CommunityPopular from "./community/pages/CommunityPopular";
 import ChartPage from "./home/pages/ChartPage";
 import FortuneCookiePage from "./home/pages/FortuneCookiePage";
-=======
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import Login from './login/pages/Login';
-import HomePage from './home/HomePage';
-import Splash from './Splash';
-import FindId from './login/pages/FindId';
-import ResetPassword from './login/pages/ResetPassword';
-import SignUp from './login/pages/SignUp';
-import NewPassword from './login/pages/NewPassword';
-import CommunityPopular from './community/pages/CommunityPopular';
->>>>>>> dev
+import HomePage from "./home/pages/HomePage";
+import WritePage from "./home/pages/WritePage";
+import FindId from "./login/pages/FindId";
+import Login from "./login/pages/Login";
+import NewPassword from "./login/pages/NewPassword";
+import ResetPassword from "./login/pages/ResetPassword";
+import SignUp from "./login/pages/SignUp";
+import Splash from "./Splash";
 
 const router = createBrowserRouter([
   {
@@ -48,11 +37,11 @@ const router = createBrowserRouter([
     element: <SignUp />,
   },
   {
-    path: '/community',
+    path: "/community",
     element: <CommunityPopular />,
   },
   {
-    path: '/home',
+    path: "/home",
     element: <HomePage />,
   },
   {
