@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import WriteTopBar from "../components/WriteTopBar";
 import WriteQuestion from "../components/WriteQuestion";
 import WriteBottomBar from "../components/WriteBottomBar";
@@ -13,13 +14,14 @@ function WritePage() {
 
   const MIN_TEXT_LENGTH = 50;
 
+  const navigate = useNavigate();
+
   const handleSubmit = () => {
     if (text.trim().length < MIN_TEXT_LENGTH) {
       setShowModal(true);
       return;
     } else {
-      // 여기에 실제 제출 처리 로직
-      console.log("제출 성공");
+      navigate("/home/chart");
     }
   };
 

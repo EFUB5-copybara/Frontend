@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import MissionBar from "../components/MissionBar";
 import MonthSelector from "../components/MonthSelector";
@@ -20,6 +21,8 @@ function HomePage() {
     setDate(newDate);
     setIsMonthSelectorOpen(false);
   };
+
+  const navigate = useNavigate();
 
   return (
     <Container>
@@ -44,7 +47,7 @@ function HomePage() {
         </SelectorWrapper>
         <Calendar year={year} month={month} />
       </CalendarContainer>
-      <DailyQuestion onClick={() => console.log("답변 페이지로 이동")} />
+      <DailyQuestion onClick={() => navigate("/home/write")} />
       <Cookiejar />
     </Container>
   );

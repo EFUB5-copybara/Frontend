@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import arrowbackImg from "../assets/svgs/arrow_back.svg";
 import checkImg from "../assets/svgs/check.svg";
 import browncheckImg from "../assets/svgs/browncheck.svg";
@@ -7,9 +8,15 @@ import browncheckImg from "../assets/svgs/browncheck.svg";
 function WriteTopBar({ onCheck, textLength }) {
   const isActive = textLength > 0;
 
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate("/home");
+  };
+
   return (
     <Bar>
-      <Button>
+      <Button onClick={handleBack}>
         <ArrowIcon src={arrowbackImg} alt="arrow back" />
       </Button>
       <Date>2025.04.02</Date>
