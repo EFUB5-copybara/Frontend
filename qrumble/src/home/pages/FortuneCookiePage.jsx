@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import XImg from "../assets/svgs/X.svg";
 import bigfortuneImg from "../assets/images/bigfortunecookie.png";
 
 function FortuneCookiePage() {
+  const [opened, setOpened] = useState(false);
+
   return (
     <Background>
       <Container>
