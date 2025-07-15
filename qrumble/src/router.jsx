@@ -3,6 +3,9 @@ import Login from './login/pages/Login';
 import HomePage from './home/HomePage';
 import Splash from './Splash';
 import FindId from './login/pages/FindId';
+import ResetPassword from './login/pages/ResetPassword';
+import SignUp from './login/pages/SignUp';
+import NewPassword from './login/pages/NewPassword';
 
 const router = createBrowserRouter([
   {
@@ -16,6 +19,18 @@ const router = createBrowserRouter([
   {
     path: '/find-id',
     element: <FindId />,
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPassword />,
+  },
+  {
+    path: '/reset-password/new',
+    element: <NewPassword />,
+  },
+  {
+    path: '/sign-up',
+    element: <SignUp />,
   },
   {
     path: '/home',
