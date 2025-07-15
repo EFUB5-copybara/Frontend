@@ -54,8 +54,8 @@ const MissionButton = styled.button`
 const DayIcon = styled.div`
   display: flex;
   padding: 5px 6px;
-  height: 30px;
-  width: 63px;
+  height: 40px;
+  width: 75px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
