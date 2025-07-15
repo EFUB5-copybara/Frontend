@@ -115,7 +115,7 @@ const HintIcon = styled.img`
 `;
 
 const HintText = styled.span`
-  font-family: ${({ theme }) => theme.typography.nunitoDisplay18B};
+  font-family: ${({ theme }) => theme.fonts.nd18B};
   font-weight: 500;
   color: ${({ active, theme }) =>
     active ? theme.colors.brown1 : theme.colors.brown3};
@@ -140,7 +140,7 @@ const ToggleButton = styled.button`
 `;
 
 const ToggleText = styled.span`
-  font-family: ${({ theme }) => theme.typography.body16M};
+  font-family: ${({ theme }) => theme.fonts.b16M};
   color: ${({ active, theme }) =>
     active ? theme.colors.brown1 : theme.colors.brown3};
 `;
@@ -193,5 +193,5 @@ const GrammarCheck = styled.button`
 `;
 
 const CheckText = styled.span`
-  font-family: ${({ theme }) => theme.typography.caption14M};
+  font-family: ${({ theme }) => theme.fonts.c14M};
 `;

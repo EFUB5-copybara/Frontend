@@ -21,6 +21,6 @@ const Container = styled.div`
 `;
 
 const Question = styled.div`
-  font-family: ${({ theme }) => theme.typography.nunitoDisplay18SB};
+  font-family: ${({ theme }) => theme.fonts.nd18SB};
   color: ${({ theme }) => theme.colors.black};
 `;

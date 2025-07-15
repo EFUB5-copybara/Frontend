@@ -31,7 +31,7 @@ const Wrapper = styled.div`
 `;
 
 const QuestionText = styled.div`
-  ${({ theme }) => theme.typography.body16M};
+  ${({ theme }) => theme.fonts.b16M};
   color: ${({ theme }) => theme.colors.black};
 `;
 
@@ -45,7 +45,7 @@ const AnswerButton = styled.button`
   background: none;
   padding: 0;
   border: none;
-  font-family: ${({ theme }) => theme.typography.caption12M};
+  font-family: ${({ theme }) => theme.fonts.c12M};
   color: ${({ theme }) => theme.colors.brown1};
   font-size: 14px;
   font-weight: 600;

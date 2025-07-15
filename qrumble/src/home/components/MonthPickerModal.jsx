@@ -190,7 +190,7 @@ const Item = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: ${({ theme }) => theme.typography.display24SB};
+  font-family: ${({ theme }) => theme.fonts.d24SB};
   font-size: 24px;
   font-weight: ${({ selected }) => (selected ? 600 : 300)};
   color: ${({ selected, theme }) =>

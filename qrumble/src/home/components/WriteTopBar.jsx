@@ -64,7 +64,7 @@ const CheckIcon = styled.img`
 `;
 
 const Date = styled.div`
-  font-family: ${({ theme }) => theme.typography.nunitoSubtitle14SB};
+  font-family: ${({ theme }) => theme.fonts.ns14SB};
   color: ${({ theme }) => theme.colors.green};
   text-align: center;
   align-self: flex-end;

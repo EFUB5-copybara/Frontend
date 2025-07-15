@@ -76,7 +76,7 @@ const FireIcon = styled.img`
 `;
 
 const Text = styled.span`
-  ${({ theme }) => theme.typography.subtitle16SB};
+  ${({ theme }) => theme.fonts.s16SB};
   color: ${({ theme }) => theme.colors.error};
   padding-right: 4px;
 `;

@@ -91,7 +91,7 @@ const Date = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: ${({ theme }) => theme.typography.nunitoSubtitle14SB};
+  font-family: ${({ theme }) => theme.fonts.ns14SB};
   color: ${({ theme }) => theme.colors.green};
 `;
 
@@ -106,14 +106,14 @@ const Wrapper = styled.div`
 `;
 
 const Question = styled.div`
-  font-family: ${({ theme }) => theme.typography.nunitoDisplay18SB};
+  font-family: ${({ theme }) => theme.fonts.nd18SB};
   color: ${({ theme }) => theme.colors.black};
   padding-bottom: 19px;
   border-bottom: 1px solid ${({ theme }) => theme.colors.brown1};
 `;
 
 const Answer = styled.div`
-  font-family: ${({ theme }) => theme.typography.nunitoSubtitle16M};
+  font-family: ${({ theme }) => theme.fonts.ns16M};
   color: ${({ theme }) => theme.colors.black};
   padding-top: 14px;
 `;
@@ -132,7 +132,7 @@ const BottomBtn = styled.button`
   display: flex;
   align-items: center;
   gap: 4px;
-  font-family: ${({ theme }) => theme.typography.caption12M};
+  font-family: ${({ theme }) => theme.fonts.c12M};
   color: ${({ theme }) => theme.colors.brown1};
   padding-left: 0px;
   padding-right: 0px;

@@ -143,7 +143,7 @@ const CloseButton = styled.button`
 
 const ModalText = styled.p`
   color: ${({ theme }) => theme.colors.error};
-  font-family: ${({ theme }) => theme.typography.body16B};
+  font-family: ${({ theme }) => theme.fonts.b16B};
   margin: 0;
   white-space: nowrap;
   width: 100%;
@@ -151,13 +151,13 @@ const ModalText = styled.p`
 
 const LengthText = styled.p`
   color: ${({ theme }) => theme.colors.brown2};
-  font-family: ${({ theme }) => theme.typography.caption14M};
+  font-family: ${({ theme }) => theme.fonts.c14M};
   margin: 0 0 20px 0;
 `;
 
 const ConfirmButton = styled.button`
   background-color: ${({ theme }) => theme.colors.brown1};
-  font-family: ${({ theme }) => theme.typography.title20SB};
+  font-family: ${({ theme }) => theme.fonts.t20SB};
   color: white;
   border: none;
   border-radius: 10px;

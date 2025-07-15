@@ -94,7 +94,7 @@ const TouchCookieMsg = styled.span`
   top: 336px;
   display: flex;
   align-items: center;
-  font-family: ${({ theme }) => theme.typography.body16M};
+  font-family: ${({ theme }) => theme.fonts.b16M};
   color: ${({ theme }) => theme.colors.green};
 `;
 
@@ -107,11 +107,11 @@ const TextWrapper = styled.div`
 `;
 
 const Text1 = styled.span`
-  font-family: ${({ theme }) => theme.typography.display24SB};
+  font-family: ${({ theme }) => theme.fonts.d24SB};
   color: ${({ theme }) => theme.colors.primary};
 `;
 
 const Text2 = styled.span`
-  font-family: ${({ theme }) => theme.typography.display32SB};
+  font-family: ${({ theme }) => theme.fonts.d32SB};
   color: ${({ theme }) => theme.colors.green};
 `;
