@@ -6,6 +6,8 @@ import FindId from "./login/pages/FindId";
 import ResetPassword from "./login/pages/ResetPassword";
 import SignUp from "./login/pages/SignUp";
 import NewPassword from "./login/pages/NewPassword";
+import WritePage from "./home/pages/WritePage";
+import ChartPage from "./home/pages/ChartPage";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,14 @@ const router = createBrowserRouter([
   {
     path: "/home",
     element: <HomePage />,
+  },
+  {
+    path: "/home/write",
+    element: <WritePage />,
+  },
+  {
+    path: "/home/chart",
+    element: <ChartPage />,
   },
 ]);
 

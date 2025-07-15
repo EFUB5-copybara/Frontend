@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import beforehintImg from "../assets/svgs/pbeforehint.svg";
+import beforehintImg from "../assets/svgs/beforehint.svg";
 import afterhintImg from "../assets/svgs/afterhint.svg";
 
 function WriteButtonBar({ hintActive, setHintActive }) {
