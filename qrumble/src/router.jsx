@@ -8,6 +8,7 @@ import SignUp from "./login/pages/SignUp";
 import NewPassword from "./login/pages/NewPassword";
 import WritePage from "./home/pages/WritePage";
 import ChartPage from "./home/pages/ChartPage";
+import FortuneCookiePage from "./home/pages/FortuneCookiePage";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
   {
     path: "/home/chart",
     element: <ChartPage />,
+  },
+  {
+    path: "/home/fortune",
+    element: <FortuneCookiePage />,
   },
 ]);
 

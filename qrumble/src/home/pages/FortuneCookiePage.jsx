@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import XImg from "../assets/image/X.svg";
-import bigfortuneImg from "../assets/image/bigfortunecookie.png";
+import XImg from "../assets/svgs/X.svg";
+import bigfortuneImg from "../assets/images/bigfortunecookie.png";
 
 function FortuneCookiePage() {
   return (
