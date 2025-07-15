@@ -98,14 +98,14 @@ const Wrapper = styled.div`
 `;
 
 const WeekRow = styled.div`
-  font-family: ${({ theme }) => theme.typography.nunitoSubtitle14SB};
+  font-family: ${({ theme }) => theme.fonts.ns14SB};
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   margin-bottom: 20px;
 `;
 
 const WeekDay = styled.div`
-  ${({ theme }) => theme.typography.nunitoSubtitle14S};
+  ${({ theme }) => theme.fonts.ns14S};
   text-align: center;
   color: ${({ theme }) => theme.colors.black};
 `;
@@ -139,7 +139,7 @@ const DateBox = styled.div`
 `;
 
 const DateText = styled.div`
-  ${({ theme }) => theme.typography.nunitoSubtitle14SB};
+  ${({ theme }) => theme.fonts.ns14SB};
   color: ${({ $color, theme }) => theme.colors[$color || "primary"]};
 `;
 
