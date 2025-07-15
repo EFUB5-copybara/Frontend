@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import MissionBar from "./components/MissionBar";
-import MonthSelector from "./components/MonthSelector";
-import Calendar from "./components/Calendar";
-import DailyQuestion from "./components/DailyQuestion";
-import Cookiejar from "./components/Cookiejar";
-import MonthPickerModal from "./components/MonthPickerModal";
+import MissionBar from "../components/MissionBar";
+import MonthSelector from "../components/MonthSelector";
+import Calendar from "../components/Calendar";
+import DailyQuestion from "../components/DailyQuestion";
+import Cookiejar from "../components/Cookiejar";
+import MonthPickerModal from "../components/MonthPickerModal";
 
 function HomePage() {
   const [year, setYear] = useState(2025);

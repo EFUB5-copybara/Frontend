@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import WriteTopBar from "./components/WriteTopBar";
-import WriteQuestion from "./components/WriteQuestion";
-import WriteBottomBar from "./components/WriteBottomBar";
-import HintTagList from "./components/HintTagList";
+import WriteTopBar from "../components/WriteTopBar";
+import WriteQuestion from "../components/WriteQuestion";
+import WriteBottomBar from "../components/WriteBottomBar";
+import HintTagList from "../components/HintTagList";
 
 function WritePage() {
   const [hintActive, setHintActive] = useState(false);
