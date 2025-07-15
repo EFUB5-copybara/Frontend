@@ -136,6 +136,10 @@ const BottomBtn = styled.button`
   color: ${({ theme }) => theme.colors.brown1};
   padding-left: 0px;
   padding-right: 0px;
+  border: none;
+  &:focus {
+    outline: none;
+  }
 `;
 
 const BottomBtnImg = styled.img`
