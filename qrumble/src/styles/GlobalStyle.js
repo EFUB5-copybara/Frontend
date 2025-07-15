@@ -1,9 +1,13 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
-  
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
   body {
-    font-family: 'Pretendard', sans-serif;
+    font-family: 'Pretendard','Nunito', sans-serif;
     margin: 0;
     padding: 0;
     display: flex;

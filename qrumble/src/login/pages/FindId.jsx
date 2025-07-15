@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import Input from '../components/Input';
 import ConfirmButton from '../components/ConfirmButton';
 import LogoImg from '../components/Logo';
-import BackIcon from '../assets/svgs/btn_back.svg?react';
+
 import LoginSupportLinks from '../components/LoginSupportLinks';
+import BackButton from '../components/BackButton';
 
 export default function FindId() {
   return (
@@ -49,16 +50,11 @@ const TitleWrapper = styled.div`
 
 const Title = styled.p`
   color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.typography.display32SB};
+  font-size: ${({ theme }) => theme.fonts.d32SB};
 `;
 
 const InputButtonWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.875rem;
-`;
-
-const BackButton = styled(BackIcon)`
-  width: 46px;
-  height: 46px;
 `;

@@ -9,7 +9,7 @@ const Input = styled.input`
 
   color: ${({ theme }) => theme.colors.black};
   background-color: transparent;
-  font-size: ${({ theme }) => theme.typography.body16M};
+  font-size: ${({ theme }) => theme.fonts.b16M};
   &::placeholder {
     color: ${({ theme }) => theme.colors.brown2};
   }
