@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import cookieImg from "../assets/images/cookie.png";
+import cookieImg from "../assets/svgs/cookie.svg";
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
