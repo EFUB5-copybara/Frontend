@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import starIcon from "../assets/svgs/star.svg";
 import fireIcon from "../assets/svgs/fire.svg";
-import fortunecookieIcon from "../assets/svgs/fortunecookie.svg";
+import fortunecookieIcon from "../assets/svgs/fortune-button.svg";
+import fortunecookieOpenedIcon from "../assets/svgs/broken-fortune-button.svg";
 
 function MissionBar() {
   const navigate = useNavigate();
@@ -28,7 +29,10 @@ function MissionBar() {
         </DayIcon>
       </Left>
       <FortuneButton onClick={handleFortuneClick} disabled={isClicked}>
-        <CookieIcon src={fortunecookieIcon} alt="포춘쿠키 버튼" />
+        <CookieIcon
+          src={isClicked ? fortunecookieOpenedIcon : fortunecookieIcon}
+          alt="포춘쿠키 버튼"
+        />
       </FortuneButton>
     </Bar>
   );
@@ -96,11 +100,9 @@ const FortuneButton = styled.button`
   display: flex;
   width: 40px;
   height: 40px;
-  padding: 5px;
+  padding: 0px;
   justify-content: center;
   align-items: center;
-  border-radius: 100px;
-  background: ${({ theme }) => theme.colors.green};
   cursor: pointer;
 
   &:disabled {
@@ -110,7 +112,7 @@ const FortuneButton = styled.button`
 `;
 
 const CookieIcon = styled.img`
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
 `;
