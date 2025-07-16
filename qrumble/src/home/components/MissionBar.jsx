@@ -1,10 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import starIcon from "../assets/svgs/star.svg";
 import fireIcon from "../assets/svgs/fire.svg";
 import fortunecookieIcon from "../assets/svgs/fortunecookie.svg";
 
 function MissionBar() {
+  const navigate = useNavigate();
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handleFortuneClick = () => {
+    setIsClicked(true);
+    setTimeout(() => {
+      navigate("/home/fortune");
+    }, 100);
+  };
+
   return (
     <Bar>
       <Left>
@@ -16,7 +27,7 @@ function MissionBar() {
           <Text>7일</Text>
         </DayIcon>
       </Left>
-      <FortuneButton>
+      <FortuneButton onClick={handleFortuneClick} disabled={isClicked}>
         <CookieIcon src={fortunecookieIcon} alt="포춘쿠키 버튼" />
       </FortuneButton>
     </Bar>
@@ -90,6 +101,12 @@ const FortuneButton = styled.button`
   align-items: center;
   border-radius: 100px;
   background: ${({ theme }) => theme.colors.green};
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const CookieIcon = styled.img`
