@@ -4,6 +4,7 @@ import ChartPage from "./home/pages/ChartPage";
 import FortuneCookiePage from "./home/pages/FortuneCookiePage";
 import HomePage from "./home/pages/HomePage";
 import WritePage from "./home/pages/WritePage";
+import MissionPage from "./home/pages/MissionPage";
 import FindId from "./login/pages/FindId";
 import Login from "./login/pages/Login";
 import NewPassword from "./login/pages/NewPassword";
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
   {
     path: "/home/fortune",
     element: <FortuneCookiePage />,
+  },
+  {
+    path: "/home/mission",
+    element: <MissionPage />,
   },
 ]);
 

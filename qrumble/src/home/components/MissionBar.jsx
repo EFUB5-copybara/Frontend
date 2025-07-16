@@ -17,10 +17,17 @@ function MissionBar() {
     }, 100);
   };
 
+  const handleMissionClick = () => {
+    setIsClicked(true);
+    setTimeout(() => {
+      navigate("/home/mission");
+    }, 100);
+  };
+
   return (
     <Bar>
       <Left>
-        <MissionButton>
+        <MissionButton onClick={handleMissionClick}>
           <StarIcon src={starIcon} alt="미션 버튼" />
         </MissionButton>
         <DayIcon>
