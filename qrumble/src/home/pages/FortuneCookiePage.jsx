@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import XImg from "../assets/svgs/X.svg";
-import bigfortuneImg from "../assets/images/bigfortunecookie.png";
+import bigfortuneImg from "../assets/svgs/fortune.svg";
 import { useNavigate } from "react-router-dom";
 
 function FortuneCookiePage() {
