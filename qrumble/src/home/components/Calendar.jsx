@@ -1,11 +1,17 @@
 import React, { useMemo, useEffect } from "react";
 import styled from "styled-components";
+import {
+  DayCell,
+  DateBox,
+  DateText,
+  CookieIcon,
+} from "./styles/CalendarStyles";
 import cookieImg from "../assets/svgs/cookie.svg";
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-function Calendar({ year, month, setMonthlyCookieJarLevel }) {
-  const today = new Date(2025, 2, 22); // 테스트용 오늘 (2025.03.09)
+function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
+  const today = new Date(2025, 2, 11); // 테스트용 오늘
   const currentFirstDate = new Date(year, month - 1, 1);
   const currentLastDate = new Date(year, month, 0).getDate();
   const firstDay = currentFirstDate.getDay();
@@ -16,7 +22,7 @@ function Calendar({ year, month, setMonthlyCookieJarLevel }) {
 
   const days = [];
 
-  const attendedDates = [4, 5, 6, 7, 8, 10, 11, 12, 13, 15];
+  const attendedDates = [4, 5, 6, 7, 8];
 
   const weeks = {};
   for (let day = 1; day <= currentLastDate; day++) {
@@ -97,8 +103,18 @@ function Calendar({ year, month, setMonthlyCookieJarLevel }) {
             isPast &&
             !attendedDates.includes(item.date);
 
+          const handleClick = () => {
+            if (item.type === "current") {
+              const weekDates = getWeekDates(year, month - 1, item.date);
+              onSelectDate({
+                day: item.date,
+                weekDates,
+              });
+            }
+          };
+
           return (
-            <DayCell key={`day-${idx}`}>
+            <DayCell key={`day-${idx}`} onClick={handleClick}>
               {item.type === "next" ? (
                 <DateText $color="brown3">{item.date}</DateText>
               ) : isCookie ? (
@@ -145,43 +161,32 @@ const DaysGrid = styled.div`
   gap: 8px;
 `;
 
-const DayCell = styled.div`
-  width: 39px;
-  height: 39px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const DateBox = styled.div`
-  width: 39px;
-  height: 39px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  ${({ $isToday, theme }) =>
-    $isToday &&
-    `
-    background-color: ${theme.colors.primary};
-  `}
-`;
-
-const DateText = styled.div`
-  ${({ theme }) => theme.fonts.ns14SB};
-  color: ${({ $color, theme }) => theme.colors[$color || "primary"]};
-`;
-
-const CookieIcon = styled.img`
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-`;
-
 function getWeekIndex(date) {
   const firstDate = new Date(date.getFullYear(), date.getMonth(), 1);
   const firstDay = firstDate.getDay(); // 요일 (0:일 ~ 6:토)
   const day = date.getDate();
 
   return Math.floor((firstDay + day - 1) / 7);
+}
+
+function getWeekDates(year, month, selectedDay) {
+  const date = new Date(year, month, selectedDay);
+  const dayOfWeek = date.getDay(); // 0: 일요일
+
+  const start = new Date(date);
+  start.setDate(date.getDate() - dayOfWeek); // 주 시작일 (일요일)
+
+  const weekDates = [];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    weekDates.push({
+      day: d.getDate(),
+      month: d.getMonth() + 1,
+      year: d.getFullYear(),
+    });
+  }
+
+  return weekDates;
 }
