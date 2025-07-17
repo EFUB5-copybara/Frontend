@@ -56,6 +56,8 @@ function HomePage() {
     }
   };
 
+  const [monthlyCookieJarLevel, setMonthlyCookieJarLevel] = useState(0);
+
   return (
     <Container>
       <MissionBar />
@@ -85,9 +87,13 @@ function HomePage() {
         onWheel={handleWheel}
       >
         <ContentArea $collapsed={collapsed}>
-          <Calendar year={year} month={month} />
+          <Calendar
+            year={year}
+            month={month}
+            setMonthlyCookieJarLevel={setMonthlyCookieJarLevel}
+          />
           <DailyQuestion onClick={() => navigate("/home/write")} />
-          <Cookiejar />
+          <Cookiejar level={monthlyCookieJarLevel} />
         </ContentArea>
 
         <QuestionArea $collapsed={collapsed}>

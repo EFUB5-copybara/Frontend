@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useMemo, useEffect } from "react";
 import styled from "styled-components";
 import cookieImg from "../assets/svgs/cookie.svg";
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-function Calendar({ year, month }) {
-  const today = new Date(2025, 2, 11); // 테스트용 오늘 (2025.03.09)
+function Calendar({ year, month, setMonthlyCookieJarLevel }) {
+  const today = new Date(2025, 2, 22); // 테스트용 오늘 (2025.03.09)
   const currentFirstDate = new Date(year, month - 1, 1);
   const currentLastDate = new Date(year, month, 0).getDate();
   const firstDay = currentFirstDate.getDay();
@@ -15,6 +15,37 @@ function Calendar({ year, month }) {
   const nextMonthPreviewCount = displayCells - totalCellsNeeded;
 
   const days = [];
+
+  const attendedDates = [4, 5, 6, 7, 8, 10, 11, 12, 13, 15];
+
+  const weeks = {};
+  for (let day = 1; day <= currentLastDate; day++) {
+    const date = new Date(year, month - 1, day);
+    const weekIndex = getWeekIndex(date); // 0번째 주, 1번째 주...
+    if (!weeks[weekIndex]) weeks[weekIndex] = [];
+    weeks[weekIndex].push(day);
+  }
+
+  const jarLevel = useMemo(() => {
+    let level = 0;
+    let totalWeeks = 0;
+
+    for (const daysInWeek of Object.values(weeks)) {
+      totalWeeks++;
+      const cookieCount = daysInWeek.filter((d) =>
+        attendedDates.includes(d)
+      ).length;
+      if (cookieCount >= 5) level++;
+    }
+
+    if (level === totalWeeks) level++; // 보너스 쿠키
+
+    return level;
+  }, [year, month, attendedDates]);
+
+  useEffect(() => {
+    setMonthlyCookieJarLevel(jarLevel);
+  }, [year, month, setMonthlyCookieJarLevel]);
 
   // 현재 월 날짜들
   for (let i = 1; i <= currentLastDate; i++) {
@@ -31,8 +62,6 @@ function Calendar({ year, month }) {
       type: "next",
     });
   }
-
-  const attendedDates = [4, 5, 6, 7, 8];
 
   return (
     <Wrapper>
@@ -148,3 +177,11 @@ const CookieIcon = styled.img`
   height: 100%;
   border-radius: 4px;
 `;
+
+function getWeekIndex(date) {
+  const firstDate = new Date(date.getFullYear(), date.getMonth(), 1);
+  const firstDay = firstDate.getDay(); // 요일 (0:일 ~ 6:토)
+  const day = date.getDate();
+
+  return Math.floor((firstDay + day - 1) / 7);
+}
