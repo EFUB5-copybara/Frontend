@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import ShareModal from "../components/ShareModal";
 import arrowbackImg from "../assets/svgs/arrow_back.svg";
 import thumbsupImg from "../assets/svgs/thumbsup.svg";
 import eyeImg from "../assets/svgs/eye.svg";
@@ -7,6 +8,12 @@ import commentImg from "../assets/svgs/comments.svg";
 import shareImg from "../assets/svgs/share.svg";
 
 function ChartPage() {
+  const [isShareOpen, setIsShareOpen] = useState(false);
+
+  const handleShareClick = () => {
+    setIsShareOpen(true);
+  };
+
   return (
     <Background>
       <Container>
@@ -33,12 +40,13 @@ function ChartPage() {
               <BottomBtnImg src={commentImg} alt="comment" />
               101
             </BottomBtn>
-            <BottomBtn>
+            <BottomBtn onClick={handleShareClick}>
               <BottomBtnImg src={shareImg} alt="share" />
             </BottomBtn>
           </ChartBottomBar>
         </Wrapper>
       </Container>
+      {isShareOpen && <ShareModal onClose={() => setIsShareOpen(false)} />}
     </Background>
   );
 }
@@ -50,6 +58,8 @@ const Background = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  width: 100%;
 `;
 
 const Container = styled.div`
