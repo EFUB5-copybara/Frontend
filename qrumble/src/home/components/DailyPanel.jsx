@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import {
   DayCell,
@@ -16,9 +16,39 @@ import userImg from "../assets/svgs/userimg.svg";
 import brownlikeImg from "../assets/svgs/brownlike.svg";
 import browncommentImg from "../assets/svgs/brownmessage.svg";
 import brownbookmarkImg from "../assets/svgs/brownbookmark.svg";
+import ItemButtons from "./ItemButtons";
+import AlertModal from "./AlertModal";
 
 function DailyPanel({ date, onClose }) {
   const attendedDates = [4, 5, 6, 7, 8];
+
+  const [items, setItems] = useState([
+    { name: "key", img: keyImg, count: 10 },
+    { name: "shield", img: shieldImg, count: 10 },
+    { name: "eraser", img: eraserImg, count: 10 },
+  ]);
+
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [alert, setAlert] = useState({ open: false, type: null });
+
+  const [targetDate, setTargetDate] = useState(null);
+
+  const handleUseItem = (type) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.name === type ? { ...item, count: item.count - 1 } : item
+      )
+    );
+  };
+
+  const confirmUseItem = () => {
+    setItems((prev) =>
+      prev.map((i) =>
+        i.name === selectedItem.name ? { ...i, count: i.count - 1 } : i
+      )
+    );
+    setAlert({ open: false, type: null });
+  };
 
   return (
     <>
@@ -39,7 +69,10 @@ function DailyPanel({ date, onClose }) {
               const isMissed = isPast && !attendedDates.includes(day);
 
               return (
-                <DayCell key={`${year}-${month}-${day}`}>
+                <DayCell
+                  key={`${year}-${month}-${day}`}
+                  onClick={() => setTargetDate(new Date(year, month - 1, day))}
+                >
                   {isCookie ? (
                     <CookieIcon src={cookieImg} alt="cookie" />
                   ) : (
@@ -58,14 +91,25 @@ function DailyPanel({ date, onClose }) {
             })}
           </WeeklyRow>
 
-          <ItemWrapper>
-            {[keyImg, shieldImg, eraserImg].map((img, index) => (
-              <ItemButton key={index}>
-                <ItemImg src={img} alt="item" />
-                10개
-              </ItemButton>
-            ))}
-          </ItemWrapper>
+          <ItemButtons
+            items={Object.fromEntries(
+              items.map(({ name, count }) => [name, count])
+            )}
+            onUse={handleUseItem}
+            attendedDates={attendedDates}
+            targetDate={targetDate}
+          />
+
+          {alert.open && alert.type === "confirm" && (
+            <AlertModal
+              onClose={() => setAlert({ open: false, type: null })}
+              onConfirm={confirmUseItem}
+            />
+          )}
+
+          {alert.open && alert.type === "unavailable" && (
+            <AlertModal onClose={() => setAlert({ open: false, type: null })} />
+          )}
 
           <QnAWrapper>
             <QuestionCard>
@@ -163,30 +207,6 @@ const WeeklyRow = styled.div`
   grid-template-columns: repeat(7, 1fr);
   gap: 8px;
   height: 39px;
-`;
-
-const ItemWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 38px;
-  gap: 8px;
-`;
-
-const ItemButton = styled.button`
-  width: 101px;
-  border-radius: 100px;
-  padding: 6px 18px 6px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: ${({ theme }) => theme.fonts.b16B};
-  color: ${({ theme }) => theme.colors.white};
-  background-color: ${({ theme }) => theme.colors.green};
-`;
-
-const ItemImg = styled.img`
-  width: 24px;
 `;
 
 const QnAWrapper = styled.div`
