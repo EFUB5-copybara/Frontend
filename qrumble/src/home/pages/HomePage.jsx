@@ -21,39 +21,40 @@ function HomePage() {
 
   const navigate = useNavigate();
 
+  const [startY, setStartY] = useState(null);
+
+  const handleStart = (e) => {
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+    setStartY(y);
+  };
+
+  const handleEnd = (e) => {
+    const endY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+
+    if (startY !== null) {
+      const diffY = endY - startY;
+
+      if (diffY > 50) {
+        setCollapsed(true);
+      } else if (diffY < -50) {
+        setCollapsed(false);
+      }
+      setStartY(null);
+    }
+  };
+
+  const handleWheel = (e) => {
+    if (!collapsed && e.deltaY > 50) {
+      setCollapsed(true);
+    } else if (collapsed && e.deltaY < -50) {
+      setCollapsed(false);
+    }
+  };
+
   const handleMonthSelect = (newYear, newMonth) => {
     setYear(newYear);
     setMonth(newMonth);
     setIsMonthSelectorOpen(false);
-  };
-
-  const handleCalendarClick = () => {
-    const today = new Date();
-    const center = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate()
-    );
-
-    const weekDates = [];
-    for (let i = -3; i <= 3; i++) {
-      const temp = new Date(center);
-      temp.setDate(center.getDate() + i);
-      weekDates.push({
-        year: temp.getFullYear(),
-        month: temp.getMonth() + 1,
-        day: temp.getDate(),
-      });
-    }
-
-    setSelectedDate({
-      year: center.getFullYear(),
-      month: center.getMonth() + 1,
-      day: center.getDate(),
-      weekDates,
-    });
-
-    setIsDailyPanelOpen(true);
   };
 
   return (
@@ -76,7 +77,13 @@ function HomePage() {
         )}
       </SelectorWrapper>
 
-      <SwipeArea>
+      <SwipeArea
+        onTouchStart={handleStart}
+        onTouchEnd={handleEnd}
+        onMouseDown={handleStart}
+        onMouseUp={handleEnd}
+        onWheel={handleWheel}
+      >
         <ContentArea $collapsed={collapsed}>
           <Calendar
             year={year}
@@ -87,7 +94,12 @@ function HomePage() {
                 month - 1,
                 day
               );
-              setSelectedDate({ day, weekDates });
+              setSelectedDate({
+                day,
+                month,
+                year,
+                weekDates,
+              });
               setIsDailyPanelOpen(true);
             }}
             setMonthlyCookieJarLevel={setMonthlyCookieJarLevel}
@@ -113,7 +125,6 @@ function HomePage() {
 
 export default HomePage;
 
-// --- Styled Components ---
 const Container = styled.div`
   position: relative;
   display: flex;
