@@ -9,6 +9,9 @@ import NewPassword from "./login/pages/NewPassword";
 import CommunityPopular from "./community/pages/CommunityPopular";
 import MyPage from "./mypage/pages/MyPage";
 import ThemePage from "./mypage/pages/ThemePage";
+import MyInfoPage from "./mypage/pages/MyInfoPage";
+import MyRecordPage from "./mypage/pages/MyRecordPage";
+import BookmarkPage from "./mypage/pages/BookmarkPage";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +53,18 @@ const router = createBrowserRouter([
   {
     path: "/mypage/theme",
     element: <ThemePage />,
+  },
+  {
+    path: "/mypage/info",
+    element: <MyInfoPage />,
+  },
+  {
+    path: "/mypage/myrecords",
+    element: <MyRecordPage />,
+  },
+  {
+    path: "/mypage/bookmarks",
+    element: <BookmarkPage />,
   },
 ]);
 
