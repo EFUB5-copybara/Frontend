@@ -4,15 +4,23 @@ import styled from "styled-components";
 
 export default function MainLayout() {
   return (
-    <div>
+    <Container>
       <LayoutWrapper>
         <Outlet />
       </LayoutWrapper>
       <NavigationBar />
-    </div>
+    </Container>
   );
 }
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+`;
+
 const LayoutWrapper = styled.main`
-  width: 360px;
+  flex: 1;
+  width: 100%;
 `;
