@@ -17,8 +17,10 @@ import FortuneCookiePage from './home/pages/FortuneCookiePage';
 import WritePage from './home/pages/WritePage';
 import MissionPage from './home/pages/MissionPage';
 import MainLayout from './layout/MainLayout';
+import { getNavigationItems } from './utils/getNavigationItems';
+import navigation from './navigations';
 
-const router = createBrowserRouter([
+export const routes = [
   {
     path: '/',
     element: <Splash />,
@@ -95,6 +97,12 @@ const router = createBrowserRouter([
     path: '/home/mission',
     element: <MissionPage />,
   },
-]);
+];
+
+const router = createBrowserRouter(routes, {
+  basename: import.meta.env.BASE_URL,
+});
 
 export default router;
+
+export const navigationItems = getNavigationItems(navigation);
