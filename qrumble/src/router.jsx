@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Login from './login/pages/Login';
 import HomePage from './home/HomePage';
+import ShopPage from './shop/ShopPage';
 import Splash from './Splash';
 import FindId from './login/pages/FindId';
 import ResetPassword from './login/pages/ResetPassword';
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
   {
     path: '/home',
     element: <HomePage />,
+  },
+  {
+    path: '/shop',
+    element: <ShopPage />,
   },
 ]);
 
