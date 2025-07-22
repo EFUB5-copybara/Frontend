@@ -97,7 +97,6 @@ const ProfileImg = styled.button`
   width: 90px;
   height: 90px;
   border-radius: 100px;
-  background-color: ${({ theme }) => theme.colors.brown3};
   background-image: url(${(props) => props.$img});
   background-size: cover;
   background-position: center;
