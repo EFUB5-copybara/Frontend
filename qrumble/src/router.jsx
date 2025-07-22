@@ -19,6 +19,7 @@ import MissionPage from './home/pages/MissionPage';
 import MainLayout from './layout/MainLayout';
 import { getNavigationItems } from './utils/getNavigationItems';
 import navigation from './navigations';
+import { configRoutes } from './utils/configRoutes';
 
 export const routes = [
   {
@@ -26,22 +27,13 @@ export const routes = [
     element: <Splash />,
   },
   {
-    path: '/login',
-    element: <Login />,
-  },
-  {
     path: '/',
     element: <MainLayout />,
-    children: [
-      {
-        path: '/community',
-        element: <CommunityPopular />,
-      },
-      {
-        path: '/home',
-        element: <HomePage />,
-      },
-    ],
+    children: configRoutes(navigation),
+  },
+  {
+    path: '/login',
+    element: <Login />,
   },
 
   {
