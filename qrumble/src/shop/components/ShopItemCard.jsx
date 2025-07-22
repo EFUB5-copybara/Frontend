@@ -44,3 +44,36 @@ const ItemContent = styled.div`
   background: ${({ theme }) => theme.colors.ivory3};
   margin-bottom: 16px;
 `;
+
+const ItemName = styled.div`
+  font-size: 16px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.brown1};
+  margin-bottom: 4px;
+`;
+
+const ItemDesc = styled.div`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.brown2};
+  margin-bottom: 8px;
+  text-align: center;
+`;
+
+const Price = styled.div`
+  font-size: 16px;
+  font-weight: 700;
+  color: #C05A1B;
+  margin-bottom: 8px;
+`;
+
+const BuyButton = styled.button`
+  width: 100%;
+  height: 32px;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.colors.brown1};
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+`;

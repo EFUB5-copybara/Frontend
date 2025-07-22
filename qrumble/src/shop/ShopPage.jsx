@@ -2,10 +2,10 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import ItemBar from './components/ItemBar';
 import ShopTab from './components/ShopTab';
-//import ItemList from './components/ItemList';
+import ItemList from './components/ItemList';
 //import FontList from './components/FontList';
 //import PaperList from './components/PaperList';
-//import ShopCard from './components/ShopItemCard';
+import ShopCard from './components/ShopItemCard';
 import Underbar from '@/components/UnderBar';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ export default function ShopPage() {
     <PageContainer>
       <ItemBar />
       <ShopTab activeTab={activeTab} onTabChange={setActiveTab} />
+      {activeTab === 'item' && <ItemList />}
       <Underbar current="shop" onTabClick={(tab) => {
         if (tab === 'shop') {
           setActiveTab('item');
