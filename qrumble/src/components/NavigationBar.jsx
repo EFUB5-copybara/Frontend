@@ -55,21 +55,19 @@ export default function NavigationBar({ current, onTabClick }) {
 const Wrapper = styled.div`
   width: 360px;
   height: 65px;
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
+  position: sticky;
   bottom: 0;
   background: ${({ theme }) => theme.colors.brown3};
   border-radius: 20px 20px 0 0;
   overflow: hidden;
   z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const IconContainer = styled.div`
-  position: absolute;
-  left: 23px;
-  top: 12px;
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   gap: 26px;
