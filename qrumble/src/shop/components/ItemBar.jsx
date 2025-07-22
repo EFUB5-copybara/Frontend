@@ -9,35 +9,39 @@ const point = 120;
 
 export default function ItemBar() {
   return (
-    <Bar>
-      <Left>
-        <Shield>
-          <ShieldIcon />
-          <Count>{shieldCount}개</Count>
-        </Shield>
-        <Key>
-          <KeyIcon />
-          <Count>{keyCount}개</Count>
-        </Key>
-      </Left>
-      <Point>
-        {point}P
-      </Point>
-    </Bar>
+    <Wrapper>
+      <Bar>
+        <Left>
+          <ItemBox>
+            <KeyIcon width={20} height={20} />
+            <Text>{keyCount}개</Text>
+          </ItemBox>
+          <ItemBox>
+            <ShieldIcon width={20} height={20} />
+            <Text>{shieldCount}개</Text>
+          </ItemBox>
+        </Left>
+        <Point>
+          <PointText>{point}P</PointText>
+        </Point>
+      </Bar>
+    </Wrapper>
   );
 }
 
+const Wrapper = styled.div`
+  width: 360px;
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+`;
+
 const Bar = styled.div`
+  width: 322px;
+  padding: 2px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 29px;
-  padding: 6px 14px;
-  gap: 10px;
-  border-radius: 100px;
-  background: ${({ theme }) => theme.colors.ivory1};
-  margin-top: 18px;
-  margin-bottom: 12px;
 `;
 
 const Left = styled.div`
@@ -46,39 +50,32 @@ const Left = styled.div`
   gap: 8px;
 `;
 
-const Shield = styled.div`
+const ItemBox = styled.div`
   display: flex;
   align-items: center;
   height: 29px;
   padding: 6px 8px;
   border-radius: 100px;
   background: ${({ theme }) => theme.colors.ivory1};
-  gap: 6px;
-`;
-
-const Key = styled.div`
-  display: flex;
-  align-items: center;
-  height: 29px;
-  padding: 6px 8px;
-  border-radius: 100px;
-  background: ${({ theme }) => theme.colors.green};
-  gap: 6px;
-`;
-
-const Count = styled.span`
-  font-family: Pretendard;
-  font-size: 16px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.primary};
+  gap: 4px;
 `;
 
 const Point = styled.div`
+  display: flex;
+  height: 29px;
+  padding: 6px 14px;
+  justify-content: center;
+  align-items: center;
   border-radius: 100px;
   background: ${({ theme }) => theme.colors.green};
-  padding: 6px 14px;
-  font-family: Pretendard;
-  font-size: 16px;
-  font-weight: 600;
+`;
+
+const Text = styled.span`
+  ${({ theme }) => theme.fonts.c14M};
+  color: ${({ theme }) => theme.colors.primary};
+`;
+
+const PointText = styled.span`
+  ${({ theme }) => theme.fonts.sub14SB};
   color: ${({ theme }) => theme.colors.primary};
 `;
