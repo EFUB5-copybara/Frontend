@@ -11,7 +11,7 @@ import SelectedHome from '@/assets/svgs/home_4_fill.svg?react';
 import SelectedChart from '@/assets/svgs/chart_bar_fill.svg?react';
 import SelectedUser from '@/assets/svgs/user_3_fill.svg?react';
 
-export default function Underbar({ current, onTabClick }) {
+export default function NavigationBar({ current, onTabClick }) {
   const navigate = useNavigate();
 
   const handleTabClick = (tab, path) => {
@@ -22,19 +22,29 @@ export default function Underbar({ current, onTabClick }) {
   return (
     <Wrapper>
       <IconContainer>
-        <IconButton onClick={() => handleTabClick('shop', '/shop')} $active={current === 'shop'}>
+        <IconButton
+          onClick={() => handleTabClick('shop', '/shop')}
+          $active={current === 'shop'}>
           {current === 'shop' ? <SelectedShop /> : <ShopIcon />}
         </IconButton>
-        <IconButton onClick={() => handleTabClick('community', '/community')} $active={current === 'community'}>
+        <IconButton
+          onClick={() => handleTabClick('community', '/community')}
+          $active={current === 'community'}>
           {current === 'community' ? <SelectedCommunity /> : <CommunityIcon />}
         </IconButton>
-        <IconButton onClick={() => handleTabClick('home', '/home')} $active={current === 'home'}>
+        <IconButton
+          onClick={() => handleTabClick('home', '/home')}
+          $active={current === 'home'}>
           {current === 'home' ? <SelectedHome /> : <HomeIcon />}
         </IconButton>
-        <IconButton onClick={() => handleTabClick('chart', '/chart')} $active={current === 'chart'}>
+        <IconButton
+          onClick={() => handleTabClick('chart', '/chart')}
+          $active={current === 'chart'}>
           {current === 'chart' ? <SelectedChart /> : <ChartIcon />}
         </IconButton>
-        <IconButton onClick={() => handleTabClick('user', '/user')} $active={current === 'user'}>
+        <IconButton
+          onClick={() => handleTabClick('user', '/user')}
+          $active={current === 'user'}>
           {current === 'user' ? <SelectedUser /> : <UserIcon />}
         </IconButton>
       </IconContainer>
@@ -79,6 +89,7 @@ const IconButton = styled.button`
   svg {
     width: 30px;
     height: 30px;
-    fill: ${({ $active, theme }) => $active ? theme.colors.primary : theme.colors.brown1};
+    fill: ${({ $active, theme }) =>
+      $active ? theme.colors.primary : theme.colors.brown1};
   }
 `;
