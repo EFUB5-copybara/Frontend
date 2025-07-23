@@ -142,13 +142,17 @@ function DailyPanel({ date, onClose }) {
 
           {alert.open && alert.type === "confirm" && (
             <AlertModal
+              isOpen={alert.open}
               onClose={() => setAlert({ open: false, type: null })}
               onConfirm={confirmUseItem}
             />
           )}
 
           {alert.open && alert.type === "unavailable" && (
-            <AlertModal onClose={() => setAlert({ open: false, type: null })} />
+            <AlertModal
+              isOpen={alert.open}
+              onClose={() => setAlert({ open: false, type: null })}
+            />
           )}
 
           <QnAWrapper>

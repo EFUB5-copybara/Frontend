@@ -11,12 +11,23 @@ function AlertModal({
 }) {
   if (!isOpen) return null;
 
+  const isConfirmMode = typeof onConfirm === "function";
+
   return (
     <ModalOverlay>
       <ModalBox>
         <ModalText $variant={variant}>{message}</ModalText>
         {lengthText && <DetailText>{lengthText}</DetailText>}
-        <ConfirmButton onClick={onConfirm}>확인</ConfirmButton>
+        <ButtonRow $isSingle={!isConfirmMode}>
+          {isConfirmMode ? (
+            <>
+              <CancelButton onClick={onClose}>취소</CancelButton>
+              <ConfirmButton onClick={onConfirm}>확인</ConfirmButton>
+            </>
+          ) : (
+            <ConfirmButton onClick={onClose}>확인</ConfirmButton>
+          )}
+        </ButtonRow>
       </ModalBox>
     </ModalOverlay>
   );
@@ -62,14 +73,32 @@ const DetailText = styled.p`
   margin: 0 0 20px 0;
 `;
 
+const ButtonRow = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: ${({ $isSingle }) => ($isSingle ? "0" : "12px")};
+  margin-top: auto;
+  margin-bottom: 28px;
+`;
+
+const CancelButton = styled.button`
+  background-color: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.primary};
+  border: 1px solid ${({ theme }) => theme.colors.primary};
+  font-family: ${({ theme }) => theme.fonts.s16SB};
+  border-radius: 10px;
+  width: 120px;
+  height: 40px;
+  cursor: pointer;
+`;
+
 const ConfirmButton = styled.button`
   background-color: ${({ theme }) => theme.colors.primary};
-  font-family: ${({ theme }) => theme.fonts.s16SB};
   color: white;
   border: none;
+  font-family: ${({ theme }) => theme.fonts.s16SB};
   border-radius: 10px;
-  width: 246px;
+  width: 120px;
   height: 40px;
-  padding: 6px 0 8px 0;
   cursor: pointer;
 `;

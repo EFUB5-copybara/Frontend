@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import AlertModal from "../components/AlertModal.jsx";
 import keyImg from "../assets/svgs/key.svg";
 import shieldImg from "../assets/svgs/shield.svg";
@@ -11,6 +11,7 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
     type: "",
     message: "",
     canUse: true,
+    itemName: "",
   });
 
   const itemAssets = {
@@ -19,14 +20,20 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
     eraser: eraserImg,
   };
 
-  const handleUseItem = (type, targetDate) => {
-    const canUse = checkIfUsable(type, targetDate);
+  const itemDescriptions = {
+    shield: "방패: 연속일수가 깨지지 않도록 방어해준다",
+    eraser: "지우개: 이미 작성한 답변을 새로 쓸 수 있다",
+    key: "열쇠: 사용시 다른 사람들의 답변을 볼 수 있다",
+  };
 
-    const typeToKor = {
-      key: "열쇠",
-      shield: "방패",
-      eraser: "지우개",
-    };
+  const typeToKor = {
+    key: "열쇠",
+    shield: "방패",
+    eraser: "지우개",
+  };
+
+  const handleUseItem = (type) => {
+    const canUse = checkIfUsable(type);
 
     setModalInfo({
       isOpen: true,
@@ -40,35 +47,35 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
   };
 
   const confirmUse = () => {
-    if (!modalInfo.canUse) return closeModal();
-
+    if (!modalInfo.canUse) {
+      closeModal();
+      return;
+    }
     onUse(modalInfo.type);
     closeModal();
   };
 
   const closeModal = () => {
-    setModalInfo({ isOpen: false, type: "", message: "", canUse: true });
+    setModalInfo({
+      isOpen: false,
+      type: "",
+      message: "",
+      canUse: true,
+    });
   };
 
-  const checkIfUsable = (type, targetDate) => {
+  const checkIfUsable = (type) => {
     if (!attendedDates || !targetDate) return false;
-
     const itemCount = items[type];
     if (itemCount === 0) return false;
 
     const isCookieDay = attendedDates.includes(targetDate.getDate());
-    const today = new Date(2025, 2, 11); // 예시용 기준일
+    const today = new Date(2025, 2, 11);
     const sevenDaysAgo = new Date(today);
     sevenDaysAgo.setDate(today.getDate() - 7);
 
-    if (type === "key") {
-      return !isCookieDay;
-    }
-
-    if (type === "eraser") {
-      return isCookieDay;
-    }
-
+    if (type === "key") return !isCookieDay;
+    if (type === "eraser") return isCookieDay;
     if (type === "shield") {
       const dateRange = [];
       for (let i = 1; i <= 7; i++) {
@@ -76,23 +83,17 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
         d.setDate(today.getDate() - i);
         dateRange.push(d.getDate());
       }
-      const missedDays = dateRange.filter((d) => !attendedDates.includes(d));
-      return missedDays.length > 0;
+      const missed = dateRange.filter((d) => !attendedDates.includes(d));
+      return missed.length > 0;
     }
 
     return false;
   };
 
-  const itemDescriptions = {
-    shield: "방패: 연속일수가 깨지지 않도록 방어해준다",
-    eraser: "지우개: 이미 작성한 답변을 새로 쓸 수 있다",
-    key: "열쇠: 사용시 다른 사람들의 답변을 볼 수 있다",
-  };
-
   return (
     <ItemWrapper>
       {Object.entries(itemAssets).map(([type, img]) => (
-        <ItemButton key={type} onClick={() => handleUseItem(type, targetDate)}>
+        <ItemButton key={type} onClick={() => handleUseItem(type)}>
           <ItemImg src={img} alt={type} />
           {items[type]}개
         </ItemButton>
@@ -101,7 +102,7 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
       <AlertModal
         isOpen={modalInfo.isOpen}
         onClose={closeModal}
-        onConfirm={confirmUse}
+        onConfirm={modalInfo.canUse ? confirmUse : undefined}
         variant={modalInfo.canUse ? "default" : "error"}
         message={modalInfo.message}
         lengthText={
