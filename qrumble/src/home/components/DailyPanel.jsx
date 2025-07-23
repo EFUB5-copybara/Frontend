@@ -29,65 +29,12 @@ function DailyPanel({ date, onClose }) {
     { name: "eraser", img: eraserImg, count: 10 },
   ]);
 
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [alert, setAlert] = useState({ open: false, type: null });
-
   const [targetDate, setTargetDate] = useState(null);
 
   const handleUseItem = (type) => {
-    const today = new Date(2025, 2, 11);
-
-    const isAttended =
-      targetDate &&
-      attendedDates.some((d) => {
-        const attended = new Date(2025, 2, d);
-        return attended.toDateString() === targetDate.toDateString();
-      });
-
-    const canUseKey = targetDate && !isAttended;
-    const canUseEraser = targetDate && isAttended;
-
-    const canUseShield = (() => {
-      const twoWeeksAgo = new Date(today);
-      twoWeeksAgo.setDate(today.getDate() - 13);
-      const missed = [];
-      for (
-        let d = new Date(twoWeeksAgo);
-        d <= today;
-        d.setDate(d.getDate() + 1)
-      ) {
-        const matched = attendedDates.some((attendedDay) => {
-          const attended = new Date(2025, 2, attendedDay);
-          return attended.toDateString() === d.toDateString();
-        });
-        if (!matched) missed.push(new Date(d));
-      }
-      return missed.length > 0;
-    })();
-
-    const itemMap = {
-      key: canUseKey,
-      eraser: canUseEraser,
-      shield: canUseShield,
-    };
-
-    const item = items.find((i) => i.name === type);
-    if (!item || item.count <= 0 || !itemMap[type]) {
-      setAlert({ open: true, type: "unavailable" });
-      return;
-    }
-
-    setSelectedItem(item);
-    setAlert({ open: true, type: "confirm" });
-  };
-
-  const confirmUseItem = () => {
     setItems((prev) =>
-      prev.map((i) =>
-        i.name === selectedItem.name ? { ...i, count: i.count - 1 } : i
-      )
+      prev.map((i) => (i.name === type ? { ...i, count: i.count - 1 } : i))
     );
-    setAlert({ open: false, type: null });
   };
 
   return (
@@ -139,21 +86,6 @@ function DailyPanel({ date, onClose }) {
             attendedDates={attendedDates}
             targetDate={targetDate}
           />
-
-          {alert.open && alert.type === "confirm" && (
-            <AlertModal
-              isOpen={alert.open}
-              onClose={() => setAlert({ open: false, type: null })}
-              onConfirm={confirmUseItem}
-            />
-          )}
-
-          {alert.open && alert.type === "unavailable" && (
-            <AlertModal
-              isOpen={alert.open}
-              onClose={() => setAlert({ open: false, type: null })}
-            />
-          )}
 
           <QnAWrapper>
             <QuestionCard>

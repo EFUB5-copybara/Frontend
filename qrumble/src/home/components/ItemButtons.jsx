@@ -66,28 +66,42 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
 
   const checkIfUsable = (type) => {
     if (!attendedDates || !targetDate) return false;
+
     const itemCount = items[type];
     if (itemCount === 0) return false;
 
-    const isCookieDay = attendedDates.includes(targetDate.getDate());
+    const isSameDay = (d1, d2) =>
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+
+    const isAttended = attendedDates.some((attendedDay) =>
+      isSameDay(targetDate, new Date(2025, targetDate.getMonth(), attendedDay))
+    );
+
     const today = new Date(2025, 2, 11);
-    const sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(today.getDate() - 7);
 
-    if (type === "key") return !isCookieDay;
-    if (type === "eraser") return isCookieDay;
-    if (type === "shield") {
-      const dateRange = [];
-      for (let i = 1; i <= 7; i++) {
-        const d = new Date(today);
-        d.setDate(today.getDate() - i);
-        dateRange.push(d.getDate());
-      }
-      const missed = dateRange.filter((d) => !attendedDates.includes(d));
-      return missed.length > 0;
+    switch (type) {
+      case "key":
+        return !isAttended; // 답변 안 한 날만 사용 가능
+      case "eraser":
+        return isAttended; // 답변한 날만 사용 가능
+      case "shield":
+        const start = new Date(today);
+        start.setDate(start.getDate() - 13); // 14일 전
+
+        let missedCount = 0;
+        for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+          const isWritten = attendedDates.some((day) =>
+            isSameDay(d, new Date(2025, 2, day))
+          );
+          if (!isWritten) missedCount++;
+        }
+
+        return missedCount > 0;
+      default:
+        return false;
     }
-
-    return false;
   };
 
   return (

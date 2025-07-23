@@ -77,8 +77,9 @@ const ButtonRow = styled.div`
   display: flex;
   justify-content: center;
   gap: ${({ $isSingle }) => ($isSingle ? "0" : "12px")};
-  margin-top: auto;
-  margin-bottom: 28px;
+  margin: 0px;
+  width: 100%;
+  gap: 10px;
 `;
 
 const CancelButton = styled.button`
@@ -86,8 +87,8 @@ const CancelButton = styled.button`
   color: ${({ theme }) => theme.colors.primary};
   border: 1px solid ${({ theme }) => theme.colors.primary};
   font-family: ${({ theme }) => theme.fonts.s16SB};
+  width: 100%;
   border-radius: 10px;
-  width: 120px;
   height: 40px;
   cursor: pointer;
 `;
@@ -98,7 +99,7 @@ const ConfirmButton = styled.button`
   border: none;
   font-family: ${({ theme }) => theme.fonts.s16SB};
   border-radius: 10px;
-  width: 120px;
+  width: 100%;
   height: 40px;
   cursor: pointer;
 `;
