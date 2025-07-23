@@ -14,9 +14,8 @@ function AlertModal({
   return (
     <ModalOverlay>
       <ModalBox>
-        <CloseButton onClick={onClose}>✕</CloseButton>
         <ModalText $variant={variant}>{message}</ModalText>
-        {lengthText && <LengthText>{lengthText}</LengthText>}
+        {lengthText && <DetailText>{lengthText}</DetailText>}
         <ConfirmButton onClick={onConfirm}>확인</ConfirmButton>
       </ModalBox>
     </ModalOverlay>
@@ -27,21 +26,18 @@ export default AlertModal;
 
 const ModalOverlay = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.3);
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.25);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 200;
+  z-index: 100;
 `;
 
 const ModalBox = styled.div`
   width: 323px;
   height: 173px;
-  padding: 28px 38px 0 38px;
+  padding: 33.5px 38px 0 38px;
   background-color: ${({ theme }) => theme.colors.ivory3};
   border-radius: 20px;
   position: relative;
@@ -49,19 +45,6 @@ const ModalBox = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-`;
-
-const CloseButton = styled.button`
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  border: none;
-  background: none;
-  padding: 0;
-  font-size: 18px;
-  cursor: pointer;
 `;
 
 const ModalText = styled.p`
@@ -73,7 +56,7 @@ const ModalText = styled.p`
   width: 100%;
 `;
 
-const LengthText = styled.p`
+const DetailText = styled.p`
   color: ${({ theme }) => theme.colors.brown2};
   font-family: ${({ theme }) => theme.fonts.c14M};
   margin: 0 0 20px 0;
@@ -81,12 +64,12 @@ const LengthText = styled.p`
 
 const ConfirmButton = styled.button`
   background-color: ${({ theme }) => theme.colors.primary};
-  font-family: ${({ theme }) => theme.fonts.t20SB};
+  font-family: ${({ theme }) => theme.fonts.s16SB};
   color: white;
   border: none;
   border-radius: 10px;
   width: 246px;
-  height: 51px;
-  padding: 12px 0 11px 0;
+  height: 40px;
+  padding: 6px 0 8px 0;
   cursor: pointer;
 `;

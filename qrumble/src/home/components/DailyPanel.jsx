@@ -101,17 +101,6 @@ function DailyPanel({ date, onClose }) {
             targetDate={targetDate}
           />
 
-          {alert.open && alert.type === "confirm" && (
-            <AlertModal
-              onClose={() => setAlert({ open: false, type: null })}
-              onConfirm={confirmUseItem}
-            />
-          )}
-
-          {alert.open && alert.type === "unavailable" && (
-            <AlertModal onClose={() => setAlert({ open: false, type: null })} />
-          )}
-
           <QnAWrapper>
             <QuestionCard>
               <Header>
@@ -144,6 +133,16 @@ function DailyPanel({ date, onClose }) {
               ))}
             </AnswerList>
           </QnAWrapper>
+          {alert.open && alert.type === "confirm" && (
+            <AlertModal
+              onClose={() => setAlert({ open: false, type: null })}
+              onConfirm={confirmUseItem}
+            />
+          )}
+
+          {alert.open && alert.type === "unavailable" && (
+            <AlertModal onClose={() => setAlert({ open: false, type: null })} />
+          )}
         </ModalContainer>
       </Dim>
     </>
@@ -171,7 +170,7 @@ const Dim = styled.div`
 `;
 
 const ModalContainer = styled.div`
-  position: absolute;
+  position: relative;
   top: 145px;
   width: 100%;
   height: 655px;
