@@ -35,11 +35,50 @@ function DailyPanel({ date, onClose }) {
   const [targetDate, setTargetDate] = useState(null);
 
   const handleUseItem = (type) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.name === type ? { ...item, count: item.count - 1 } : item
-      )
-    );
+    const today = new Date(2025, 2, 11);
+
+    const isAttended =
+      targetDate &&
+      attendedDates.some((d) => {
+        const attended = new Date(2025, 2, d);
+        return attended.toDateString() === targetDate.toDateString();
+      });
+
+    const canUseKey = targetDate && !isAttended;
+    const canUseEraser = targetDate && isAttended;
+
+    const canUseShield = (() => {
+      const twoWeeksAgo = new Date(today);
+      twoWeeksAgo.setDate(today.getDate() - 13);
+      const missed = [];
+      for (
+        let d = new Date(twoWeeksAgo);
+        d <= today;
+        d.setDate(d.getDate() + 1)
+      ) {
+        const matched = attendedDates.some((attendedDay) => {
+          const attended = new Date(2025, 2, attendedDay);
+          return attended.toDateString() === d.toDateString();
+        });
+        if (!matched) missed.push(new Date(d));
+      }
+      return missed.length > 0;
+    })();
+
+    const itemMap = {
+      key: canUseKey,
+      eraser: canUseEraser,
+      shield: canUseShield,
+    };
+
+    const item = items.find((i) => i.name === type);
+    if (!item || item.count <= 0 || !itemMap[type]) {
+      setAlert({ open: true, type: "unavailable" });
+      return;
+    }
+
+    setSelectedItem(item);
+    setAlert({ open: true, type: "confirm" });
   };
 
   const confirmUseItem = () => {
@@ -101,6 +140,17 @@ function DailyPanel({ date, onClose }) {
             targetDate={targetDate}
           />
 
+          {alert.open && alert.type === "confirm" && (
+            <AlertModal
+              onClose={() => setAlert({ open: false, type: null })}
+              onConfirm={confirmUseItem}
+            />
+          )}
+
+          {alert.open && alert.type === "unavailable" && (
+            <AlertModal onClose={() => setAlert({ open: false, type: null })} />
+          )}
+
           <QnAWrapper>
             <QuestionCard>
               <Header>
@@ -133,16 +183,6 @@ function DailyPanel({ date, onClose }) {
               ))}
             </AnswerList>
           </QnAWrapper>
-          {alert.open && alert.type === "confirm" && (
-            <AlertModal
-              onClose={() => setAlert({ open: false, type: null })}
-              onConfirm={confirmUseItem}
-            />
-          )}
-
-          {alert.open && alert.type === "unavailable" && (
-            <AlertModal onClose={() => setAlert({ open: false, type: null })} />
-          )}
         </ModalContainer>
       </Dim>
     </>
