@@ -99,6 +99,16 @@ const GrammarCheck = styled.button`
   &:focus {
     outline: none;
   }
+
+  &:hover {
+    background-color: ${({ theme, grammarChecked }) =>
+      grammarChecked ? "rgba(185, 156, 127, 1)" : theme.colors.brown3};
+  }
+
+  &:active {
+    background-color: ${({ theme, grammarChecked }) =>
+      grammarChecked ? "rgba(163, 130, 96, 1)" : theme.colors.brown3};
+  }
 `;
 
 const CheckText = styled.span`
