@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import {
   DayCell,
@@ -30,6 +30,12 @@ function DailyPanel({ date, onClose }) {
   ]);
 
   const [targetDate, setTargetDate] = useState(null);
+
+  useEffect(() => {
+    if (targetDate) {
+      console.log("타겟 날짜 갱신:", targetDate);
+    }
+  }, [targetDate]);
 
   const handleUseItem = (type) => {
     setItems((prev) =>
