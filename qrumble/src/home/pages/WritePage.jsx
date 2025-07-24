@@ -28,15 +28,6 @@ function WritePage() {
 
   return (
     <>
-      {showModal && (
-        <AlertModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          message="최소 글자수를 충족하지 못했습니다"
-          lengthText={`${text.trim().length}/50`}
-        />
-      )}
-
       <Container>
         <Top>
           <WriteTopBar onCheck={handleSubmit} textLength={text.trim().length} />
@@ -56,6 +47,14 @@ function WritePage() {
           />
         </Bottom>
       </Container>
+      {showModal && (
+        <AlertModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          message="최소 글자수를 충족하지 못했습니다"
+          lengthText={`${text.trim().length}/50`}
+        />
+      )}
     </>
   );
 }
@@ -84,6 +83,7 @@ const Bottom = styled.div`
 `;
 
 const TextArea = styled.textarea`
+  margin-top: 14px;
   width: 320px;
   height: 78px;
   padding: 0;
