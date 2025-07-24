@@ -83,7 +83,7 @@ const ButtonRow = styled.div`
 `;
 
 const CancelButton = styled.button`
-  background-color: ${({ theme }) => theme.colors.white};
+  background-color: ${({ theme }) => theme.colors.ivory3};
   color: ${({ theme }) => theme.colors.primary};
   border: 1px solid ${({ theme }) => theme.colors.primary};
   font-family: ${({ theme }) => theme.fonts.s16SB};
@@ -91,15 +91,29 @@ const CancelButton = styled.button`
   border-radius: 10px;
   height: 40px;
   cursor: pointer;
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.ivory2};
+  }
+
+  &:active {
+    background-color: ${({ theme }) => theme.colors.ivory3};
+  }
 `;
 
 const ConfirmButton = styled.button`
   background-color: ${({ theme }) => theme.colors.primary};
-  color: white;
+  color: ${({ theme }) => theme.colors.white};
   border: none;
   font-family: ${({ theme }) => theme.fonts.s16SB};
   border-radius: 10px;
   width: 100%;
   height: 40px;
   cursor: pointer;
+  &:hover {
+    background-color: rgba(92, 57, 20, 1);
+  }
+
+  &:active {
+    background-color: rgba(78, 46, 13, 1);
+  }
 `;
