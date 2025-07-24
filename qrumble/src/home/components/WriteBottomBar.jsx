@@ -46,7 +46,7 @@ const BottomBarWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: white;
+  background-color: transparent;
   padding: none;
   height: 100%;
   position: relative;

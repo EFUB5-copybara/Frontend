@@ -9,6 +9,7 @@ import Cookiejar from "../components/Cookiejar";
 import MonthPickerModal from "../components/MonthPickerModal";
 import QuestionList from "../components/QuestionList";
 import DailyPanel from "../components/DailyPanel";
+import WriteFixButton from "../components/WriteFixButton";
 
 function HomePage() {
   const [year, setYear] = useState(2025);
@@ -135,6 +136,7 @@ function HomePage() {
           onClose={() => setIsDailyPanelOpen(false)}
         />
       )}
+      <WriteFixButton />
     </Container>
   );
 }

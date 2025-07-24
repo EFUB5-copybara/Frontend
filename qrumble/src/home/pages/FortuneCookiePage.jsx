@@ -3,6 +3,9 @@ import styled from "styled-components";
 import XImg from "../assets/svgs/X.svg";
 import bigfortuneImg from "../assets/svgs/fortune.svg";
 import { useNavigate } from "react-router-dom";
+import background1Img from "../assets/svgs/background1.svg";
+import background2Img from "../assets/svgs/background2.svg";
+import background3Img from "../assets/svgs/background3.svg";
 
 function FortuneCookiePage() {
   const [opened, setOpened] = useState(false);
@@ -72,6 +75,10 @@ const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.white};
   transition: all 0.4s ease;
   padding: 0;
+  background-image: ${({ $opened }) =>
+    $opened ? `url(${background1Img})` : "none"};
+  background-size: cover;
+  background-position: center;
 `;
 
 const XButton = styled.button`

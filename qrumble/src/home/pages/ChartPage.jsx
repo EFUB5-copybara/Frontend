@@ -6,6 +6,9 @@ import thumbsupImg from "../assets/svgs/thumbsup.svg";
 import eyeImg from "../assets/svgs/eye.svg";
 import commentImg from "../assets/svgs/comments.svg";
 import shareImg from "../assets/svgs/share.svg";
+import background1Img from "../assets/svgs/background1.svg";
+import background2Img from "../assets/svgs/background2.svg";
+import background3Img from "../assets/svgs/background3.svg";
 
 function ChartPage() {
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -73,6 +76,9 @@ const Container = styled.div`
   border-radius: 20px;
   border: 1px solid black;
   background-color: ${({ theme }) => theme.colors.white};
+  background-image: url(${background1Img});
+  background-size: cover;
+  background-position: center;
 `;
 
 const Button = styled.button`
@@ -132,10 +138,14 @@ const ChartBottomBar = styled.div`
   display: flex;
   align-items: center;
   position: absolute;
+  width: 245px;
   height: 40px;
   bottom: 41px;
   justify-content: space-around;
   gap: 20px;
+  padding-left: 16px;
+  border-radius: 100px;
+  background-color: rgba(255, 255, 255, 0.9);
 `;
 
 const BottomBtn = styled.button`
@@ -146,6 +156,7 @@ const BottomBtn = styled.button`
   color: ${({ theme }) => theme.colors.brown1};
   padding-left: 0px;
   padding-right: 0px;
+  background-color: transparent;
   border: none;
   &:focus {
     outline: none;
