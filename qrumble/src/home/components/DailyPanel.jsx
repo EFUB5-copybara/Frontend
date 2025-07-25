@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import {
   DayCell,
@@ -18,6 +18,7 @@ import browncommentImg from "../assets/svgs/brownmessage.svg";
 import brownbookmarkImg from "../assets/svgs/brownbookmark.svg";
 import ItemButtons from "./ItemButtons";
 import AlertModal from "./AlertModal";
+import AnswerCard from "./AnswerCard";
 
 function DailyPanel({ date, onClose }) {
   const attendedDates = [4, 5, 6, 7, 8];
@@ -28,26 +29,18 @@ function DailyPanel({ date, onClose }) {
     { name: "eraser", img: eraserImg, count: 10 },
   ]);
 
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [alert, setAlert] = useState({ open: false, type: null });
-
   const [targetDate, setTargetDate] = useState(null);
+
+  useEffect(() => {
+    if (targetDate) {
+      console.log("타겟 날짜 갱신:", targetDate);
+    }
+  }, [targetDate]);
 
   const handleUseItem = (type) => {
     setItems((prev) =>
-      prev.map((item) =>
-        item.name === type ? { ...item, count: item.count - 1 } : item
-      )
+      prev.map((i) => (i.name === type ? { ...i, count: i.count - 1 } : i))
     );
-  };
-
-  const confirmUseItem = () => {
-    setItems((prev) =>
-      prev.map((i) =>
-        i.name === selectedItem.name ? { ...i, count: i.count - 1 } : i
-      )
-    );
-    setAlert({ open: false, type: null });
   };
 
   return (
@@ -100,17 +93,6 @@ function DailyPanel({ date, onClose }) {
             targetDate={targetDate}
           />
 
-          {alert.open && alert.type === "confirm" && (
-            <AlertModal
-              onClose={() => setAlert({ open: false, type: null })}
-              onConfirm={confirmUseItem}
-            />
-          )}
-
-          {alert.open && alert.type === "unavailable" && (
-            <AlertModal onClose={() => setAlert({ open: false, type: null })} />
-          )}
-
           <QnAWrapper>
             <QuestionCard>
               <Header>
@@ -133,28 +115,13 @@ function DailyPanel({ date, onClose }) {
             <BestAnswerText>최고 인기 답변</BestAnswerText>
             <AnswerList>
               {[1, 2, 3].map((rank) => (
-                <AnswerCard key={rank}>
-                  <Rank>{rank}</Rank>
-                  <AnswerContent>
-                    <AnswerTitle>
-                      name <span>about a diary in english...</span>
-                    </AnswerTitle>
-                    <AnswerMeta>
-                      <AnswerId>
-                        <AnswerIdImg src={userImg} alt="user" /> 아이디
-                      </AnswerId>
-                      <AnswerBottomWrapper>
-                        {[brownlikeImg, browncommentImg, brownbookmarkImg].map(
-                          (img, idx) => (
-                            <AnswerBottomItem key={idx}>
-                              <AnswerBottomImg src={img} alt="icon" />
-                            </AnswerBottomItem>
-                          )
-                        )}
-                      </AnswerBottomWrapper>
-                    </AnswerMeta>
-                  </AnswerContent>
-                </AnswerCard>
+                <AnswerCard
+                  key={rank}
+                  rank={rank}
+                  title="name"
+                  subtitle="about a diary in english..."
+                  userId="아이디"
+                />
               ))}
             </AnswerList>
           </QnAWrapper>
@@ -185,7 +152,7 @@ const Dim = styled.div`
 `;
 
 const ModalContainer = styled.div`
-  position: absolute;
+  position: relative;
   top: 145px;
   width: 100%;
   height: 655px;
@@ -273,84 +240,4 @@ const AnswerList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-`;
-
-const AnswerCard = styled.div`
-  display: flex;
-  padding: 0 10px 0 20px;
-  height: 104px;
-  border: 1px solid ${({ theme }) => theme.colors.brown1};
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.colors.white};
-  gap: 10px;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Rank = styled.div`
-  font-family: ${({ theme }) => theme.fonts.b16B};
-  color: ${({ theme }) => theme.colors.primary};
-`;
-
-const AnswerContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
-const AnswerTitle = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 261px;
-  height: 52px;
-  font-family: ${({ theme }) => theme.fonts.b16B};
-  background-color: ${({ theme }) => theme.colors.ivory2};
-  color: ${({ theme }) => theme.colors.primary};
-  padding: 3px 9px 9px 8px;
-  margin-top: 10px;
-  span {
-    font-family: ${({ theme }) => theme.fonts.c12L};
-  }
-`;
-
-const AnswerMeta = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-family: ${({ theme }) => theme.fonts.c12M};
-  color: ${({ theme }) => theme.colors.primary};
-  height: 42px;
-`;
-
-const AnswerId = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  height: 17px;
-`;
-
-const AnswerIdImg = styled.img`
-  width: 17px;
-  height: 17px;
-  border-radius: 50%;
-`;
-
-const AnswerBottomWrapper = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const AnswerBottomItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  font-family: ${({ theme }) => theme.fonts.c12M};
-  color: ${({ theme }) => theme.colors.brown1};
-  padding: 14px 6px 14px 6px;
-`;
-
-const AnswerBottomImg = styled.img`
-  width: 14px;
-  height: 14px;
 `;

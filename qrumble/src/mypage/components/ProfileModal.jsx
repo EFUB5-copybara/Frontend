@@ -1,7 +1,22 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
+import profile1Img from "../assets/profile1.svg";
+import profile2Img from "../assets/profile2.svg";
+import profile3Img from "../assets/profile3.svg";
+import profile4Img from "../assets/profile4.svg";
+import profile5Img from "../assets/profile5.svg";
+import profile6Img from "../assets/profile6.svg";
 
 function ProfileModal({ onClose, onSelectProfile }) {
+  const profileImages = [
+    profile1Img,
+    profile2Img,
+    profile3Img,
+    profile4Img,
+    profile5Img,
+    profile6Img,
+  ];
+
   const handleProfileClick = (index) => {
     onSelectProfile(index);
     onClose();
@@ -13,8 +28,12 @@ function ProfileModal({ onClose, onSelectProfile }) {
       <ModalContainer>
         <Text>프로필 사진 변경</Text>
         <ProfileWrapper>
-          {Array.from({ length: 9 }).map((_, idx) => (
-            <ProfileImg key={idx} onClick={() => handleProfileClick(idx)} />
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <ProfileImg
+              key={idx}
+              $img={profileImages[idx % profileImages.length]}
+              onClick={() => handleProfileClick(idx)}
+            />
           ))}
         </ProfileWrapper>
       </ModalContainer>
@@ -47,7 +66,6 @@ const ModalContainer = styled.div`
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 409px;
   background: ${({ theme }) => theme.colors.white};
   border-top-left-radius: 40px;
   border-top-right-radius: 40px;
@@ -79,5 +97,9 @@ const ProfileImg = styled.button`
   width: 90px;
   height: 90px;
   border-radius: 100px;
-  background-color: ${({ theme }) => theme.colors.brown3};
+  background-image: url(${(props) => props.$img});
+  background-size: cover;
+  background-position: center;
+  border: none;
+  cursor: pointer;
 `;

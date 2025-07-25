@@ -1,11 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 import arrowbackImg from "../assets/arrow_back.svg";
+import { useNavigate } from "react-router-dom";
 
 function MyPageTopBar({ title }) {
+  const navigate = useNavigate();
+
   return (
     <Container>
-      <BackButton>
+      <BackButton onClick={() => navigate(-1)}>
         <ButtonImg src={arrowbackImg} alt="back button" />
       </BackButton>
       <TitleText>{title}</TitleText>

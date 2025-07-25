@@ -46,6 +46,7 @@ const Button = styled.button`
   padding: 0px;
   justify-content: center;
   align-items: center;
+  background-color: transparent;
 `;
 
 const CheckButton = styled.button`

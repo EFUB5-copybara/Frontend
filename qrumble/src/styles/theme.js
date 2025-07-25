@@ -12,6 +12,7 @@ const theme = {
     brown3: '#D8C4B1',
     error: '#DE4E3E',
   },
+  fontFamily: "'Pretendard', 'Nunito'",
 
   fonts: {
     d32SB: {
