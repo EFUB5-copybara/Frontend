@@ -9,6 +9,7 @@ import Cookiejar from "../components/Cookiejar";
 import MonthPickerModal from "../components/MonthPickerModal";
 import QuestionList from "../components/QuestionList";
 import DailyPanel from "../components/DailyPanel";
+import WriteFixButton from "../components/WriteFixButton";
 
 function HomePage() {
   const [year, setYear] = useState(2025);
@@ -51,10 +52,25 @@ function HomePage() {
     }
   };
 
-  const handleMonthSelect = (newYear, newMonth) => {
+  const handleMonthSelect = (newYear, newMonth, newDate) => {
     setYear(newYear);
     setMonth(newMonth);
+
+    const weekDates = getWeekDatesCenteredOnToday(
+      newYear,
+      newMonth - 1,
+      newDate
+    );
+
+    setSelectedDate({
+      day: newDate,
+      month: newMonth,
+      year: newYear,
+      weekDates,
+    });
+
     setIsMonthSelectorOpen(false);
+    setIsDailyPanelOpen(true);
   };
 
   return (
@@ -71,6 +87,7 @@ function HomePage() {
           <MonthPickerModal
             selectedYear={year}
             selectedMonth={month}
+            selectedDate={1} // 기본 초기 날짜로 전달
             onSelect={handleMonthSelect}
             onClose={() => setIsMonthSelectorOpen(false)}
           />
@@ -119,6 +136,7 @@ function HomePage() {
           onClose={() => setIsDailyPanelOpen(false)}
         />
       )}
+      <WriteFixButton />
     </Container>
   );
 }
