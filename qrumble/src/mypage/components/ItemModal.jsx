@@ -9,24 +9,33 @@ function ItemModal({
   onSelect,
   onClose,
 }) {
-  const [startX, setStartX] = useState(0);
+  const [startX, setStartX] = useState(null);
   const [deltaX, setDeltaX] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
 
-  const handleTouchStart = (e) => {
-    setStartX(e.touches[0].clientX);
+  const handleStart = (e) => {
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    setStartX(x);
+    setIsSwiping(true);
   };
 
-  const handleTouchMove = (e) => {
-    setDeltaX(e.touches[0].clientX - startX);
+  const handleMove = (e) => {
+    if (startX !== null) {
+      const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+      setDeltaX(currentX - startX);
+    }
   };
 
-  const handleTouchEnd = () => {
+  const handleEnd = () => {
     if (deltaX > 50 && currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
     } else if (deltaX < -50 && currentIndex < items.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
+
     setDeltaX(0);
+    setStartX(null);
+    setIsSwiping(false);
   };
 
   return (
@@ -34,9 +43,15 @@ function ItemModal({
       <ModalWrap onClick={(e) => e.stopPropagation()}>
         <SwipeContainer
           currentIndex={currentIndex}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+          deltaX={deltaX}
+          isSwiping={isSwiping}
+          onTouchStart={handleStart}
+          onTouchMove={handleMove}
+          onTouchEnd={handleEnd}
+          onMouseDown={handleStart}
+          onMouseMove={(e) => isSwiping && handleMove(e)}
+          onMouseUp={handleEnd}
+          onMouseLeave={() => isSwiping && handleEnd()}
         >
           {items.map((item, idx) => (
             <ModalContainer key={idx}>
@@ -46,11 +61,7 @@ function ItemModal({
                 <ItemDesc>{item.description}</ItemDesc>
               </ItemText>
 
-              <Dots>
-                {items.map((_, i) => (
-                  <Dot key={i} active={i === idx} />
-                ))}
-              </Dots>
+              <Points>100P</Points>
               <SelectButton
                 disabled={isSelected(idx)}
                 onClick={() => {
@@ -83,16 +94,17 @@ const ModalWrap = styled.div`
   width: 100%;
   max-width: 380px;
   overflow: hidden;
+  position: relative;
 `;
 
 const SwipeContainer = styled.div`
   display: flex;
-  gap: 10px;
-  transition: transform 0.3s ease;
-  transform: translateX(
-    ${({ currentIndex }) => `-${currentIndex * (317 + 10.75)}px`}
-  );
+  gap: 10.75px;
   padding: 0 21.5px;
+  transform: ${({ currentIndex, deltaX }) =>
+    `translateX(calc(-${currentIndex * (317 + 10.75)}px + ${deltaX}px))`};
+  transition: ${({ isSwiping }) =>
+    isSwiping ? "none" : "transform 0.3s ease"};
   touch-action: pan-y;
 `;
 
@@ -137,18 +149,11 @@ const ItemDesc = styled.p`
   margin: 0;
 `;
 
-const Dots = styled.div`
+const Points = styled.div`
   display: flex;
-  gap: 8px;
-  padding: 16px 0 18px 8px;
-`;
-
-const Dot = styled.div`
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background-color: ${({ active, theme }) =>
-    active ? theme.colors.primary : "rgba(217, 217, 217, 1)"};
+  padding: 8px;
+  font-family: ${({ theme }) => theme.fonts.d24SB};
+  color: ${({ theme }) => theme.colors.error};
 `;
 
 const SelectButton = styled.button`
@@ -164,4 +169,14 @@ const SelectButton = styled.button`
   border-radius: 10px;
   font-family: ${({ theme }) => theme.fonts.b16B};
   cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
+
+  &:hover {
+    background-color: ${({ disabled, theme }) =>
+      disabled ? theme.colors.brown3 : "rgba(92, 57, 20, 1)"};
+  }
+
+  &:active {
+    background-color: ${({ disabled, theme }) =>
+      disabled ? theme.colors.brown3 : "rgba(78, 46, 13, 1)"};
+  }
 `;
