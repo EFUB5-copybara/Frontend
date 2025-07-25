@@ -1,14 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import starIcon from "../../assets/image/star.svg";
-import fireIcon from "../../assets/image/fire.svg";
-import fortunecookieIcon from "../../assets/image/fortunecookie.svg";
+import { useNavigate } from "react-router-dom";
+import starIcon from "../assets/svgs/star.svg";
+import fireIcon from "../assets/svgs/fire.svg";
+import fortunecookieIcon from "../assets/svgs/fortune-button.svg";
+import fortunecookieOpenedIcon from "../assets/svgs/broken-fortune-button.svg";
 
 function MissionBar() {
+  const navigate = useNavigate();
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handleFortuneClick = () => {
+    setIsClicked(true);
+    setTimeout(() => {
+      navigate("/home/fortune");
+    }, 100);
+  };
+
+  const handleMissionClick = () => {
+    setIsClicked(true);
+    setTimeout(() => {
+      navigate("/home/mission");
+    }, 100);
+  };
+
   return (
     <Bar>
       <Left>
-        <MissionButton>
+        <MissionButton onClick={handleMissionClick}>
           <StarIcon src={starIcon} alt="미션 버튼" />
         </MissionButton>
         <DayIcon>
@@ -16,8 +35,11 @@ function MissionBar() {
           <Text>7일</Text>
         </DayIcon>
       </Left>
-      <FortuneButton>
-        <CookieIcon src={fortunecookieIcon} alt="포춘쿠키 버튼" />
+      <FortuneButton onClick={handleFortuneClick} disabled={isClicked}>
+        <CookieIcon
+          src={isClicked ? fortunecookieOpenedIcon : fortunecookieIcon}
+          alt="포춘쿠키 버튼"
+        />
       </FortuneButton>
     </Bar>
   );
@@ -31,7 +53,7 @@ const Bar = styled.div`
   align-items: center;
   width: 322px;
   height: 40px;
-  padding-bottom: 14px;
+  padding: none;
 `;
 
 const Left = styled.div`
@@ -48,20 +70,20 @@ const MissionButton = styled.button`
   justify-content: center;
   align-items: center;
   border-radius: 100px;
-  background: var(--Qrumble-Primary, #543310);
+  background: ${({ theme }) => theme.colors.primary};
 `;
 
 const DayIcon = styled.div`
   display: flex;
   padding: 5px 6px;
-  height: 30px;
-  width: 63px;
+  height: 40px;
+  width: 75px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   gap: 6px;
   border-radius: 100px;
-  background: var(--Qrumble-Ivory1, #f7eed3);
+  background: ${({ theme }) => theme.colors.ivory1};
   white-space: nowrap;
 `;
 
@@ -76,12 +98,8 @@ const FireIcon = styled.img`
 `;
 
 const Text = styled.span`
-  font-family: Pretendard;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 26px;
-  color: var(--Qrumble-error, #dd4e3e);
+  ${({ theme }) => theme.fonts.s16SB};
+  color: ${({ theme }) => theme.colors.error};
   padding-right: 4px;
 `;
 
@@ -89,15 +107,19 @@ const FortuneButton = styled.button`
   display: flex;
   width: 40px;
   height: 40px;
-  padding: 5px;
+  padding: 0px;
   justify-content: center;
   align-items: center;
-  border-radius: 100px;
-  background: var(--Qrumble-Green, #aab396);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const CookieIcon = styled.img`
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
 `;
