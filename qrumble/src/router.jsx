@@ -17,6 +17,7 @@ import FortuneCookiePage from "./home/pages/FortuneCookiePage";
 import WritePage from "./home/pages/WritePage";
 import MissionPage from "./home/pages/MissionPage";
 import MainLayout from "./layout/MainLayout";
+import ReportPage from "./chart/pages/ReportPage";
 import { getNavigationItems } from "./utils/getNavigationItems";
 import navigation from "./navigations";
 
@@ -96,6 +97,10 @@ export const routes = [
     path: "/home/mission",
     element: <MissionPage />,
   },
+  {
+    path: "/chart",
+    element: <ReportPage />,
+  }
 ];
 
 const router = createBrowserRouter(routes, {
