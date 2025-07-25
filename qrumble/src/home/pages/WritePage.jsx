@@ -6,6 +6,9 @@ import WriteQuestion from "../components/WriteQuestion";
 import WriteBottomBar from "../components/WriteBottomBar";
 import HintTagList from "../components/HintTagList";
 import AlertModal from "../components/AlertModal";
+import background1Img from "../assets/svgs/background1.svg";
+import background2Img from "../assets/svgs/background2.svg";
+import background3Img from "../assets/svgs/background3.svg";
 
 function WritePage() {
   const [hintActive, setHintActive] = useState(false);
@@ -28,15 +31,6 @@ function WritePage() {
 
   return (
     <>
-      {showModal && (
-        <AlertModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          message="최소 글자수를 충족하지 못했습니다"
-          lengthText={`${text.trim().length}/50`}
-        />
-      )}
-
       <Container>
         <Top>
           <WriteTopBar onCheck={handleSubmit} textLength={text.trim().length} />
@@ -56,6 +50,14 @@ function WritePage() {
           />
         </Bottom>
       </Container>
+      {showModal && (
+        <AlertModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          message="최소 글자수를 충족하지 못했습니다"
+          lengthText={`${text.trim().length}/50`}
+        />
+      )}
     </>
   );
 }
@@ -68,6 +70,9 @@ const Container = styled.div`
   justify-content: space-between;
   height: 800px;
   background-color: ${({ theme }) => theme.colors.white};
+  background-image: url(${background1Img});
+  background-size: cover;
+  background-position: center;
 `;
 
 const Top = styled.div`
@@ -84,6 +89,7 @@ const Bottom = styled.div`
 `;
 
 const TextArea = styled.textarea`
+  margin-top: 14px;
   width: 320px;
   height: 78px;
   padding: 0;
@@ -95,7 +101,7 @@ const TextArea = styled.textarea`
   line-height: 26px;
   letter-spacing: 0;
   color: ${({ theme }) => theme.colors.black};
-
+  background-color: transparent;
   &:focus {
     outline: none;
   }

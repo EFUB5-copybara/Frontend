@@ -19,7 +19,7 @@ const TagContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  margin: 10px 0;
+  margin: 10px 0 0 0;
 `;
 
 const Tag = styled.div`

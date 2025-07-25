@@ -80,10 +80,16 @@ function MonthPickerModal({
       );
 
       const getItem = (arr, i) => arr[Math.max(0, Math.min(i, arr.length - 1))];
+      const value =
+        type === "year"
+          ? getItem(years, index)
+          : type === "month"
+          ? getItem(months, index)
+          : getItem(days, index);
 
-      if (type === "year") setYear(getItem(years, index));
-      else if (type === "month") setMonth(getItem(months, index));
-      else if (type === "day") setDate(getItem(days, index));
+      if (type === "year") setYear(value);
+      else if (type === "month") setMonth(value);
+      else if (type === "day") setDate(value);
     }, 100);
   };
 
@@ -96,6 +102,12 @@ function MonthPickerModal({
     if (type === "month") newMonth = value;
     if (type === "day") newDate = value;
 
+    // 상태 갱신
+    setYear(newYear);
+    setMonth(newMonth);
+    setDate(newDate);
+
+    // onSelect + onClose 호출
     onSelect(newYear, newMonth, newDate);
     onClose();
   };

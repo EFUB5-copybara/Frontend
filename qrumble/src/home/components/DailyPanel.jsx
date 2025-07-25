@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import {
   DayCell,
@@ -29,26 +29,18 @@ function DailyPanel({ date, onClose }) {
     { name: "eraser", img: eraserImg, count: 10 },
   ]);
 
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [alert, setAlert] = useState({ open: false, type: null });
-
   const [targetDate, setTargetDate] = useState(null);
+
+  useEffect(() => {
+    if (targetDate) {
+      console.log("타겟 날짜 갱신:", targetDate);
+    }
+  }, [targetDate]);
 
   const handleUseItem = (type) => {
     setItems((prev) =>
-      prev.map((item) =>
-        item.name === type ? { ...item, count: item.count - 1 } : item
-      )
+      prev.map((i) => (i.name === type ? { ...i, count: i.count - 1 } : i))
     );
-  };
-
-  const confirmUseItem = () => {
-    setItems((prev) =>
-      prev.map((i) =>
-        i.name === selectedItem.name ? { ...i, count: i.count - 1 } : i
-      )
-    );
-    setAlert({ open: false, type: null });
   };
 
   return (
@@ -100,17 +92,6 @@ function DailyPanel({ date, onClose }) {
             attendedDates={attendedDates}
             targetDate={targetDate}
           />
-
-          {alert.open && alert.type === "confirm" && (
-            <AlertModal
-              onClose={() => setAlert({ open: false, type: null })}
-              onConfirm={confirmUseItem}
-            />
-          )}
-
-          {alert.open && alert.type === "unavailable" && (
-            <AlertModal onClose={() => setAlert({ open: false, type: null })} />
-          )}
 
           <QnAWrapper>
             <QuestionCard>
@@ -171,7 +152,7 @@ const Dim = styled.div`
 `;
 
 const ModalContainer = styled.div`
-  position: absolute;
+  position: relative;
   top: 145px;
   width: 100%;
   height: 655px;
