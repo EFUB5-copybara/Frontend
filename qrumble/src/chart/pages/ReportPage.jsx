@@ -40,27 +40,30 @@ function ReportPage() {
   );
 }
 
-// 전체 페이지를 감싸는 컴포넌트
 const PageWrapper = styled.div`
   background: ${({ theme }) => theme.colors.ivory3};
-  min-height: 100vh;
   width: 100%;
+  height: 100%;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   overflow-y: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 `;
 
-// 컨텐츠를 담는 중앙 컨테이너
 const Container = styled.div`
-  max-width: 360px;
   width: 100%;
+  max-width: 360px;
   padding: 24px 16px 80px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
-// 카드들을 담는 컨테이너
 const CardContainer = styled.div`
   width: 100%;
   display: flex;

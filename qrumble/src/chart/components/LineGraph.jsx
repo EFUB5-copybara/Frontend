@@ -22,14 +22,10 @@ ChartJS.register(
   Legend
 );
 
-function LineGraph({ data, title = "글자수" }) {
+function LineGraph({ data }) {
   const [hoveredPoint, setHoveredPoint] = useState(null);
   const labels = ['1주차', '2주차', '3주차', '4주차', '5주차'];
   
-  // Find the highest value for label positioning
-  const highestValue = Math.max(...data);
-  const highestIndex = data.indexOf(highestValue);
-
   const chartData = {
     labels,
     datasets: [
@@ -52,6 +48,7 @@ function LineGraph({ data, title = "글자수" }) {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    devicePixelRatio: 2, // 더 선명한 렌더링을 위해 추가
     plugins: {
       legend: {
         display: false,
@@ -64,12 +61,14 @@ function LineGraph({ data, title = "글자수" }) {
       padding: {
         left: 10,
         right: 10,
+        top: 20,
+        bottom: 10
       }
     },
     scales: {
       y: {
         beginAtZero: true,
-        max: 100,
+        max: Math.max(...data) + 20, // 데이터 최대값에 여유 공간 추가
         border: {
           display: false,
         },
@@ -77,19 +76,18 @@ function LineGraph({ data, title = "글자수" }) {
           color: '#D8C4B1',
           font: {
             family: 'Pretendard',
-            size: 12,
+            size: 10,
             weight: 300,
           },
           padding: 10,
           callback: function(value) {
             return value + '자';
           },
-          count: 6,
           stepSize: 20,
         },
         grid: {
-          color: '#D8C4B1',
-          lineWidth: 1,
+          color: 'rgba(216, 196, 177, 0.5)',
+          lineWidth: 0.5,
           z: 1,
           drawTicks: false,
         },
@@ -102,7 +100,7 @@ function LineGraph({ data, title = "글자수" }) {
           color: '#AF8F6F',
           font: {
             family: 'Pretendard',
-            size: 12,
+            size: 10,
             weight: 500,
           },
           padding: 8,
@@ -111,11 +109,6 @@ function LineGraph({ data, title = "글자수" }) {
           display: false,
         },
       },
-    },
-    elements: {
-      line: {
-        z: 20,
-      }
     },
     onHover: (event, elements) => {
       if (elements && elements.length) {
@@ -132,33 +125,34 @@ function LineGraph({ data, title = "글자수" }) {
         <ChartContainer>
           <Line data={chartData} options={options} />
         </ChartContainer>
-        {hoveredPoint && (
-          <DataLabel
+        {data.map((value, index) => (
+          <StaticDataLabel
+            key={index}
             style={{
-              left: `${(hoveredPoint / (labels.length - 1)) * 100}%`,
-              top: `calc(${100 - ((data[hoveredPoint] / 100) * 100)}% - 20px)`
+              left: `${(index / (labels.length - 1)) * 100}%`,
+              top: `calc(${100 - ((value / (Math.max(...data) + 20)) * 100)}% - 16px)`,
+              opacity: hoveredPoint === index ? '1' : '0'
             }}
           >
-            {data[hoveredPoint]}자
-          </DataLabel>
-        )}
+            {value}자
+          </StaticDataLabel>
+        ))}
       </ChartWrapper>
     </GraphContainer>
   );
 }
 
 const GraphContainer = styled.div`
-  width: 293px;
-  height: 159px;
+  width: 100%;
+  height: 180px;
   display: flex;
   flex-direction: column;
-  padding: 0;
 `;
 
 const ChartWrapper = styled.div`
   position: relative;
-  height: 159px;
-  width: 293px;
+  height: 100%;
+  width: 100%;
   margin: 0 auto;
 `;
 
@@ -168,14 +162,18 @@ const ChartContainer = styled.div`
   z-index: 2;
 `;
 
-const DataLabel = styled.div`
+const StaticDataLabel = styled.div`
   position: absolute;
   transform: translate(-50%, -50%);
   background-color: white;
-  color: ${({ theme }) => theme.colors.brown3};
-  font-family: ${({ theme }) => theme.fonts.c12L};
-  gap: 6px;
+  color: ${({ theme }) => theme.colors.brown1};
+  font-family: ${({ theme }) => theme.fonts.c12M};
+  padding: 2px 4px;
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.colors.brown3};
+  transition: opacity 0.2s ease;
   pointer-events: none;
+  z-index: 10;
 `;
 
 export default LineGraph;
