@@ -1,32 +1,81 @@
 import styled from 'styled-components';
-import ShopItemCard from './ShopItemCard';
+import KeyIcon from '../assets/key.svg?react';
+import ShieldIcon from '../assets/shield.svg?react';
+import EraserIcon from '../assets/eraser.svg?react';
 
-const items = [
-  { id: 1, name: '열쇠', desc: '사용 시 다른 사람들의 답변을 볼 수 있는 아이템', price: 200 },
-  { id: 2, name: '방패', desc: '연속일수가 깨지지 않도록 방어해주는 아이템', price: 300 },
-  { id: 3, name: '지우개', desc: '이미 작성한 답변을 새로 쓸 수 있는 아이템', price: 100 },
-];
-
-export default function ItemList({ onCardClick }) {
+export default function ItemList({ items, onCardClick }) {
   return (
-    <ContentWrapper>
-      {items.map((item) => (
-        <ShopItemCard key={item.id} name={item.name} desc={item.desc} price={item.price} onClick={onCardClick} />
+    <ItemGrid>
+      {items.map((item, idx) => (
+        <Item key={item.id} onClick={() => onCardClick(idx)}>
+          <ItemImg $owned={item.owned}>
+            <IconWrapper>
+              {item.name === '열쇠' && <KeyIcon width="36" height="36" />}
+              {item.name === '방패' && <ShieldIcon width="36" height="36" />}
+              {item.name === '지우개' && <EraserIcon width="36" height="36" />}
+            </IconWrapper>
+          </ItemImg>
+          <ItemName>{item.name}</ItemName>
+          <ItemPrice $owned={item.owned}>
+            {item.owned ? '보유함' : `${item.price}P`}
+          </ItemPrice>
+        </Item>
       ))}
-    </ContentWrapper>
+    </ItemGrid>
   );
 }
 
-const ContentWrapper = styled.div`
+const ItemGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 10px;
+  justify-content: center;
   width: 320px;
-  min-height: 222px;
-  margin: 0 auto;
-  padding: 20px;
+  margin: 20px auto 0;
+  padding: 0 10px;
+`;
+
+const Item = styled.button`
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: flex-start;
-  align-content: flex-start;
-  background: ${({ theme }) => theme.colors.ivory3};
-  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 155px;
+`;
+
+const ItemImg = styled.div`
+  width: 155px;
+  height: 76px;
+  border-radius: 12px;
+  border: 1px solid ${({ theme }) => theme.colors.brown1};
+  background-color: ${({ $owned, theme }) => 
+    $owned ? theme.colors.brown4 : theme.colors.white};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: ${({ $owned }) => ($owned ? 0.6 : 1)};
+`;
+
+const IconWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ItemName = styled.div`
+  ${({ theme }) => theme.fonts.c14M};
+  color: ${({ theme }) => theme.colors.primary};
+  margin-top: 4px;
+  text-align: center;
+`;
+
+const ItemPrice = styled.div`
+  ${({ theme }) => theme.fonts.c14M};
+  color: ${({ $owned, theme }) =>
+    $owned ? theme.colors.green : theme.colors.brown2};
+  margin-top: 2px;
+  text-align: center;
 `;
