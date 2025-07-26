@@ -50,7 +50,7 @@ const TitleWrapper = styled.div`
 
 const Title = styled.p`
   color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.fonts.d32SB};
+  ${({ theme }) => theme.fonts.d32SB};
 `;
 
 const InputButtonWrapper = styled.div`

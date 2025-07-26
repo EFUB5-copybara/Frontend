@@ -83,12 +83,12 @@ const TitleWrapper = styled.div`
 
 const Title = styled.p`
   color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.fonts.d32SB};
+  ${({ theme }) => theme.fonts.d32SB};
 `;
 
 const SubTitle = styled.p`
   color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.fonts.d24SB};
+  ${({ theme }) => theme.fonts.d24SB};
 `;
 
 const InputButtonWrapper = styled.div`
@@ -99,7 +99,7 @@ const InputButtonWrapper = styled.div`
 
 const Subtitle = styled.p`
   margin-top: 1rem;
-  font-size: ${({ theme }) => theme.fonts.b18M};
+  ${({ theme }) => theme.fonts.b18M};
   color: ${({ theme }) => theme.colors.brown1};
   text-align: center;
 `;
