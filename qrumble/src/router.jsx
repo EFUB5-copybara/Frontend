@@ -19,6 +19,7 @@ import MissionPage from "./home/pages/MissionPage";
 import MainLayout from "./layout/MainLayout";
 import { getNavigationItems } from "./utils/getNavigationItems";
 import navigation from "./navigations";
+import ShopPage from "./shop/pages/ShopPage";
 
 export const routes = [
   {
@@ -96,6 +97,10 @@ export const routes = [
     path: "/home/mission",
     element: <MissionPage />,
   },
+  {
+    path: "/shop",
+    element: <ShopPage />,
+  }
 ];
 
 const router = createBrowserRouter(routes, {
