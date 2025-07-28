@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
-import arrowIcon from "../assets/svgs/chevronright.svg";
+import React from 'react';
+import styled from 'styled-components';
+import arrowIcon from '../assets/svgs/chevronright.svg';
 
 function DailyQuestion({
-  question = "Q. How was your relationship with your friends?",
+  question = 'Q. How was your relationship with your friends?',
   onClick,
 }) {
   return (
@@ -11,7 +11,7 @@ function DailyQuestion({
       <QuestionText>{question}</QuestionText>
       <AnswerButton onClick={onClick}>
         답변하러 가기
-        <Icon src={arrowIcon} alt="arrow" />
+        <Icon src={arrowIcon} alt='arrow' />
       </AnswerButton>
     </Wrapper>
   );
@@ -45,7 +45,7 @@ const AnswerButton = styled.button`
   background: none;
   padding: 0;
   border: none;
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   color: ${({ theme }) => theme.colors.brown1};
   font-size: 14px;
   font-weight: 600;

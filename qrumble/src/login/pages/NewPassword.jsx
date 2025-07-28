@@ -73,6 +73,6 @@ const InputWrapper = styled.div`
 
 const CompleteMessage = styled.p`
   text-align: center;
-  font-size: ${({ theme }) => theme.fonts.b18M};
+  ${({ theme }) => theme.fonts.b18M};
   color: ${({ theme }) => theme.colors.primary};
 `;

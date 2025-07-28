@@ -1,21 +1,21 @@
-import React from "react";
-import styled, { keyframes } from "styled-components";
-import kakaoIcon from "../assets/svgs/kakaotalk.svg";
-import gmailIcon from "../assets/svgs/gmail.svg";
-import instagramIcon from "../assets/svgs/instagram.svg";
-import twitterIcon from "../assets/svgs/twitter.svg";
-import discordIcon from "../assets/svgs/discord.svg";
-import copyIcon from "../assets/svgs/copy.svg";
-import { Link } from "react-router-dom";
+import React from 'react';
+import styled, { keyframes } from 'styled-components';
+import kakaoIcon from '../assets/svgs/kakaotalk.svg';
+import gmailIcon from '../assets/svgs/gmail.svg';
+import instagramIcon from '../assets/svgs/instagram.svg';
+import twitterIcon from '../assets/svgs/twitter.svg';
+import discordIcon from '../assets/svgs/discord.svg';
+import copyIcon from '../assets/svgs/copy.svg';
+import { Link } from 'react-router-dom';
 
 function ShareModal({ onClose }) {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      alert("복사되었습니다");
+      alert('복사되었습니다');
       onClose();
     } catch (err) {
-      console.error("복사 실패", err);
+      console.error('복사 실패', err);
     }
   };
 
@@ -26,28 +26,28 @@ function ShareModal({ onClose }) {
         <DragBar />
         <IconsRow>
           <CopyButton>
-            <Icon src={gmailIcon} alt="Gmail" />
+            <Icon src={gmailIcon} alt='Gmail' />
             Gmail
           </CopyButton>
           <CopyButton>
-            <Icon src={kakaoIcon} alt="KakaoTalk" />
+            <Icon src={kakaoIcon} alt='KakaoTalk' />
             카카오톡
           </CopyButton>
           <CopyButton>
-            <Icon src={discordIcon} alt="Discord" />
+            <Icon src={discordIcon} alt='Discord' />
             Discord
           </CopyButton>
           <CopyButton>
-            <Icon src={instagramIcon} alt="Instagram" />
+            <Icon src={instagramIcon} alt='Instagram' />
             Instagram
           </CopyButton>
           <CopyButton>
-            <Icon src={twitterIcon} alt="X" />X
+            <Icon src={twitterIcon} alt='X' />X
           </CopyButton>
         </IconsRow>
         <CopyLinkBox>
           <LinkCopyButton onClick={handleCopyLink}>
-            <Icon src={copyIcon} alt="링크 복사" />
+            <Icon src={copyIcon} alt='링크 복사' />
             링크 복사
           </LinkCopyButton>
         </CopyLinkBox>
@@ -112,7 +112,7 @@ const IconsRow = styled.div`
 
 const CopyButton = styled.button`
   padding: 0;
-  font-family: ${({ theme }) => theme.fonts.c14L};
+  ${({ theme }) => theme.fonts.c14L};
   color: ${({ theme }) => theme.colors.black};
   min-width: 50px;
   display: flex;
@@ -139,6 +139,6 @@ const LinkCopyButton = styled.button`
   display: flex;
   align-items: center;
   gap: 11px;
-  font-family: ${({ theme }) => theme.fonts.b18M};
+  ${({ theme }) => theme.fonts.b18M};
   color: ${({ theme }) => theme.colors.brown2};
 `;

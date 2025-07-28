@@ -1,11 +1,11 @@
-import React from "react";
-import styled, { keyframes } from "styled-components";
-import profile1Img from "../assets/profile1.svg";
-import profile2Img from "../assets/profile2.svg";
-import profile3Img from "../assets/profile3.svg";
-import profile4Img from "../assets/profile4.svg";
-import profile5Img from "../assets/profile5.svg";
-import profile6Img from "../assets/profile6.svg";
+import React from 'react';
+import styled, { keyframes } from 'styled-components';
+import profile1Img from '../assets/profile1.svg';
+import profile2Img from '../assets/profile2.svg';
+import profile3Img from '../assets/profile3.svg';
+import profile4Img from '../assets/profile4.svg';
+import profile5Img from '../assets/profile5.svg';
+import profile6Img from '../assets/profile6.svg';
 
 function ProfileModal({ onClose, onSelectProfile }) {
   const profileImages = [
@@ -79,7 +79,7 @@ const Text = styled.p`
   justify-content: center;
   align-items: center;
   color: ${({ theme }) => theme.colors.primary};
-  font-family: ${({ theme }) => theme.fonts.b18M};
+  ${({ theme }) => theme.fonts.b18M};
   padding-bottom: 28px;
   margin: 0;
 `;
