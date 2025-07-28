@@ -1,29 +1,36 @@
-import React from "react";
-import styled from "styled-components";
-import userImg from "../assets/svgs/userimg.svg";
-import brownlikeImg from "../assets/svgs/brownlike.svg";
-import browncommentImg from "../assets/svgs/brownmessage.svg";
-import brownbookmarkImg from "../assets/svgs/brownbookmark.svg";
+import React from 'react';
+import styled from 'styled-components';
+import userImg from '../assets/svgs/userimg.svg';
+import brownlikeImg from '../assets/svgs/brownlike.svg';
+import browncommentImg from '../assets/svgs/brownmessage.svg';
+import brownbookmarkImg from '../assets/svgs/brownbookmark.svg';
+import { useNavigate } from 'react-router-dom';
 
-function AnswerCard({ rank, title, subtitle, userId }) {
+function AnswerCard({ id, title, subtitle, userId }) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/community/${id}`);
+  };
+
   const bottomIcons = [brownlikeImg, browncommentImg, brownbookmarkImg];
 
   return (
-    <Wrapper>
-      <Rank>{rank}</Rank>
+    <Wrapper onClick={handleClick}>
+      <Rank>{id}</Rank>
       <Content>
         <AnswerTitle>
           {title} <span>{subtitle}</span>
         </AnswerTitle>
         <Meta>
           <AnswerId>
-            <AnswerIdImg src={userImg} alt="user" />
+            <AnswerIdImg src={userImg} alt='user' />
             {userId}
           </AnswerId>
           <AnswerBottomWrapper>
             {bottomIcons.map((img, idx) => (
               <AnswerBottomItem key={idx}>
-                <AnswerBottomImg src={img} alt="icon" />
+                <AnswerBottomImg src={img} alt='icon' />
               </AnswerBottomItem>
             ))}
           </AnswerBottomWrapper>
