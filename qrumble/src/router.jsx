@@ -24,6 +24,7 @@ import CommunityLayout from './layout/CommunityLayout';
 import navigation from './navigations';
 import { configRoutes } from './utils/configRoutes';
 import { getNavigationItems } from './utils/getNavigationItems';
+import UserProfilePage from './community/pages/UserProfilePage';
 
 export const routes = [
   {
@@ -33,9 +34,14 @@ export const routes = [
   {
     path: '/',
     element: <MainLayout />,
-    children: configRoutes(navigation),
+    children: [
+      ...configRoutes(navigation),
+      {
+        path: 'user-profile/:userId',
+        element: <UserProfilePage />,
+      },
+    ],
   },
-
   {
     path: '/login',
     element: <Login />,
@@ -84,6 +90,7 @@ export const routes = [
     path: '/home/mission',
     element: <MissionPage />,
   },
+
   {
     path: '/community/:id',
     element: <CommunityLayout />,
