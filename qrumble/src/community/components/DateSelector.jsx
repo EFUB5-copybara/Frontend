@@ -3,43 +3,47 @@ import CookieIc from '../assets/svgs/cookie.svg?react';
 
 export default function DateSelector({ dates, onSelect }) {
   return (
-    <ScrollWrapper>
-      {dates.map(({ day, type }) => (
-        <DateItem key={day}>
-          {type === 'cookie' ? (
-            <CookieIcon alt='cookie' />
-          ) : (
-            <DateButton
-              selected={type === 'today'}
-              onClick={() => onSelect(day)}>
-              {day}
-            </DateButton>
-          )}
-        </DateItem>
-      ))}
-    </ScrollWrapper>
+    <Container>
+      <ScrollWrapper>
+        {dates.map(({ day, type }) => (
+          <DateItem key={day}>
+            {type === 'cookie' ? (
+              <CookieIcon alt='cookie' />
+            ) : (
+              <DateButton
+                selected={type === 'today'}
+                onClick={() => onSelect(day)}>
+                {day}
+              </DateButton>
+            )}
+          </DateItem>
+        ))}
+      </ScrollWrapper>
+    </Container>
   );
 }
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 0.8125rem 0;
+`;
 
 const ScrollWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
-  gap: 7px;
-  width: 100%;
+  gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
-  padding: 0.8125rem 1.1875rem;
 `;
 
 const DateItem = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 `;
 
 const CookieIcon = styled(CookieIc)`
-  width: 32px;
-  height: 32px;
+  width: 39px;
+  height: 39px;
 `;
 
 const DateButton = styled.button`
