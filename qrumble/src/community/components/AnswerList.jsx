@@ -5,56 +5,57 @@ import styled from 'styled-components';
 
 const dummyAnswers = [
   {
-    rank: 1,
+    id: 1,
     title: 'name',
     subtitle: 'about a diary in english...',
     userId: '아이디',
   },
   {
-    rank: 2,
+    id: 2,
     title: 'name',
     subtitle: 'about a diary in english...',
     userId: '아이디',
   },
   {
-    rank: 3,
+    id: 3,
     title: 'name',
     subtitle: 'about a diary in english...',
     userId: '아이디',
   },
   {
-    rank: 4,
+    id: 4,
     title: 'name',
     subtitle: 'about a diary in english...',
     userId: '아이디',
   },
   {
-    rank: 5,
+    id: 5,
     title: 'name',
     subtitle: 'about a diary in english...',
     userId: '아이디',
   },
   {
-    rank: 6,
+    id: 6,
     title: 'name',
     subtitle: 'about a diary in english...',
     userId: '아이디',
   },
   {
-    rank: 7,
+    id: 7,
     title: 'name',
     subtitle: 'about a diary in english...',
     userId: '아이디',
   },
 ];
 
-export default function AnswerList() {
+export default function AnswerList({ ranked = false }) {
   return (
     <ListWrapper>
-      {dummyAnswers.map((answer) => (
+      {dummyAnswers.map((answer, index) => (
         <AnswerCard
-          key={answer.rank}
-          rank={answer.rank}
+          key={answer.id}
+          id={answer.id}
+          rank={ranked ? index + 1 : undefined}
           title={answer.title}
           subtitle={answer.subtitle}
           userId={answer.userId}
@@ -68,7 +69,6 @@ const ListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 0 16px;
 
   height: 600px;
   overflow-y: auto;
