@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
 function ItemModal({
   items,
@@ -51,8 +51,7 @@ function ItemModal({
           onMouseDown={handleStart}
           onMouseMove={(e) => isSwiping && handleMove(e)}
           onMouseUp={handleEnd}
-          onMouseLeave={() => isSwiping && handleEnd()}
-        >
+          onMouseLeave={() => isSwiping && handleEnd()}>
           {items.map((item, idx) => (
             <ModalContainer key={idx}>
               <PreviewBox />
@@ -66,9 +65,8 @@ function ItemModal({
                 disabled={isSelected(idx)}
                 onClick={() => {
                   if (!isSelected(idx)) onSelect(idx);
-                }}
-              >
-                {isSelected(idx) ? "선택됨" : "선택"}
+                }}>
+                {isSelected(idx) ? '선택됨' : '선택'}
               </SelectButton>
             </ModalContainer>
           ))}
@@ -104,7 +102,7 @@ const SwipeContainer = styled.div`
   transform: ${({ currentIndex, deltaX }) =>
     `translateX(calc(-${currentIndex * (317 + 10.75)}px + ${deltaX}px))`};
   transition: ${({ isSwiping }) =>
-    isSwiping ? "none" : "transform 0.3s ease"};
+    isSwiping ? 'none' : 'transform 0.3s ease'};
   touch-action: pan-y;
 `;
 
@@ -138,13 +136,13 @@ const ItemText = styled.div`
 `;
 
 const ItemName = styled.h3`
-  font-family: ${({ theme }) => theme.fonts.t20B};
+  ${({ theme }) => theme.fonts.t20B};
   color: ${({ theme }) => theme.colors.primary};
   margin: 0;
 `;
 
 const ItemDesc = styled.p`
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   color: ${({ theme }) => theme.colors.brown1};
   margin: 0;
 `;
@@ -152,7 +150,7 @@ const ItemDesc = styled.p`
 const Points = styled.div`
   display: flex;
   padding: 8px;
-  font-family: ${({ theme }) => theme.fonts.d24SB};
+  ${({ theme }) => theme.fonts.d24SB};
   color: ${({ theme }) => theme.colors.error};
 `;
 
@@ -167,16 +165,16 @@ const SelectButton = styled.button`
   color: ${({ theme }) => theme.colors.white};
   border: none;
   border-radius: 10px;
-  font-family: ${({ theme }) => theme.fonts.b16B};
-  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
+  ${({ theme }) => theme.fonts.b16B};
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
 
   &:hover {
     background-color: ${({ disabled, theme }) =>
-      disabled ? theme.colors.brown3 : "rgba(92, 57, 20, 1)"};
+      disabled ? theme.colors.brown3 : 'rgba(92, 57, 20, 1)'};
   }
 
   &:active {
     background-color: ${({ disabled, theme }) =>
-      disabled ? theme.colors.brown3 : "rgba(78, 46, 13, 1)"};
+      disabled ? theme.colors.brown3 : 'rgba(78, 46, 13, 1)'};
   }
 `;

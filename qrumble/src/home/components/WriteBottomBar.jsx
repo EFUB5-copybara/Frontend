@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import HintOImg from "../assets/svgs/hint-o.svg";
-import HintXImg from "../assets/svgs/hint-x.svg";
-import PublicOImg from "../assets/svgs/public-o.svg";
-import PublicXImg from "../assets/svgs/public-x.svg";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import HintOImg from '../assets/svgs/hint-o.svg';
+import HintXImg from '../assets/svgs/hint-x.svg';
+import PublicOImg from '../assets/svgs/public-o.svg';
+import PublicXImg from '../assets/svgs/public-x.svg';
 
 function WriteButtonBar({ hintActive, setHintActive }) {
   const [isPublic, setIsPublic] = useState(true);
@@ -17,11 +17,11 @@ function WriteButtonBar({ hintActive, setHintActive }) {
     <BottomBarWrapper>
       <LeftButtonGroup>
         <Button onClick={() => setHintActive((prev) => !prev)}>
-          <ButtonImg src={hintActive ? HintOImg : HintXImg} alt="hint" />
+          <ButtonImg src={hintActive ? HintOImg : HintXImg} alt='hint' />
         </Button>
 
         <Button onClick={() => setIsPublic((prev) => !prev)}>
-          <ButtonImg src={isPublic ? PublicOImg : PublicXImg} alt="public" />
+          <ButtonImg src={isPublic ? PublicOImg : PublicXImg} alt='public' />
         </Button>
       </LeftButtonGroup>
 
@@ -29,9 +29,8 @@ function WriteButtonBar({ hintActive, setHintActive }) {
         <GrammarCheck
           disabled={!grammarChecked}
           onClick={handleGrammarCheck}
-          grammarChecked={grammarChecked}
-        >
-          <CheckText>문법 검사 {grammarChecked ? "1/1" : "0/1"}</CheckText>
+          grammarChecked={grammarChecked}>
+          <CheckText>문법 검사 {grammarChecked ? '1/1' : '0/1'}</CheckText>
         </GrammarCheck>
       </RightButtonGroup>
     </BottomBarWrapper>
@@ -95,22 +94,22 @@ const GrammarCheck = styled.button`
   height: 38px;
   white-space: nowrap;
   outline: none;
-  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   &:focus {
     outline: none;
   }
 
   &:hover {
     background-color: ${({ theme, grammarChecked }) =>
-      grammarChecked ? "rgba(185, 156, 127, 1)" : theme.colors.brown3};
+      grammarChecked ? 'rgba(185, 156, 127, 1)' : theme.colors.brown3};
   }
 
   &:active {
     background-color: ${({ theme, grammarChecked }) =>
-      grammarChecked ? "rgba(163, 130, 96, 1)" : theme.colors.brown3};
+      grammarChecked ? 'rgba(163, 130, 96, 1)' : theme.colors.brown3};
   }
 `;
 
 const CheckText = styled.span`
-  font-family: ${({ theme }) => theme.fonts.c14M};
+  ${({ theme }) => theme.fonts.c14M};
 `;

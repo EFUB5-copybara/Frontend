@@ -1,15 +1,15 @@
-import React from "react";
-import styled from "styled-components";
-import polygonIcon from "../assets/svgs/polygon.svg";
+import React from 'react';
+import styled from 'styled-components';
+import polygonIcon from '../assets/svgs/polygon.svg';
 
 function MonthSelector({ year, month, onClick }) {
   return (
     <Wrapper>
       <MonthButton onClick={onClick}>
         <DateText>
-          {year}.{String(month).padStart(2, "0")}
+          {year}.{String(month).padStart(2, '0')}
         </DateText>
-        <PolygonIcon src={polygonIcon} alt="polygon icon" />
+        <PolygonIcon src={polygonIcon} alt='polygon icon' />
       </MonthButton>
     </Wrapper>
   );
@@ -40,7 +40,7 @@ const MonthButton = styled.button`
 `;
 
 const DateText = styled.span`
-  font-family: ${({ theme }) => theme.fonts.nd18SB};
+  ${({ theme }) => theme.fonts.nd18SB};
   color: ${({ theme }) => theme.colors.black};
 `;
 

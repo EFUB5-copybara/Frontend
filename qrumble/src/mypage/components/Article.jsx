@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 function Article() {
   return (
@@ -41,19 +41,19 @@ const ArticleTopBar = styled.div`
 `;
 
 const ArticleTitle = styled.p`
-  font-family: ${({ theme }) => theme.fonts.b16B};
+  ${({ theme }) => theme.fonts.b16B};
   color: ${({ theme }) => theme.colors.black};
   margin: 0;
 `;
 
 const ArticleDate = styled.p`
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   color: ${({ theme }) => theme.colors.green};
   margin: 0;
 `;
 
 const ArticleContents = styled.p`
-  font-family: ${({ theme }) => theme.fonts.c14M};
+  ${({ theme }) => theme.fonts.c14M};
   color: ${({ theme }) => theme.colors.black};
   margin: 0;
 `;
@@ -74,7 +74,7 @@ const ArticleUserProfile = styled.div`
 `;
 
 const ArticleUserId = styled.div`
-  font-family: ${({ theme }) => theme.fonts.c12L};
+  ${({ theme }) => theme.fonts.c12L};
   color: ${({ theme }) => theme.colors.black};
   margin: 0;
 `;

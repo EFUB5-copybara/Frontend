@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import styled, { keyframes } from "styled-components";
-import AlertModal from "../components/AlertModal.jsx";
-import keyImg from "../assets/svgs/key.svg";
-import shieldImg from "../assets/svgs/shield.svg";
-import eraserImg from "../assets/svgs/eraser.svg";
+import React, { useState } from 'react';
+import styled, { keyframes } from 'styled-components';
+import AlertModal from '../components/AlertModal.jsx';
+import keyImg from '../assets/svgs/key.svg';
+import shieldImg from '../assets/svgs/shield.svg';
+import eraserImg from '../assets/svgs/eraser.svg';
 
 function ItemButtons({ items, onUse, attendedDates, targetDate }) {
   const [modalInfo, setModalInfo] = useState({
     isOpen: false,
-    type: "",
-    message: "",
+    type: '',
+    message: '',
     canUse: true,
-    itemName: "",
+    itemName: '',
   });
 
   const itemAssets = {
@@ -21,15 +21,15 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
   };
 
   const itemDescriptions = {
-    shield: "방패: 연속일수가 깨지지 않도록 방어해준다",
-    eraser: "지우개: 이미 작성한 답변을 새로 쓸 수 있다",
-    key: "열쇠: 사용시 다른 사람들의 답변을 볼 수 있다",
+    shield: '방패: 연속일수가 깨지지 않도록 방어해준다',
+    eraser: '지우개: 이미 작성한 답변을 새로 쓸 수 있다',
+    key: '열쇠: 사용시 다른 사람들의 답변을 볼 수 있다',
   };
 
   const typeToKor = {
-    key: "열쇠",
-    shield: "방패",
-    eraser: "지우개",
+    key: '열쇠',
+    shield: '방패',
+    eraser: '지우개',
   };
 
   const handleUseItem = (type) => {
@@ -40,15 +40,15 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
       type,
       message: canUse
         ? `${typeToKor[type]}를 사용하시겠습니까?`
-        : "적용할 수 없는 아이템입니다",
+        : '적용할 수 없는 아이템입니다',
       canUse,
       itemName: type,
     });
 
-    console.log("타입:", type);
-    console.log("targetDate:", targetDate);
-    console.log("attendedDates:", attendedDates);
-    console.log("check result:", canUse);
+    console.log('타입:', type);
+    console.log('targetDate:', targetDate);
+    console.log('attendedDates:', attendedDates);
+    console.log('check result:', canUse);
   };
 
   const confirmUse = () => {
@@ -63,8 +63,8 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
   const closeModal = () => {
     setModalInfo({
       isOpen: false,
-      type: "",
-      message: "",
+      type: '',
+      message: '',
       canUse: true,
     });
   };
@@ -88,13 +88,13 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
     });
 
     switch (type) {
-      case "key":
+      case 'key':
         return !isAttended;
 
-      case "eraser":
+      case 'eraser':
         return isAttended;
 
-      case "shield":
+      case 'shield':
         const start = new Date(today);
         start.setDate(start.getDate() - 13);
 
@@ -127,12 +127,12 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
         isOpen={modalInfo.isOpen}
         onClose={closeModal}
         onConfirm={modalInfo.canUse ? confirmUse : undefined}
-        variant={modalInfo.canUse ? "default" : "error"}
+        variant={modalInfo.canUse ? 'default' : 'error'}
         message={modalInfo.message}
         lengthText={
           modalInfo.canUse
             ? itemDescriptions[modalInfo.type]
-            : "다른 아이템을 사용해 보세요"
+            : '다른 아이템을 사용해 보세요'
         }
       />
     </ItemWrapper>
@@ -156,7 +156,7 @@ const ItemButton = styled.button`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: ${({ theme }) => theme.fonts.b16B};
+  ${({ theme }) => theme.fonts.b16B};
   color: ${({ theme }) => theme.colors.white};
   background-color: ${({ theme }) => theme.colors.green};
 `;
