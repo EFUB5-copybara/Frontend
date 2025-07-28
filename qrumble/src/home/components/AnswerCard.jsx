@@ -6,7 +6,7 @@ import browncommentImg from '../assets/svgs/brownmessage.svg';
 import brownbookmarkImg from '../assets/svgs/brownbookmark.svg';
 import { useNavigate } from 'react-router-dom';
 
-function AnswerCard({ id, title, subtitle, userId }) {
+function AnswerCard({ id, title, subtitle, userId, rank }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -16,8 +16,8 @@ function AnswerCard({ id, title, subtitle, userId }) {
   const bottomIcons = [brownlikeImg, browncommentImg, brownbookmarkImg];
 
   return (
-    <Wrapper onClick={handleClick}>
-      <Rank>{id}</Rank>
+    <Wrapper onClick={handleClick} $hasRank={!!rank}>
+      {rank && <Rank>{rank}</Rank>}
       <Content>
         <AnswerTitle>
           {title} <span>{subtitle}</span>
@@ -44,7 +44,7 @@ export default AnswerCard;
 
 const Wrapper = styled.div`
   display: flex;
-  padding: 0 10px 0 20px;
+  padding: ${({ $hasRank }) => ($hasRank ? '0 10px 0 20px' : '0 20px')};
   height: 104px;
   border: 1px solid ${({ theme }) => theme.colors.brown1};
   border-radius: 10px;
@@ -52,10 +52,11 @@ const Wrapper = styled.div`
   gap: 10px;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
 `;
 
 const Rank = styled.div`
-  font-family: ${({ theme }) => theme.fonts.b16B};
+  ${({ theme }) => theme.fonts.b16B};
   color: ${({ theme }) => theme.colors.primary};
 `;
 
@@ -70,14 +71,14 @@ const AnswerTitle = styled.div`
   flex-direction: column;
   width: 261px;
   height: 52px;
-  font-family: ${({ theme }) => theme.fonts.b16B};
+  ${({ theme }) => theme.fonts.b16B};
   background-color: ${({ theme }) => theme.colors.ivory2};
   color: ${({ theme }) => theme.colors.primary};
   padding: 3px 9px 9px 8px;
   margin-top: 10px;
 
   span {
-    font-family: ${({ theme }) => theme.fonts.c12L};
+    ${({ theme }) => theme.fonts.c12L};
   }
 `;
 
@@ -86,7 +87,7 @@ const Meta = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   color: ${({ theme }) => theme.colors.primary};
   height: 42px;
 `;
@@ -113,7 +114,7 @@ const AnswerBottomItem = styled.div`
   display: flex;
   align-items: center;
   gap: 3px;
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   color: ${({ theme }) => theme.colors.brown1};
 `;
 
