@@ -11,6 +11,7 @@ import UserFill from '@/assets/svgs/user_3_fill.svg?react';
 import UserLine from '@/assets/svgs/user_3_line.svg?react';
 import MyPage from './mypage/pages/MyPage';
 import CommunityPage from './community/pages/CommunityPage';
+import ChartPage from './home/pages/ChartPage';
 
 const navigation = [
   {
@@ -34,7 +35,7 @@ const navigation = [
     path: '/chart',
     icon: ChartBarLine,
     activeIcon: ChartBarFill,
-    // element: <HomePage />,
+    element: <ChartPage />,
   },
   {
     path: '/mypage',
