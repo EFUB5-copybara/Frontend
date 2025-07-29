@@ -17,6 +17,8 @@ import MyRecordPage from './mypage/pages/MyRecordPage';
 
 import CommunityDetailPage from './community/pages/CommunityDetailPage';
 
+import ReportPage from './report/pages/ReportPage';
+
 import MainLayout from './layout/MainLayout';
 
 import UserProfilePage from './community/pages/UserProfilePage';
@@ -101,6 +103,10 @@ export const routes = [
       },
     ],
   },
+  {
+    path: '/report',
+    element: <ReportPage />,
+  }
 ];
 
 const router = createBrowserRouter(routes, {
