@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 function HintTagList({ hints = [], onClick }) {
   return (
@@ -28,6 +28,6 @@ const Tag = styled.div`
   padding: 6px 14px;
   border-radius: 100px;
   cursor: pointer;
-  font-family: ${({ theme }) => theme.fonts.ns14SB};
+  ${({ theme }) => theme.fonts.ns14SB};
   white-space: nowrap;
 `;

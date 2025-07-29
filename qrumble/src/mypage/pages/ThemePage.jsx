@@ -1,61 +1,59 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import MyPageTopBar from "../components/MyPageTopBar";
-import checkImg from "../assets/check.svg";
-import ItemModal from "../components/ItemModal";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import MyPageTopBar from '../components/MyPageTopBar';
+import checkImg from '../assets/check.svg';
+import ItemModal from '../components/ItemModal';
 
 function ThemePage() {
-  const [selectedTab, setSelectedTab] = useState("font");
+  const [selectedTab, setSelectedTab] = useState('font');
   const [selectedFontItem, setSelectedFontItem] = useState(0);
   const [selectedPaperItem, setSelectedPaperItem] = useState(2);
 
   const fontItems = [
-    { name: "Nanum", description: "따뜻한 느낌의 나눔 글꼴입니다" },
-    { name: "Pretendard", description: "모던하고 균형 잡힌 고딕체입니다" },
-    { name: "Sanserif", description: "깔끔하고 산뜻한 산세리프체입니다" },
-    { name: "Cafe24", description: "개성 있는 카페24 글꼴입니다" },
+    { name: 'Nanum', description: '따뜻한 느낌의 나눔 글꼴입니다' },
+    { name: 'Pretendard', description: '모던하고 균형 잡힌 고딕체입니다' },
+    { name: 'Sanserif', description: '깔끔하고 산뜻한 산세리프체입니다' },
+    { name: 'Cafe24', description: '개성 있는 카페24 글꼴입니다' },
   ];
 
   const paperItems = [
-    { name: "Basic", description: "기본적인 종이 질감입니다" },
-    { name: "Check", description: "체크무늬 종이입니다" },
-    { name: "Ivory", description: "부드러운 아이보리톤 종이입니다" },
-    { name: "Grid", description: "그리드가 있는 종이입니다" },
+    { name: 'Basic', description: '기본적인 종이 질감입니다' },
+    { name: 'Check', description: '체크무늬 종이입니다' },
+    { name: 'Ivory', description: '부드러운 아이보리톤 종이입니다' },
+    { name: 'Grid', description: '그리드가 있는 종이입니다' },
   ];
 
   const [modalItem, setModalItem] = useState(null);
 
   const [modalIndex, setModalIndex] = useState(null);
-  const currentItems = selectedTab === "font" ? fontItems : paperItems;
+  const currentItems = selectedTab === 'font' ? fontItems : paperItems;
 
   return (
     <Wrapper>
-      <MyPageTopBar title="테마" />
+      <MyPageTopBar title='테마' />
       <Container>
         <FontPaperWrapper>
           <FontButton
-            selected={selectedTab === "font"}
-            onClick={() => setSelectedTab("font")}
-          >
+            selected={selectedTab === 'font'}
+            onClick={() => setSelectedTab('font')}>
             폰트
           </FontButton>
           <PaperButton
-            selected={selectedTab === "paper"}
-            onClick={() => setSelectedTab("paper")}
-          >
+            selected={selectedTab === 'paper'}
+            onClick={() => setSelectedTab('paper')}>
             종이
           </PaperButton>
         </FontPaperWrapper>
         <ItemContainer>
-          {(selectedTab === "font" ? fontItems : paperItems).map(
+          {(selectedTab === 'font' ? fontItems : paperItems).map(
             (item, index) => {
               const isSelected =
-                selectedTab === "font"
+                selectedTab === 'font'
                   ? selectedFontItem === index
                   : selectedPaperItem === index;
 
               const handleClick = () => {
-                if (selectedTab === "font") {
+                if (selectedTab === 'font') {
                   setSelectedFontItem(index);
                 } else {
                   setSelectedPaperItem(index);
@@ -65,7 +63,7 @@ function ThemePage() {
               return (
                 <Item key={index} onClick={() => setModalIndex(index)}>
                   <ItemImg selected={isSelected}>
-                    {isSelected && <CheckImg src={checkImg} alt="선택됨" />}
+                    {isSelected && <CheckImg src={checkImg} alt='선택됨' />}
                   </ItemImg>
                   <ItemName>{item.name}</ItemName>
                 </Item>
@@ -80,12 +78,12 @@ function ThemePage() {
           currentIndex={modalIndex}
           setCurrentIndex={setModalIndex}
           isSelected={(idx) =>
-            selectedTab === "font"
+            selectedTab === 'font'
               ? selectedFontItem === idx
               : selectedPaperItem === idx
           }
           onSelect={(idx) => {
-            if (selectedTab === "font") {
+            if (selectedTab === 'font') {
               setSelectedFontItem(idx);
             } else {
               setSelectedPaperItem(idx);
@@ -158,7 +156,7 @@ const ItemImg = styled.div`
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.colors.brown1};
   background-color: ${({ selected, theme }) =>
-    selected ? "rgba(0, 0, 0, 0.2)" : theme.colors.white};
+    selected ? 'rgba(0, 0, 0, 0.2)' : theme.colors.white};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -169,7 +167,7 @@ const ItemName = styled.p`
   justify-content: center;
   align-items: center;
   margin-top: 4px;
-  font-family: ${({ theme }) => theme.fonts.c14M};
+  ${({ theme }) => theme.fonts.c14M};
   color: ${({ theme }) => theme.colors.primary};
   margin: 0px;
 `;

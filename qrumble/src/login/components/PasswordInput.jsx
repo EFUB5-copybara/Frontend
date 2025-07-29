@@ -30,7 +30,7 @@ const StyledInput = styled.input`
   padding: 8px;
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.colors.brown3};
-  font-size: ${({ theme }) => theme.typography.body16M};
+  ${({ theme }) => theme.fonts.b16M};
   color: ${({ theme }) => theme.colors.black};
   background-color: transparent;
   outline: none;

@@ -45,6 +45,6 @@ const CheckButton = styled.button`
 `;
 
 const Info = styled.p`
-  font-size: ${({ theme }) => theme.typography.caption14M};
+  ${({ theme }) => theme.fonts.c14M};
   color: ${({ theme }) => theme.colors.brown2};
 `;

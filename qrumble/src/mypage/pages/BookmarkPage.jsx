@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import MyPageTopBar from "../components/MyPageTopBar";
-import Article from "../components/Article";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import MyPageTopBar from '../components/MyPageTopBar';
+import Article from '../components/Article';
 
 function BookmarkPage() {
   return (
     <Wrapper>
-      <MyPageTopBar title="북마크" />
+      <MyPageTopBar title='북마크' />
       <OrderWrapper>
         <LatestButton>최신순</LatestButton>
         <PopularityButton>인기순</PopularityButton>
@@ -35,7 +35,7 @@ const OrderWrapper = styled.div`
   gap: 10px;
   height: 31px;
   margin: 9px 20px 26px 20px;
-  font-family: ${({ theme }) => theme.fonts.c14M};
+  ${({ theme }) => theme.fonts.c14M};
 `;
 
 const LatestButton = styled.button`

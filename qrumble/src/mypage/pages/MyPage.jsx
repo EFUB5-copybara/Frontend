@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import alarmonImg from "../assets/alramon.svg";
-import alarmoffImg from "../assets/alramoff.svg";
-import bookmarkImg from "../assets/bookmark.svg";
-import myrecordImg from "../assets/myrecord.svg";
-import profile1Img from "../assets/profile1.svg";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import alarmonImg from '../assets/alramon.svg';
+import alarmoffImg from '../assets/alramoff.svg';
+import bookmarkImg from '../assets/bookmark.svg';
+import myrecordImg from '../assets/myrecord.svg';
+import profile1Img from '../assets/profile1.svg';
 
 function MyPage() {
-  const [selected, setSelected] = useState("info");
+  const [selected, setSelected] = useState('info');
   const [alarmOn, setAlarmOn] = useState(false);
 
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function MyPage() {
       <TitleText>마이 페이지</TitleText>
       <Container>
         <UserInfoButton>
-          <Profile src={profile1Img} alt="기본 프로필" />
+          <Profile src={profile1Img} alt='기본 프로필' />
           <UserInfoWrapper>
             <UserName>사용자 이름</UserName>
             <UserMail>user@email.com</UserMail>
@@ -26,47 +26,43 @@ function MyPage() {
         </UserInfoButton>
         <InfoThemeWrapper>
           <TabButton
-            selected={selected === "info"}
+            selected={selected === 'info'}
             onClick={() => {
-              setSelected("info");
-              navigate("/mypage/info");
-            }}
-          >
+              setSelected('info');
+              navigate('/mypage/info');
+            }}>
             내 정보
           </TabButton>
 
           <TabButton
-            selected={selected === "theme"}
+            selected={selected === 'theme'}
             onClick={() => {
-              setSelected("theme");
-              navigate("/mypage/theme");
-            }}
-          >
+              setSelected('theme');
+              navigate('/mypage/theme');
+            }}>
             테마
           </TabButton>
         </InfoThemeWrapper>
         <InfoBox>
           <MyRecordButton
             onClick={() => {
-              navigate("/mypage/myrecords");
-            }}
-          >
-            <ButtonImg src={myrecordImg} alt="my record" />내 기록
+              navigate('/mypage/myrecords');
+            }}>
+            <ButtonImg src={myrecordImg} alt='my record' />내 기록
           </MyRecordButton>
           <BookMarkButton
             onClick={() => {
-              navigate("/mypage/bookmarks");
-            }}
-          >
-            <ButtonImg src={bookmarkImg} alt="bookmark" />
+              navigate('/mypage/bookmarks');
+            }}>
+            <ButtonImg src={bookmarkImg} alt='bookmark' />
             북마크
           </BookMarkButton>
           <AlramButton onClick={() => setAlarmOn(!alarmOn)}>
             <ButtonImg
               src={alarmOn ? alarmonImg : alarmoffImg}
-              alt="alarm toggle"
+              alt='alarm toggle'
             />
-            {alarmOn ? "알림 끄기" : "알림 켜기"}
+            {alarmOn ? '알림 끄기' : '알림 켜기'}
           </AlramButton>
           <NumberOfInfo>
             <Count>24</Count>
@@ -94,7 +90,7 @@ const TitleText = styled.div`
   justify-content: center;
   padding-top: 59px;
   color: ${({ theme }) => theme.colors.primary};
-  font-family: ${({ theme }) => theme.fonts.t20SB};
+  ${({ theme }) => theme.fonts.t20SB};
 `;
 
 const Container = styled.div`
@@ -133,13 +129,13 @@ const UserInfoWrapper = styled.div`
 
 const UserName = styled.p`
   color: ${({ theme }) => theme.colors.black};
-  font-family: ${({ theme }) => theme.fonts.b18M};
+  ${({ theme }) => theme.fonts.b18M};
   margin: 0px;
 `;
 
 const UserMail = styled.p`
   color: ${({ theme }) => theme.colors.green};
-  font-family: ${({ theme }) => theme.fonts.c14L};
+  ${({ theme }) => theme.fonts.c14L};
   margin: 0px;
 `;
 
@@ -159,7 +155,7 @@ const TabButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: ${({ theme }) => theme.fonts.b16B};
+  ${({ theme }) => theme.fonts.b16B};
   background-color: ${({ selected, theme }) =>
     selected ? theme.colors.primary : theme.colors.white};
   color: ${({ selected, theme }) =>
@@ -167,12 +163,12 @@ const TabButton = styled.button`
 
   &:hover {
     background-color: ${({ selected, theme }) =>
-      selected ? "rgba(92, 57, 20, 1)" : theme.colors.ivory3};
+      selected ? 'rgba(92, 57, 20, 1)' : theme.colors.ivory3};
   }
 
   &:active {
     background-color: ${({ selected, theme }) =>
-      selected ? "rgba(78, 46, 13, 1)" : theme.colors.white};
+      selected ? 'rgba(78, 46, 13, 1)' : theme.colors.white};
   }
 `;
 
@@ -197,7 +193,7 @@ const MyRecordButton = styled.button`
   align-items: center;
   flex-direction: column;
   color: ${({ theme }) => theme.colors.brown2};
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   padding: 0px;
   width: 47px;
 `;
@@ -208,7 +204,7 @@ const BookMarkButton = styled.button`
   align-items: center;
   flex-direction: column;
   color: ${({ theme }) => theme.colors.brown2};
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   padding: 0px;
   width: 47px;
 `;
@@ -219,7 +215,7 @@ const AlramButton = styled.button`
   align-items: center;
   flex-direction: column;
   color: ${({ theme }) => theme.colors.brown2};
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   padding: 0px;
   width: 47px;
 `;
@@ -236,7 +232,7 @@ const NumberOfInfo = styled.div`
   align-items: center;
   flex-direction: column;
   color: ${({ theme }) => theme.colors.brown2};
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   padding: 0px;
   white-space: nowrap;
   width: 47px;
@@ -252,5 +248,5 @@ const Count = styled.div`
   padding: 10px 5px 9px 6px;
   background-color: ${({ theme }) => theme.colors.ivory1};
   color: ${({ theme }) => theme.colors.primary};
-  font-family: ${({ theme }) => theme.fonts.t20SB};
+  ${({ theme }) => theme.fonts.t20SB};
 `;

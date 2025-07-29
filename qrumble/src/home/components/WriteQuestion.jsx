@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 function WriteQuestion() {
   return (
@@ -21,6 +21,6 @@ const Container = styled.div`
 `;
 
 const Question = styled.div`
-  font-family: ${({ theme }) => theme.fonts.nd18SB};
+  ${({ theme }) => theme.fonts.nd18SB};
   color: ${({ theme }) => theme.colors.black};
 `;
