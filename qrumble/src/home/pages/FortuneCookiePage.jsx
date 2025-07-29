@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import XImg from "../assets/svgs/X.svg";
-import bigfortuneImg from "../assets/svgs/fortune.svg";
-import { useNavigate } from "react-router-dom";
-import background1Img from "../assets/svgs/background1.svg";
-import background2Img from "../assets/svgs/background2.svg";
-import background3Img from "../assets/svgs/background3.svg";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import XImg from '../assets/svgs/X.svg';
+import bigfortuneImg from '../assets/svgs/fortune.svg';
+import { useNavigate } from 'react-router-dom';
+import background1Img from '../assets/svgs/background1.svg';
+import background2Img from '../assets/svgs/background2.svg';
+import background3Img from '../assets/svgs/background3.svg';
 
 function FortuneCookiePage() {
   const [opened, setOpened] = useState(false);
@@ -16,14 +16,14 @@ function FortuneCookiePage() {
     <Background>
       {opened && <TitleText $opened={opened}>오늘의 포춘 쿠키</TitleText>}
       <Container $opened={opened}>
-        <XButton onClick={() => navigate("/home")}>
-          <img src={XImg} alt="닫기" />
+        <XButton onClick={() => navigate('/home')}>
+          <img src={XImg} alt='닫기' />
         </XButton>
 
         {!opened ? (
           <>
             <CookieButton onClick={() => setOpened(true)}>
-              <img src={bigfortuneImg} alt="포춘쿠키 버튼" />
+              <img src={bigfortuneImg} alt='포춘쿠키 버튼' />
             </CookieButton>
             <TouchCookieMsg>쿠키를 터치하세요!</TouchCookieMsg>
             <TextWrapper>
@@ -67,16 +67,16 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: ${({ $opened }) => ($opened ? "96px 20px 20px" : "72px 20px 28px")};
+  margin: ${({ $opened }) => ($opened ? '96px 20px 20px' : '72px 20px 28px')};
   width: 320px;
-  height: ${({ $opened }) => ($opened ? "684px" : "700px")};
+  height: ${({ $opened }) => ($opened ? '684px' : '700px')};
   border-radius: 20px;
   border: 1px solid black;
   background-color: ${({ theme }) => theme.colors.white};
   transition: all 0.4s ease;
   padding: 0;
   background-image: ${({ $opened }) =>
-    $opened ? `url(${background1Img})` : "none"};
+    $opened ? `url(${background1Img})` : 'none'};
   background-size: cover;
   background-position: center;
 `;
@@ -124,7 +124,7 @@ const TouchCookieMsg = styled.span`
   top: 336px;
   display: flex;
   align-items: center;
-  font-family: ${({ theme }) => theme.fonts.b16M};
+  ${({ theme }) => theme.fonts.b16M};
   color: ${({ theme }) => theme.colors.green};
 `;
 
@@ -137,12 +137,12 @@ const TextWrapper = styled.div`
 `;
 
 const Text1 = styled.span`
-  font-family: ${({ theme }) => theme.fonts.d24SB};
+  ${({ theme }) => theme.fonts.d24SB};
   color: ${({ theme }) => theme.colors.primary};
 `;
 
 const Text2 = styled.span`
-  font-family: ${({ theme }) => theme.fonts.d32SB};
+  ${({ theme }) => theme.fonts.d32SB};
   color: ${({ theme }) => theme.colors.green};
 `;
 
@@ -152,11 +152,11 @@ const TitleText = styled.div`
   left: 50%;
   transform: ${({ $opened }) =>
     $opened
-      ? "translateX(-50%) translateY(0)"
-      : "translateX(-50%) translateY(-8px)"};
+      ? 'translateX(-50%) translateY(0)'
+      : 'translateX(-50%) translateY(-8px)'};
   opacity: ${({ $opened }) => ($opened ? 1 : 0)};
   transition: opacity 1s ease, transform 1s ease;
-  font-family: ${({ theme }) => theme.fonts.t20SB};
+  ${({ theme }) => theme.fonts.t20SB};
   color: ${({ theme }) => theme.colors.white};
   text-align: center;
   pointer-events: none;
@@ -180,13 +180,13 @@ const OpenedContent = styled.div`
 `;
 
 const DateText = styled.div`
-  font-family: ${({ theme }) => theme.fonts.ns14SB};
+  ${({ theme }) => theme.fonts.ns14SB};
   color: ${({ theme }) => theme.colors.green};
   margin-bottom: 23px;
 `;
 
 const Question = styled.div`
-  font-family: ${({ theme }) => theme.fonts.nd18B};
+  ${({ theme }) => theme.fonts.nd18B};
   color: ${({ theme }) => theme.colors.black};
   padding-bottom: 16px;
   margin-bottom: 16px;
@@ -194,7 +194,7 @@ const Question = styled.div`
 `;
 
 const Answer = styled.div`
-  font-family: ${({ theme }) => theme.fonts.ns16M};
+  ${({ theme }) => theme.fonts.ns16M};
   color: ${({ theme }) => theme.colors.black};
   margin-bottom: 20px;
   padding: 0;
@@ -212,7 +212,7 @@ const Tag = styled.div`
   padding: 6px 14px;
   background-color: ${({ theme }) => theme.colors.green};
   border-radius: 100px;
-  font-family: ${({ theme }) => theme.fonts.ns14SB};
+  ${({ theme }) => theme.fonts.ns14SB};
   color: ${({ theme }) => theme.colors.white};
 `;
 
@@ -221,7 +221,7 @@ const DoneText = styled.div`
   bottom: 38px;
   left: 50%;
   transform: translateX(-50%);
-  font-family: ${({ theme }) => theme.fonts.t20SB};
+  ${({ theme }) => theme.fonts.t20SB};
   color: ${({ theme }) => theme.colors.brown1};
   text-align: center;
 `;

@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 function AlertModal({
   isOpen,
@@ -7,11 +7,11 @@ function AlertModal({
   onConfirm,
   message,
   lengthText,
-  variant = "error",
+  variant = 'error',
 }) {
   if (!isOpen) return null;
 
-  const isConfirmMode = typeof onConfirm === "function";
+  const isConfirmMode = typeof onConfirm === 'function';
 
   return (
     <ModalOverlay>
@@ -60,8 +60,8 @@ const ModalBox = styled.div`
 
 const ModalText = styled.p`
   color: ${({ theme, $variant }) =>
-    $variant === "error" ? theme.colors.error : theme.colors.black};
-  font-family: ${({ theme }) => theme.fonts.b16B};
+    $variant === 'error' ? theme.colors.error : theme.colors.black};
+  ${({ theme }) => theme.fonts.b16B};
   margin: 0;
   white-space: nowrap;
   width: 100%;
@@ -69,14 +69,14 @@ const ModalText = styled.p`
 
 const DetailText = styled.p`
   color: ${({ theme }) => theme.colors.brown2};
-  font-family: ${({ theme }) => theme.fonts.c14M};
+  ${({ theme }) => theme.fonts.c14M};
   margin: 0 0 20px 0;
 `;
 
 const ButtonRow = styled.div`
   display: flex;
   justify-content: center;
-  gap: ${({ $isSingle }) => ($isSingle ? "0" : "12px")};
+  gap: ${({ $isSingle }) => ($isSingle ? '0' : '12px')};
   margin: 0px;
   width: 100%;
   gap: 10px;
@@ -86,7 +86,7 @@ const CancelButton = styled.button`
   background-color: ${({ theme }) => theme.colors.ivory3};
   color: ${({ theme }) => theme.colors.primary};
   border: 1px solid ${({ theme }) => theme.colors.primary};
-  font-family: ${({ theme }) => theme.fonts.s16SB};
+  ${({ theme }) => theme.fonts.s16SB};
   width: 100%;
   border-radius: 10px;
   height: 40px;
@@ -104,7 +104,7 @@ const ConfirmButton = styled.button`
   background-color: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.white};
   border: none;
-  font-family: ${({ theme }) => theme.fonts.s16SB};
+  ${({ theme }) => theme.fonts.s16SB};
   border-radius: 10px;
   width: 100%;
   height: 40px;

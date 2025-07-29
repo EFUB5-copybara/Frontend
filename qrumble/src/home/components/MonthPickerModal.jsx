@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
 
 // 날짜 리스트 생성
 const currentYear = new Date().getFullYear();
@@ -81,15 +81,15 @@ function MonthPickerModal({
 
       const getItem = (arr, i) => arr[Math.max(0, Math.min(i, arr.length - 1))];
       const value =
-        type === "year"
+        type === 'year'
           ? getItem(years, index)
-          : type === "month"
+          : type === 'month'
           ? getItem(months, index)
           : getItem(days, index);
 
-      if (type === "year") setYear(value);
-      else if (type === "month") setMonth(value);
-      else if (type === "day") setDate(value);
+      if (type === 'year') setYear(value);
+      else if (type === 'month') setMonth(value);
+      else if (type === 'day') setDate(value);
     }, 100);
   };
 
@@ -98,9 +98,9 @@ function MonthPickerModal({
     let newMonth = month;
     let newDate = date;
 
-    if (type === "year") newYear = value;
-    if (type === "month") newMonth = value;
-    if (type === "day") newDate = value;
+    if (type === 'year') newYear = value;
+    if (type === 'month') newMonth = value;
+    if (type === 'day') newDate = value;
 
     // 상태 갱신
     setYear(newYear);
@@ -119,12 +119,11 @@ function MonthPickerModal({
         <Item
           key={item}
           selected={item === selected}
-          onClick={() => handleSelect(type, item)}
-        >
-          {type === "year"
+          onClick={() => handleSelect(type, item)}>
+          {type === 'year'
             ? `${item}년`
-            : `${String(item).padStart(2, "0")}${
-                type === "month" ? "월" : "일"
+            : `${String(item).padStart(2, '0')}${
+                type === 'month' ? '월' : '일'
               }`}
         </Item>
       ))}
@@ -136,9 +135,9 @@ function MonthPickerModal({
     <Wrapper onClick={onClose}>
       <Modal onClick={(e) => e.stopPropagation()}>
         <PickerWrapper>
-          {renderList(years, year, "year")}
-          {renderList(months, month, "month")}
-          {renderList(days, date, "day")}
+          {renderList(years, year, 'year')}
+          {renderList(months, month, 'month')}
+          {renderList(days, date, 'day')}
         </PickerWrapper>
       </Modal>
     </Wrapper>
@@ -202,7 +201,7 @@ const Item = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: ${({ theme }) => theme.fonts.d24SB};
+  ${({ theme }) => theme.fonts.d24SB};
   font-size: 24px;
   font-weight: ${({ selected }) => (selected ? 600 : 300)};
   color: ${({ selected, theme }) =>

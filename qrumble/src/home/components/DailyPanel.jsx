@@ -1,39 +1,39 @@
-import React, { useState, useEffect } from "react";
-import styled, { keyframes } from "styled-components";
+import React, { useState, useEffect } from 'react';
+import styled, { keyframes } from 'styled-components';
 import {
   DayCell,
   DateBox,
   DateText,
   CookieIcon,
-} from "./styles/CalendarStyles";
-import cookieImg from "../assets/svgs/cookie.svg";
-import keyImg from "../assets/svgs/key.svg";
-import shieldImg from "../assets/svgs/shield.svg";
-import eraserImg from "../assets/svgs/eraser.svg";
-import likeImg from "../assets/svgs/like.svg";
-import commentImg from "../assets/svgs/question-comments.svg";
-import userImg from "../assets/svgs/userimg.svg";
-import brownlikeImg from "../assets/svgs/brownlike.svg";
-import browncommentImg from "../assets/svgs/brownmessage.svg";
-import brownbookmarkImg from "../assets/svgs/brownbookmark.svg";
-import ItemButtons from "./ItemButtons";
-import AlertModal from "./AlertModal";
-import AnswerCard from "./AnswerCard";
+} from './styles/CalendarStyles';
+import cookieImg from '../assets/svgs/cookie.svg';
+import keyImg from '../assets/svgs/key.svg';
+import shieldImg from '../assets/svgs/shield.svg';
+import eraserImg from '../assets/svgs/eraser.svg';
+import likeImg from '../assets/svgs/like.svg';
+import commentImg from '../assets/svgs/question-comments.svg';
+import userImg from '../assets/svgs/userimg.svg';
+import brownlikeImg from '../assets/svgs/brownlike.svg';
+import browncommentImg from '../assets/svgs/brownmessage.svg';
+import brownbookmarkImg from '../assets/svgs/brownbookmark.svg';
+import ItemButtons from './ItemButtons';
+import AlertModal from './AlertModal';
+import AnswerCard from './AnswerCard';
 
 function DailyPanel({ date, onClose }) {
   const attendedDates = [4, 5, 6, 7, 8];
 
   const [items, setItems] = useState([
-    { name: "key", img: keyImg, count: 10 },
-    { name: "shield", img: shieldImg, count: 10 },
-    { name: "eraser", img: eraserImg, count: 10 },
+    { name: 'key', img: keyImg, count: 10 },
+    { name: 'shield', img: shieldImg, count: 10 },
+    { name: 'eraser', img: eraserImg, count: 10 },
   ]);
 
   const [targetDate, setTargetDate] = useState(null);
 
   useEffect(() => {
     if (targetDate) {
-      console.log("타겟 날짜 갱신:", targetDate);
+      console.log('타겟 날짜 갱신:', targetDate);
     }
   }, [targetDate]);
 
@@ -64,17 +64,15 @@ function DailyPanel({ date, onClose }) {
               return (
                 <DayCell
                   key={`${year}-${month}-${day}`}
-                  onClick={() => setTargetDate(new Date(year, month - 1, day))}
-                >
+                  onClick={() => setTargetDate(new Date(year, month - 1, day))}>
                   {isCookie ? (
-                    <CookieIcon src={cookieImg} alt="cookie" />
+                    <CookieIcon src={cookieImg} alt='cookie' />
                   ) : (
                     <DateBox $isToday={isToday}>
                       <DateText
                         $color={
-                          isToday ? "white" : isMissed ? "error" : "primary"
-                        }
-                      >
+                          isToday ? 'white' : isMissed ? 'error' : 'primary'
+                        }>
                         {day}
                       </DateText>
                     </DateBox>
@@ -104,10 +102,10 @@ function DailyPanel({ date, onClose }) {
               </QuestionText>
               <Bottom>
                 <BottomItem>
-                  <BottomImg src={likeImg} alt="like" /> 공감
+                  <BottomImg src={likeImg} alt='like' /> 공감
                 </BottomItem>
                 <BottomItem>
-                  <BottomImg src={commentImg} alt="comment" /> 101
+                  <BottomImg src={commentImg} alt='comment' /> 101
                 </BottomItem>
               </Bottom>
             </QuestionCard>
@@ -118,9 +116,9 @@ function DailyPanel({ date, onClose }) {
                 <AnswerCard
                   key={rank}
                   rank={rank}
-                  title="name"
-                  subtitle="about a diary in english..."
-                  userId="아이디"
+                  title='name'
+                  subtitle='about a diary in english...'
+                  userId='아이디'
                 />
               ))}
             </AnswerList>
@@ -195,24 +193,24 @@ const Header = styled.div`
 `;
 
 const Label = styled.span`
-  font-family: ${({ theme }) => theme.fonts.b16M};
+  ${({ theme }) => theme.fonts.b16M};
   color: ${({ theme }) => theme.colors.black};
 `;
 
 const CardDateText = styled.span`
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   color: ${({ theme }) => theme.colors.green};
 `;
 
 const QuestionText = styled.div`
-  font-family: ${({ theme }) => theme.fonts.c14M};
+  ${({ theme }) => theme.fonts.c14M};
   color: ${({ theme }) => theme.colors.black};
 `;
 
 const Bottom = styled.div`
   display: flex;
   justify-content: end;
-  font-family: ${({ theme }) => theme.fonts.ns14M};
+  ${({ theme }) => theme.fonts.ns14M};
   color: ${({ theme }) => theme.colors.green};
 `;
 
@@ -220,7 +218,7 @@ const BottomItem = styled.div`
   display: flex;
   align-items: center;
   gap: 3px;
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   color: ${({ theme }) => theme.colors.green};
   padding: 10px 6px 14px 6px;
 `;
@@ -231,7 +229,7 @@ const BottomImg = styled.img`
 `;
 
 const BestAnswerText = styled.span`
-  font-family: ${({ theme }) => theme.fonts.b16B};
+  ${({ theme }) => theme.fonts.b16B};
   color: ${({ theme }) => theme.colors.primary};
   padding: 8px;
 `;

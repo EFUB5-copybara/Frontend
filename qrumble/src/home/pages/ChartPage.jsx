@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import ShareModal from "../components/ShareModal";
-import arrowbackImg from "../assets/svgs/arrow_back.svg";
-import thumbsupImg from "../assets/svgs/thumbsup.svg";
-import eyeImg from "../assets/svgs/eye.svg";
-import commentImg from "../assets/svgs/comments.svg";
-import shareImg from "../assets/svgs/share.svg";
-import background1Img from "../assets/svgs/background1.svg";
-import background2Img from "../assets/svgs/background2.svg";
-import background3Img from "../assets/svgs/background3.svg";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import ShareModal from '../components/ShareModal';
+import arrowbackImg from '../assets/svgs/arrow_back.svg';
+import thumbsupImg from '../assets/svgs/thumbsup.svg';
+import eyeImg from '../assets/svgs/eye.svg';
+import commentImg from '../assets/svgs/comments.svg';
+import shareImg from '../assets/svgs/share.svg';
+import background1Img from '../assets/svgs/background1.svg';
+import background2Img from '../assets/svgs/background2.svg';
+import background3Img from '../assets/svgs/background3.svg';
 
 function ChartPage() {
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -21,7 +21,7 @@ function ChartPage() {
     <Background>
       <Container>
         <Button>
-          <ArrowIcon src={arrowbackImg} alt="arrow back" />
+          <ArrowIcon src={arrowbackImg} alt='arrow back' />
         </Button>
         <Date>2025.04.02</Date>
         <Wrapper>
@@ -32,19 +32,19 @@ function ChartPage() {
           </Answer>
           <ChartBottomBar>
             <BottomBtn>
-              <BottomBtnImg src={thumbsupImg} alt="like" />
+              <BottomBtnImg src={thumbsupImg} alt='like' />
               101
             </BottomBtn>
             <BottomBtn>
-              <BottomBtnImg src={eyeImg} alt="eye" />
+              <BottomBtnImg src={eyeImg} alt='eye' />
               101
             </BottomBtn>
             <BottomBtn>
-              <BottomBtnImg src={commentImg} alt="comment" />
+              <BottomBtnImg src={commentImg} alt='comment' />
               101
             </BottomBtn>
             <BottomBtn onClick={handleShareClick}>
-              <BottomBtnImg src={shareImg} alt="share" />
+              <BottomBtnImg src={shareImg} alt='share' />
             </BottomBtn>
           </ChartBottomBar>
         </Wrapper>
@@ -107,7 +107,7 @@ const Date = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: ${({ theme }) => theme.fonts.ns14SB};
+  ${({ theme }) => theme.fonts.ns14SB};
   color: ${({ theme }) => theme.colors.green};
 `;
 
@@ -122,14 +122,14 @@ const Wrapper = styled.div`
 `;
 
 const Question = styled.div`
-  font-family: ${({ theme }) => theme.fonts.nd18SB};
+  ${({ theme }) => theme.fonts.nd18SB};
   color: ${({ theme }) => theme.colors.black};
   padding-bottom: 19px;
   border-bottom: 1px solid ${({ theme }) => theme.colors.brown1};
 `;
 
 const Answer = styled.div`
-  font-family: ${({ theme }) => theme.fonts.ns16M};
+  ${({ theme }) => theme.fonts.ns16M};
   color: ${({ theme }) => theme.colors.black};
   padding-top: 14px;
 `;
@@ -152,7 +152,7 @@ const BottomBtn = styled.button`
   display: flex;
   align-items: center;
   gap: 4px;
-  font-family: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
   color: ${({ theme }) => theme.colors.brown1};
   padding-left: 0px;
   padding-right: 0px;

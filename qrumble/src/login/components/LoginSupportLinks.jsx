@@ -15,10 +15,10 @@ export default function LoginSupportLinks() {
 
 const Link = styled.a`
   color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
 `;
 
 const Divider = styled.span`
   color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.fonts.c12M};
+  ${({ theme }) => theme.fonts.c12M};
 `;

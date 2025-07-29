@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import MyPageTopBar from "../components/MyPageTopBar";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import MyPageTopBar from '../components/MyPageTopBar';
 
 function MyRecordPage() {
   return (
     <Wrapper>
-      <MyPageTopBar title="내 기록" />
+      <MyPageTopBar title='내 기록' />
       <MyRecordWrapper>
         <Title>00님의 일기</Title>
         <RecordDetail>
@@ -46,7 +46,7 @@ const MyRecordWrapper = styled.div`
 
 const Title = styled.p`
   color: ${({ theme }) => theme.colors.brown1};
-  font-family: ${({ theme }) => theme.fonts.b16B};
+  ${({ theme }) => theme.fonts.b16B};
   padding: 0;
   margin: 0;
 `;
@@ -60,12 +60,12 @@ const RecordDetail = styled.div`
 
 const DetailTitle = styled.p`
   color: ${({ theme }) => theme.colors.brown2};
-  font-family: ${({ theme }) => theme.fonts.b16M};
+  ${({ theme }) => theme.fonts.b16M};
   margin: 0;
 `;
 
 const DetailContent = styled.p`
   color: ${({ theme }) => theme.colors.brown1};
-  font-family: ${({ theme }) => theme.fonts.b16B};
+  ${({ theme }) => theme.fonts.b16B};
   margin: 0;
 `;

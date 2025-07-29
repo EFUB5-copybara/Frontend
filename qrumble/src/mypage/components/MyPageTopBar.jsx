@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import arrowbackImg from "../assets/arrow_back.svg";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import styled from 'styled-components';
+import arrowbackImg from '../assets/arrow_back.svg';
+import { useNavigate } from 'react-router-dom';
 
 function MyPageTopBar({ title }) {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ function MyPageTopBar({ title }) {
   return (
     <Container>
       <BackButton onClick={() => navigate(-1)}>
-        <ButtonImg src={arrowbackImg} alt="back button" />
+        <ButtonImg src={arrowbackImg} alt='back button' />
       </BackButton>
       <TitleText>{title}</TitleText>
     </Container>
@@ -33,7 +33,7 @@ const TitleText = styled.div`
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.colors.primary};
-  font-family: ${({ theme }) => theme.fonts.t20SB};
+  ${({ theme }) => theme.fonts.t20SB};
 `;
 
 const BackButton = styled.button`

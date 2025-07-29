@@ -1,22 +1,22 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import MyPageTopBar from "../components/MyPageTopBar";
-import editImg from "../assets/pencil_line.svg";
-import ProfileModal from "../components/ProfileModal";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import MyPageTopBar from '../components/MyPageTopBar';
+import editImg from '../assets/pencil_line.svg';
+import ProfileModal from '../components/ProfileModal';
 
 function MyInfoPage() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
     <Wrapper>
-      <MyPageTopBar title="내 정보" />
+      <MyPageTopBar title='내 정보' />
       <Container>
         <UserInfo>
           <Profile onClick={() => setIsProfileOpen(true)} />
           <UserInfoWrapper>
             <NameWrapper>
               <EditButton>
-                <EditImg src={editImg} alt="edit" />
+                <EditImg src={editImg} alt='edit' />
               </EditButton>
               <UserName>사용자 이름</UserName>
             </NameWrapper>
@@ -116,13 +116,13 @@ const EditImg = styled.img`
 
 const UserName = styled.p`
   color: ${({ theme }) => theme.colors.black};
-  font-family: ${({ theme }) => theme.fonts.t20SB};
+  ${({ theme }) => theme.fonts.t20SB};
   margin: 0px;
 `;
 
 const UserMail = styled.p`
   color: ${({ theme }) => theme.colors.green};
-  font-family: ${({ theme }) => theme.fonts.c14L};
+  ${({ theme }) => theme.fonts.c14L};
   margin: 0px;
 `;
 
@@ -142,7 +142,7 @@ const AccountInfo = styled.div`
 
 const AccountText = styled.p`
   color: ${({ theme }) => theme.colors.brown1};
-  font-family: ${({ theme }) => theme.fonts.b16B};
+  ${({ theme }) => theme.fonts.b16B};
   padding-left: 2px;
   padding-top: 11.5px;
   margin: 0;
@@ -162,12 +162,12 @@ const InfoDetail = styled.div`
 
 const DetailTitle = styled.p`
   color: ${({ theme }) => theme.colors.brown2};
-  font-family: ${({ theme }) => theme.fonts.c14M};
+  ${({ theme }) => theme.fonts.c14M};
   margin: 0;
 `;
 
 const DetailContent = styled.p`
   color: ${({ theme }) => theme.colors.brown1};
-  font-family: ${({ theme }) => theme.fonts.c14L};
+  ${({ theme }) => theme.fonts.c14L};
   margin: 0;
 `;
