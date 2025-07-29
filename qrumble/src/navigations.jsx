@@ -12,12 +12,15 @@ import CommunityPage from './community/pages/CommunityPage';
 import ChartPage from './home/pages/ChartPage';
 import HomePage from './home/pages/HomePage';
 import MyPage from './mypage/pages/MyPage';
+import ShopPage from './shop/pages/ShopPage';
+import ReportPage from './report/pages/ReportPage';
 
 const navigation = [
   {
-    path: '/store',
+    path: '/shop',
     icon: StoreLine,
     activeIcon: StoreFill,
+    element: <ShopPage />,
   },
   {
     path: '/community',
@@ -32,10 +35,10 @@ const navigation = [
     element: <HomePage />,
   },
   {
-    path: '/chart',
+    path: '/report',
     icon: ChartBarLine,
     activeIcon: ChartBarFill,
-    element: <ChartPage />,
+    element: <ReportPage />,
   },
   {
     path: '/mypage',

@@ -19,6 +19,8 @@ import CommunityDetailPage from './community/pages/CommunityDetailPage';
 
 import ReportPage from './report/pages/ReportPage';
 
+import ShopPage from './shop/pages/ShopPage';
+
 import MainLayout from './layout/MainLayout';
 
 import UserProfilePage from './community/pages/UserProfilePage';
@@ -106,6 +108,10 @@ export const routes = [
   {
     path: '/report',
     element: <ReportPage />,
+  },
+  {
+    path: '/shop',
+    element: <ShopPage />,
   }
 ];
 
