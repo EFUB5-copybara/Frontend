@@ -147,7 +147,7 @@ const Container = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 50px 19px 0 19px;
+  padding: 50px 19px 0 18px;
   background-color: ${({ theme }) => theme.colors.ivory3};
   gap: 14px;
 `;
