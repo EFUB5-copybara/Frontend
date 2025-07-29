@@ -19,12 +19,12 @@ import CommunityDetailPage from './community/pages/CommunityDetailPage';
 
 import MainLayout from './layout/MainLayout';
 
+import UserProfilePage from './community/pages/UserProfilePage';
 import HomePage from './home/pages/HomePage';
 import CommunityLayout from './layout/CommunityLayout';
 import navigation from './navigations';
 import { configRoutes } from './utils/configRoutes';
 import { getNavigationItems } from './utils/getNavigationItems';
-import UserProfilePage from './community/pages/UserProfilePage';
 
 export const routes = [
   {
