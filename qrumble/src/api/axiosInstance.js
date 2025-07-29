@@ -19,14 +19,14 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      console.warn('인증 오류: 로그인 필요');
-    }
-    return Promise.reject(error);
-  }
-);
+// axiosInstance.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response?.status === 401) {
+//       console.warn('인증 오류: 로그인 필요');
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 export default axiosInstance;
