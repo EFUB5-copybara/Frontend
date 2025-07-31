@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import MissionBar from "../components/MissionBar";
-import MonthSelector from "../components/MonthSelector";
-import Calendar from "../components/Calendar";
-import DailyQuestion from "../components/DailyQuestion";
-import Cookiejar from "../components/Cookiejar";
-import MonthPickerModal from "../components/MonthPickerModal";
-import QuestionList from "../components/QuestionList";
-import DailyPanel from "../components/DailyPanel";
-import WriteFixButton from "../components/WriteFixButton";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import MissionBar from '../components/MissionBar';
+import MonthSelector from '../components/MonthSelector';
+import Calendar from '../components/Calendar';
+import DailyQuestion from '../components/DailyQuestion';
+import Cookiejar from '../components/Cookiejar';
+import MonthPickerModal from '../components/MonthPickerModal';
+import QuestionList from '../components/QuestionList';
+import DailyPanel from '../components/DailyPanel';
+import WriteFixButton from '../components/WriteFixButton';
+import { fetchDailyQuestion } from '../api/mypage';
 
 function HomePage() {
   const [year, setYear] = useState(2025);
@@ -73,6 +74,32 @@ function HomePage() {
     setIsDailyPanelOpen(true);
   };
 
+  const [dailyQuestion, setDailyQuestion] = useState('');
+  const [questionError, setQuestionError] = useState(null);
+
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      if (!selectedDate) return;
+
+      const { year, month, day } = selectedDate;
+      const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(
+        day
+      ).padStart(2, '0')}`;
+
+      try {
+        const data = await fetchDailyQuestion(formattedDate);
+        setDailyQuestion(data.content);
+        setQuestionError(null);
+      } catch (error) {
+        setDailyQuestion('');
+        const message = error.response?.data?.message || '질문 불러오기 실패';
+        setQuestionError(message);
+      }
+    };
+
+    fetchQuestion();
+  }, [selectedDate]);
+
   return (
     <Container>
       <MissionBar />
@@ -121,7 +148,15 @@ function HomePage() {
             }}
             setMonthlyCookieJarLevel={setMonthlyCookieJarLevel}
           />
-          <DailyQuestion onClick={() => navigate("/home/write")} />
+
+          <DailyQuestion
+            status={
+              questionError ? 'error' : !dailyQuestion ? 'loading' : 'success'
+            }
+            question={dailyQuestion}
+            onClick={() => navigate('/home/write')}
+          />
+
           <Cookiejar level={monthlyCookieJarLevel} />
         </ContentArea>
 
@@ -161,7 +196,7 @@ const SwipeArea = styled.div`
 `;
 
 const ContentArea = styled.div`
-  max-height: ${({ $collapsed }) => ($collapsed ? "0px" : "1000px")};
+  max-height: ${({ $collapsed }) => ($collapsed ? '0px' : '1000px')};
   opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
   transition: all 0.4s ease;
   display: flex;
@@ -170,7 +205,7 @@ const ContentArea = styled.div`
 `;
 
 const QuestionArea = styled.div`
-  max-height: ${({ $collapsed }) => ($collapsed ? "1000px" : "0px")};
+  max-height: ${({ $collapsed }) => ($collapsed ? '1000px' : '0px')};
   opacity: ${({ $collapsed }) => ($collapsed ? 1 : 0)};
   transition: all 0.4s ease;
   overflow: hidden;

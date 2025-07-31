@@ -1,20 +1,23 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import WriteTopBar from "../components/WriteTopBar";
-import WriteQuestion from "../components/WriteQuestion";
-import WriteBottomBar from "../components/WriteBottomBar";
-import HintTagList from "../components/HintTagList";
-import AlertModal from "../components/AlertModal";
-import background1Img from "../assets/svgs/background1.svg";
-import background2Img from "../assets/svgs/background2.svg";
-import background3Img from "../assets/svgs/background3.svg";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import WriteTopBar from '../components/WriteTopBar';
+import WriteQuestion from '../components/WriteQuestion';
+import WriteBottomBar from '../components/WriteBottomBar';
+import HintTagList from '../components/HintTagList';
+import AlertModal from '../components/AlertModal';
+import background1Img from '../assets/svgs/background1.svg';
+import background2Img from '../assets/svgs/background2.svg';
+import background3Img from '../assets/svgs/background3.svg';
+import { fetchDailyQuestion } from '../api/mypage';
 
 function WritePage() {
   const [hintActive, setHintActive] = useState(false);
-  const [text, setText] = useState("");
-  const hintKeywords = ["cafe", "game", "friend"];
+  const [text, setText] = useState('');
+  const hintKeywords = ['cafe', 'game', 'friend'];
   const [showModal, setShowModal] = useState(false);
+
+  const [dailyQuestion, setDailyQuestion] = useState('');
 
   const MIN_TEXT_LENGTH = 50;
 
@@ -25,20 +28,34 @@ function WritePage() {
       setShowModal(true);
       return;
     } else {
-      navigate("/home/chart");
+      navigate('/home/chart');
     }
   };
+
+  useEffect(() => {
+    const loadQuestion = async () => {
+      try {
+        const res = await fetchDailyQuestion('2025-07-31'); // 날짜는 예시
+        setDailyQuestion(res.content);
+      } catch (e) {
+        setDailyQuestion('질문을 불러오지 못했습니다.');
+      }
+    };
+
+    loadQuestion();
+  }, []);
 
   return (
     <>
       <Container>
         <Top>
           <WriteTopBar onCheck={handleSubmit} textLength={text.trim().length} />
-          <WriteQuestion />
+          <WriteQuestion question={dailyQuestion} />
+
           {hintActive && (
             <HintTagList
               hints={hintKeywords}
-              onClick={(hint) => setText((prev) => prev + " #" + hint)}
+              onClick={(hint) => setText((prev) => prev + ' #' + hint)}
             />
           )}
           <TextArea value={text} onChange={(e) => setText(e.target.value)} />
@@ -54,7 +71,7 @@ function WritePage() {
         <AlertModal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
-          message="최소 글자수를 충족하지 못했습니다"
+          message='최소 글자수를 충족하지 못했습니다'
           lengthText={`${text.trim().length}/50`}
         />
       )}
@@ -95,7 +112,7 @@ const TextArea = styled.textarea`
   padding: 0;
   border: none;
   resize: none;
-  font-family: "Nunito", sans-serif;
+  font-family: 'Nunito', sans-serif;
   font-size: 16px;
   font-weight: 500;
   line-height: 26px;

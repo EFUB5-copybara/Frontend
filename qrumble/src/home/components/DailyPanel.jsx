@@ -19,6 +19,7 @@ import brownbookmarkImg from '../assets/svgs/brownbookmark.svg';
 import ItemButtons from './ItemButtons';
 import AlertModal from './AlertModal';
 import AnswerCard from './AnswerCard';
+import { fetchDailyQuestion } from '../api/mypage';
 
 function DailyPanel({ date, onClose }) {
   const attendedDates = [4, 5, 6, 7, 8];
@@ -64,7 +65,8 @@ function DailyPanel({ date, onClose }) {
               return (
                 <DayCell
                   key={`${year}-${month}-${day}`}
-                  onClick={() => setTargetDate(new Date(year, month - 1, day))}>
+                  onClick={() => setTargetDate(new Date(year, month - 1, day))}
+                >
                   {isCookie ? (
                     <CookieIcon src={cookieImg} alt='cookie' />
                   ) : (
@@ -72,7 +74,8 @@ function DailyPanel({ date, onClose }) {
                       <DateText
                         $color={
                           isToday ? 'white' : isMissed ? 'error' : 'primary'
-                        }>
+                        }
+                      >
                         {day}
                       </DateText>
                     </DateBox>
