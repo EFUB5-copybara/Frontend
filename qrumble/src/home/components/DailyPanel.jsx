@@ -44,6 +44,31 @@ function DailyPanel({ date, onClose }) {
     );
   };
 
+  const [questionText, setQuestionText] = useState('');
+  const [questionDate, setQuestionDate] = useState('');
+
+  useEffect(() => {
+    const getQuestion = async () => {
+      if (!targetDate) return;
+
+      const y = targetDate.getFullYear();
+      const m = String(targetDate.getMonth() + 1).padStart(2, '0');
+      const d = String(targetDate.getDate()).padStart(2, '0');
+      const formattedDate = `${y}-${m}-${d}`;
+
+      try {
+        const res = await fetchDailyQuestion(formattedDate);
+        setQuestionText(res.content);
+        setQuestionDate(formattedDate);
+      } catch (e) {
+        setQuestionText('질문을 불러올 수 없습니다.');
+        setQuestionDate(formattedDate);
+      }
+    };
+
+    getQuestion();
+  }, [targetDate]);
+
   return (
     <>
       <Dim onClick={onClose}>
@@ -98,11 +123,9 @@ function DailyPanel({ date, onClose }) {
             <QuestionCard>
               <Header>
                 <Label>질문</Label>
-                <CardDateText>2025.04.02</CardDateText>
+                <CardDateText>{questionDate}</CardDateText>
               </Header>
-              <QuestionText>
-                Euismod id sapien mi massa tortor fames.
-              </QuestionText>
+              <QuestionText>{questionText}</QuestionText>
               <Bottom>
                 <BottomItem>
                   <BottomImg src={likeImg} alt='like' /> 공감
