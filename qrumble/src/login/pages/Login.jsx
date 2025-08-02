@@ -1,10 +1,12 @@
-import React from 'react';
-import LoginForm from '../components/LoginForm';
+import { useRedirectIfLoggedIn } from '@/hooks/useRedirectIfLoggedIn';
 import styled from 'styled-components';
+import LoginForm from '../components/LoginForm';
 import LoginSupportLinks from '../components/LoginSupportLinks';
 import LogoImg from '../components/Logo';
 
 export default function Login() {
+  useRedirectIfLoggedIn();
+
   return (
     <Container>
       <LogoImg />

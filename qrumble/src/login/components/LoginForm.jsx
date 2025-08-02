@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 export default function LoginForm() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    id: '',
+    username: '',
     password: '',
   });
 
@@ -19,13 +19,13 @@ export default function LoginForm() {
 
   const handleSubmit = async () => {
     try {
-      const response = await axiosInstance.post('/login', form);
+      const response = await axiosInstance.post('/auth/login', form);
       const { accessToken, refreshToken } = response.data;
 
       localStorage.setItem('token', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
 
-      navigate('/');
+      navigate('/home');
     } catch (err) {
       alert(err.response?.data?.message || '로그인에 실패했습니다.');
     }
@@ -35,8 +35,8 @@ export default function LoginForm() {
     <FormWrapper>
       <InputWrapper>
         <Input
-          name='id'
-          value={form.id}
+          name='username'
+          value={form.username}
           onChange={handleChange}
           type='text'
           placeholder='아이디를 입력해 주세요'

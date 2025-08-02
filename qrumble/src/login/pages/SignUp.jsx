@@ -6,8 +6,10 @@ import BackButton from '../components/BackButton';
 import SignUpForm from '../components/SignUpForm';
 import ConfirmButton from '../components/ConfirmButton';
 import axiosInstance from '@/api/axiosInstance';
+import { useRedirectIfLoggedIn } from '@/hooks/useRedirectIfLoggedIn';
 
 export default function SignUp() {
+  useRedirectIfLoggedIn();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -84,7 +86,7 @@ export default function SignUp() {
     }
 
     try {
-      await axiosInstance.post('/signup', form);
+      await axiosInstance.post('/auth/signup', form);
       alert('회원가입이 완료되었습니다.');
       navigate('/login');
     } catch (err) {
