@@ -4,13 +4,20 @@ import HintOImg from '../assets/svgs/hint-o.svg';
 import HintXImg from '../assets/svgs/hint-x.svg';
 import PublicOImg from '../assets/svgs/public-o.svg';
 import PublicXImg from '../assets/svgs/public-x.svg';
+import { checkGrammar } from '../api/homepage';
 
-function WriteButtonBar({ hintActive, setHintActive }) {
+function WriteButtonBar({ hintActive, setHintActive, text, setGrammarResult }) {
   const [isPublic, setIsPublic] = useState(true);
   const [grammarChecked, setGrammarChecked] = useState(true);
 
-  const handleGrammarCheck = () => {
-    setGrammarChecked(false);
+  const handleGrammarCheck = async () => {
+    try {
+      const result = await checkGrammar(text);
+      setGrammarChecked(false);
+      setGrammarResult(result);
+    } catch (error) {
+      console.error('문법 검사 실패:', error);
+    }
   };
 
   return (
@@ -29,7 +36,8 @@ function WriteButtonBar({ hintActive, setHintActive }) {
         <GrammarCheck
           disabled={!grammarChecked}
           onClick={handleGrammarCheck}
-          grammarChecked={grammarChecked}>
+          grammarChecked={grammarChecked}
+        >
           <CheckText>문법 검사 {grammarChecked ? '1/1' : '0/1'}</CheckText>
         </GrammarCheck>
       </RightButtonGroup>

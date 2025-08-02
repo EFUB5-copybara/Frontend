@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import starIcon from "../assets/svgs/star.svg";
-import fireIcon from "../assets/svgs/fire.svg";
-import fortunecookieIcon from "../assets/svgs/fortune-button.svg";
-import fortunecookieOpenedIcon from "../assets/svgs/broken-fortune-button.svg";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import starIcon from '../assets/svgs/star.svg';
+import fireIcon from '../assets/svgs/fire.svg';
+import fortunecookieIcon from '../assets/svgs/fortune-button.svg';
+import fortunecookieOpenedIcon from '../assets/svgs/broken-fortune-button.svg';
+import { getAnswerStreak, checkFortuneCookieUsed } from '../api/homepage';
 
 function MissionBar() {
   const navigate = useNavigate();
@@ -13,32 +14,55 @@ function MissionBar() {
   const handleFortuneClick = () => {
     setIsClicked(true);
     setTimeout(() => {
-      navigate("/home/fortune");
+      navigate('/home/fortune');
     }, 100);
   };
 
   const handleMissionClick = () => {
     setIsClicked(true);
     setTimeout(() => {
-      navigate("/home/mission");
+      navigate('/home/mission');
     }, 100);
   };
+
+  const [streak, setStreak] = useState(0);
+
+  const [alreadyOpened, setAlreadyOpened] = useState(false);
+
+  const isFortuneDisabled = isClicked || alreadyOpened;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [streakData, opened] = await Promise.all([
+          getAnswerStreak(),
+          checkFortuneCookieUsed(),
+        ]);
+        setStreak(streakData);
+        setAlreadyOpened(opened);
+      } catch (error) {
+        console.error('데이터 로드 실패:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <Bar>
       <Left>
         <MissionButton onClick={handleMissionClick}>
-          <StarIcon src={starIcon} alt="미션 버튼" />
+          <StarIcon src={starIcon} alt='미션 버튼' />
         </MissionButton>
         <DayIcon>
-          <FireIcon src={fireIcon} alt="fire" />
-          <Text>7일</Text>
+          <FireIcon src={fireIcon} alt='fire' />
+          <Text>{streak}일</Text>
         </DayIcon>
       </Left>
-      <FortuneButton onClick={handleFortuneClick} disabled={isClicked}>
+      <FortuneButton onClick={handleFortuneClick} disabled={isFortuneDisabled}>
         <CookieIcon
-          src={isClicked ? fortunecookieOpenedIcon : fortunecookieIcon}
-          alt="포춘쿠키 버튼"
+          src={alreadyOpened ? fortunecookieOpenedIcon : fortunecookieIcon}
+          alt='포춘쿠키 버튼'
         />
       </FortuneButton>
     </Bar>

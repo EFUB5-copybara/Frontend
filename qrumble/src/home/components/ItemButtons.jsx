@@ -4,6 +4,7 @@ import AlertModal from '../components/AlertModal.jsx';
 import keyImg from '../assets/svgs/key.svg';
 import shieldImg from '../assets/svgs/shield.svg';
 import eraserImg from '../assets/svgs/eraser.svg';
+import { useKeyItem, useShieldItem, useEraserItem } from '../api/homepage.js';
 
 function ItemButtons({ items, onUse, attendedDates, targetDate }) {
   const [modalInfo, setModalInfo] = useState({
@@ -51,13 +52,28 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
     console.log('check result:', canUse);
   };
 
-  const confirmUse = () => {
+  const confirmUse = async () => {
     if (!modalInfo.canUse) {
       closeModal();
       return;
     }
-    onUse(modalInfo.type);
-    closeModal();
+
+    try {
+      if (modalInfo.type === 'key') {
+        await useKeyItem();
+      } else if (modalInfo.type === 'shield') {
+        await useShieldItem();
+      } else if (modalInfo.type === 'eraser') {
+        await useEraserItem();
+      }
+
+      onUse(modalInfo.type);
+    } catch (error) {
+      alert('아이템 사용 중 오류가 발생했습니다.');
+      console.error(error);
+    } finally {
+      closeModal();
+    }
   };
 
   const closeModal = () => {

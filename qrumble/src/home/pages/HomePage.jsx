@@ -10,7 +10,7 @@ import MonthPickerModal from '../components/MonthPickerModal';
 import QuestionList from '../components/QuestionList';
 import DailyPanel from '../components/DailyPanel';
 import WriteFixButton from '../components/WriteFixButton';
-import { fetchDailyQuestion } from '../api/mypage';
+import { getDailyQuestion } from '../api/homepage';
 
 function HomePage() {
   const [year, setYear] = useState(2025);
@@ -87,7 +87,7 @@ function HomePage() {
       ).padStart(2, '0')}`;
 
       try {
-        const data = await fetchDailyQuestion(formattedDate);
+        const data = await getDailyQuestion(formattedDate);
         setDailyQuestion(data.content);
         setQuestionError(null);
       } catch (error) {

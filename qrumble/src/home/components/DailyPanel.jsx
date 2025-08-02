@@ -19,16 +19,29 @@ import brownbookmarkImg from '../assets/svgs/brownbookmark.svg';
 import ItemButtons from './ItemButtons';
 import AlertModal from './AlertModal';
 import AnswerCard from './AnswerCard';
-import { fetchDailyQuestion } from '../api/mypage';
+import { getDailyQuestion, getItemCounts } from '../api/homepage';
 
 function DailyPanel({ date, onClose }) {
   const attendedDates = [4, 5, 6, 7, 8];
 
-  const [items, setItems] = useState([
-    { name: 'key', img: keyImg, count: 10 },
-    { name: 'shield', img: shieldImg, count: 10 },
-    { name: 'eraser', img: eraserImg, count: 10 },
-  ]);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const res = await getItemCounts();
+        setItems([
+          { name: 'key', img: keyImg, count: res.keyCount },
+          { name: 'shield', img: shieldImg, count: res.shieldCount },
+          { name: 'eraser', img: eraserImg, count: res.eraserCount },
+        ]);
+      } catch (err) {
+        console.error('아이템 개수 조회 실패:', err);
+      }
+    };
+
+    fetchItems();
+  }, []);
 
   const [targetDate, setTargetDate] = useState(null);
 
@@ -57,7 +70,7 @@ function DailyPanel({ date, onClose }) {
       const formattedDate = `${y}-${m}-${d}`;
 
       try {
-        const res = await fetchDailyQuestion(formattedDate);
+        const res = await getDailyQuestion(formattedDate);
         setQuestionText(res.content);
         setQuestionDate(formattedDate);
       } catch (e) {

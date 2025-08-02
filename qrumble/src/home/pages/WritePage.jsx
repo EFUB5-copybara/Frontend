@@ -9,15 +9,17 @@ import AlertModal from '../components/AlertModal';
 import background1Img from '../assets/svgs/background1.svg';
 import background2Img from '../assets/svgs/background2.svg';
 import background3Img from '../assets/svgs/background3.svg';
-import { fetchDailyQuestion } from '../api/mypage';
+import { getTodayQuestion, getQuestionHints } from '../api/homepage';
 
 function WritePage() {
   const [hintActive, setHintActive] = useState(false);
   const [text, setText] = useState('');
-  const hintKeywords = ['cafe', 'game', 'friend'];
+  const [hintKeywords, setHintKeywords] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  const [dailyQuestion, setDailyQuestion] = useState('');
+  const [todayQuestion, setTodayQuestion] = useState('');
+
+  const [grammarResult, setGrammarResult] = useState(null);
 
   const MIN_TEXT_LENGTH = 50;
 
@@ -33,16 +35,20 @@ function WritePage() {
   };
 
   useEffect(() => {
-    const loadQuestion = async () => {
+    const loadContent = async () => {
       try {
-        const res = await fetchDailyQuestion('2025-07-31'); // 날짜는 예시
-        setDailyQuestion(res.content);
+        const today = new Date().toISOString().slice(0, 10); // 나중에 현재 날짜 기반으로 바꿀 수도 있음
+        const resQ = await getTodayQuestion();
+        const resH = await getQuestionHints(today);
+        setTodayQuestion(resQ.content);
+        setHintKeywords(resH.map((hint) => hint.content));
       } catch (e) {
-        setDailyQuestion('질문을 불러오지 못했습니다.');
+        setTodayQuestion('질문을 불러오지 못했습니다.');
+        setHintKeywords([]);
       }
     };
 
-    loadQuestion();
+    loadContent();
   }, []);
 
   return (
@@ -50,7 +56,7 @@ function WritePage() {
       <Container>
         <Top>
           <WriteTopBar onCheck={handleSubmit} textLength={text.trim().length} />
-          <WriteQuestion question={dailyQuestion} />
+          <WriteQuestion question={todayQuestion} />
 
           {hintActive && (
             <HintTagList
@@ -64,6 +70,8 @@ function WritePage() {
           <WriteBottomBar
             hintActive={hintActive}
             setHintActive={setHintActive}
+            text={text}
+            setGrammarResult={setGrammarResult}
           />
         </Bottom>
       </Container>
