@@ -29,6 +29,7 @@ import CommunityLayout from './layout/CommunityLayout';
 import navigation from './navigations';
 import { configRoutes } from './utils/configRoutes';
 import { getNavigationItems } from './utils/getNavigationItems';
+import ThemePage from './mypage/pages/ThemePage';
 
 export const routes = [
   {
@@ -43,6 +44,10 @@ export const routes = [
       {
         path: 'user-profile/:userId',
         element: <UserProfilePage />,
+      },
+      {
+        path: '/mypage/theme',
+        element: <ThemePage />,
       },
     ],
   },
@@ -109,10 +114,6 @@ export const routes = [
     path: '/report',
     element: <ReportPage />,
   },
-  {
-    path: '/shop',
-    element: <ShopPage />,
-  }
 ];
 
 const router = createBrowserRouter(routes, {
