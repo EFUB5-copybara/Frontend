@@ -10,10 +10,12 @@ import SignUp from './login/pages/SignUp';
 import FortuneCookiePage from './home/pages/FortuneCookiePage';
 import MissionPage from './home/pages/MissionPage';
 import WritePage from './home/pages/WritePage';
+import ChartPage from './home/pages/ChartPage';
 
 import BookmarkPage from './mypage/pages/BookmarkPage';
 import MyInfoPage from './mypage/pages/MyInfoPage';
 import MyRecordPage from './mypage/pages/MyRecordPage';
+import ThemePage from './mypage/pages/ThemePage';
 
 import CommunityDetailPage from './community/pages/CommunityDetailPage';
 
@@ -83,12 +85,20 @@ export const routes = [
     element: <BookmarkPage />,
   },
   {
+    path: '/mypage/theme',
+    element: <ThemePage />,
+  },
+  {
     path: '/home/write',
     element: <WritePage />,
   },
   {
     path: '/home/fortune',
     element: <FortuneCookiePage />,
+  },
+  {
+    path: '/home/detail',
+    element: <ChartPage />,
   },
   {
     path: '/home/mission',
@@ -112,7 +122,7 @@ export const routes = [
   {
     path: '/shop',
     element: <ShopPage />,
-  }
+  },
 ];
 
 const router = createBrowserRouter(routes, {

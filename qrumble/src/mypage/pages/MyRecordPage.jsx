@@ -1,20 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import MyPageTopBar from '../components/MyPageTopBar';
+import { getMyRecords } from '../api/mypage';
 
 function MyRecordPage() {
+  const [record, setRecord] = useState({
+    nickname: '',
+    totalAnswers: 0,
+    totalCharacters: 0,
+  });
+
+  useEffect(() => {
+    const fetchRecord = async () => {
+      try {
+        const data = await getMyRecords();
+        setRecord(data);
+      } catch (error) {
+        throw error;
+      }
+    };
+
+    fetchRecord();
+  }, []);
+
   return (
     <Wrapper>
       <MyPageTopBar title='내 기록' />
       <MyRecordWrapper>
-        <Title>00님의 일기</Title>
+        <Title>{record.nickname}님의 일기</Title>
         <RecordDetail>
           <DetailTitle>작성 개수</DetailTitle>
-          <DetailContent>10개</DetailContent>
+          <DetailContent>{record.totalAnswers}개</DetailContent>
         </RecordDetail>
         <RecordDetail>
           <DetailTitle>글자 수</DetailTitle>
-          <DetailContent>234자</DetailContent>
+          <DetailContent>{record.totalCharacters}자</DetailContent>
         </RecordDetail>
       </MyRecordWrapper>
     </Wrapper>

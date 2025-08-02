@@ -6,7 +6,7 @@ import alarmoffImg from '../assets/alramoff.svg';
 import bookmarkImg from '../assets/bookmark.svg';
 import myrecordImg from '../assets/myrecord.svg';
 import profile1Img from '../assets/profile1.svg';
-import { fetchUserInfo } from '../api/mypage';
+import { getMyPage } from '../api/mypage';
 
 function MyPage() {
   const [userInfo, setUserInfo] = useState(null);
@@ -17,7 +17,7 @@ function MyPage() {
   useEffect(() => {
     const getUserInfo = async () => {
       try {
-        const data = await fetchUserInfo();
+        const data = await getMyPage();
         setUserInfo(data);
       } catch (err) {
         console.error('유저 정보 로딩 실패', err);

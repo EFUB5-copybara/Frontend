@@ -1,17 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
-function Article() {
+function Article({ data }) {
+  if (!data) return null;
+
+  const { title, content, createdAt, userId } = data;
+
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    return `${date.getFullYear()}.${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
+  };
+
   return (
     <Container>
       <ArticleTopBar>
-        <ArticleTitle>제목</ArticleTitle>
-        <ArticleDate>2025.04.06</ArticleDate>
+        <ArticleTitle>{title}</ArticleTitle>
+        <ArticleDate>{formatDate(createdAt)}</ArticleDate>
       </ArticleTopBar>
-      <ArticleContents>내용</ArticleContents>
+      <ArticleContents>{content}</ArticleContents>
       <ArticleUser>
         <ArticleUserProfile />
-        <ArticleUserId>user456</ArticleUserId>
+        <ArticleUserId>{userId}</ArticleUserId>
       </ArticleUser>
     </Container>
   );
