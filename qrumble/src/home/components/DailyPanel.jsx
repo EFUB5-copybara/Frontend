@@ -20,6 +20,7 @@ import ItemButtons from './ItemButtons';
 import AlertModal from './AlertModal';
 import AnswerCard from './AnswerCard';
 import { getDailyQuestion, getItemCounts } from '../api/homepage';
+import { useNavigate } from 'react-router-dom';
 
 function DailyPanel({ date, onClose }) {
   const attendedDates = [4, 5, 6, 7, 8];
@@ -82,6 +83,12 @@ function DailyPanel({ date, onClose }) {
     getQuestion();
   }, [targetDate]);
 
+  const navigate = useNavigate();
+
+  const handleQuestionClick = () => {
+    navigate('/home/detail');
+  };
+
   return (
     <>
       <Dim onClick={onClose}>
@@ -133,7 +140,7 @@ function DailyPanel({ date, onClose }) {
           />
 
           <QnAWrapper>
-            <QuestionCard>
+            <QuestionCard onClick={handleQuestionClick}>
               <Header>
                 <Label>질문</Label>
                 <CardDateText>{questionDate}</CardDateText>
@@ -224,6 +231,8 @@ const QuestionCard = styled.div`
   padding: 14px 16px 2px 16px;
   border: 1px solid black;
   margin-bottom: 6px;
+
+  cursor: pointer;
 `;
 
 const Header = styled.div`
