@@ -75,7 +75,7 @@ export const routes = [
     element: <MyInfoPage />,
   },
   {
-    path: '/mypage/myrecords',
+    path: '/mypage/record',
     element: <MyRecordPage />,
   },
   {

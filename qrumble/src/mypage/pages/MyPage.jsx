@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import alarmonImg from '../assets/alramon.svg';
@@ -6,22 +6,36 @@ import alarmoffImg from '../assets/alramoff.svg';
 import bookmarkImg from '../assets/bookmark.svg';
 import myrecordImg from '../assets/myrecord.svg';
 import profile1Img from '../assets/profile1.svg';
+import { fetchUserInfo } from '../api/mypage';
 
 function MyPage() {
+  const [userInfo, setUserInfo] = useState(null);
   const [selected, setSelected] = useState('info');
   const [alarmOn, setAlarmOn] = useState(false);
 
   const navigate = useNavigate();
+  useEffect(() => {
+    const getUserInfo = async () => {
+      try {
+        const data = await fetchUserInfo();
+        setUserInfo(data);
+      } catch (err) {
+        console.error('유저 정보 로딩 실패', err);
+      }
+    };
+
+    getUserInfo();
+  }, []);
 
   return (
     <>
       <TitleText>마이 페이지</TitleText>
       <Container>
         <UserInfoButton>
-          <Profile src={profile1Img} alt='기본 프로필' />
+          <Profile src={profile1Img} alt='프로필' />
           <UserInfoWrapper>
-            <UserName>사용자 이름</UserName>
-            <UserMail>user@email.com</UserMail>
+            <UserName>{userInfo?.username || '로딩 중...'}</UserName>
+            <UserMail>{userInfo?.email || ''}</UserMail>
           </UserInfoWrapper>
         </UserInfoButton>
         <InfoThemeWrapper>
@@ -30,7 +44,8 @@ function MyPage() {
             onClick={() => {
               setSelected('info');
               navigate('/mypage/info');
-            }}>
+            }}
+          >
             내 정보
           </TabButton>
 
@@ -39,21 +54,24 @@ function MyPage() {
             onClick={() => {
               setSelected('theme');
               navigate('/mypage/theme');
-            }}>
+            }}
+          >
             테마
           </TabButton>
         </InfoThemeWrapper>
         <InfoBox>
           <MyRecordButton
             onClick={() => {
-              navigate('/mypage/myrecords');
-            }}>
+              navigate('/mypage/record');
+            }}
+          >
             <ButtonImg src={myrecordImg} alt='my record' />내 기록
           </MyRecordButton>
           <BookMarkButton
             onClick={() => {
               navigate('/mypage/bookmarks');
-            }}>
+            }}
+          >
             <ButtonImg src={bookmarkImg} alt='bookmark' />
             북마크
           </BookMarkButton>
@@ -65,15 +83,15 @@ function MyPage() {
             {alarmOn ? '알림 끄기' : '알림 켜기'}
           </AlramButton>
           <NumberOfInfo>
-            <Count>24</Count>
+            <Count>{userInfo?.totalLikesCount ?? 0}</Count>
             좋아요
           </NumberOfInfo>
           <NumberOfInfo>
-            <Count>16</Count>
+            <Count>{userInfo?.totalReceivedCommentsCount ?? 0}</Count>
             댓글 수
           </NumberOfInfo>
           <NumberOfInfo>
-            <Count>32</Count>
+            <Count>{userInfo?.totalWrittenAnswersCount ?? 0}</Count>
             작성한 일기
           </NumberOfInfo>
         </InfoBox>
