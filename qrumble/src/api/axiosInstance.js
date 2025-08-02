@@ -19,14 +19,40 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// axiosInstance.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response?.status === 401) {
-//       console.warn('인증 오류: 로그인 필요');
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken) throw new Error('No refresh token');
+
+        const res = await axios.post(
+          `${import.meta.env.VITE_API_URL}/auth/token`,
+          {
+            refreshToken,
+          }
+        );
+
+        const { accessToken, refreshToken: newRefreshToken } = res.data;
+
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('refreshToken', newRefreshToken);
+
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default axiosInstance;
