@@ -12,14 +12,14 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     display: flex;
     justify-content: center;
-    background-color: #f8f8f8; 
+    /* background-color: #f8f8f8;  */
   }
 
     #root {
     width: 360px;
     height: 800px;
     overflow: hidden;
-    background-color: ${({ theme }) => theme.colors.ivory3};
+    /* background-color: ${({ theme }) => theme.colors.ivory3}; */
     border: 1px solid #ccc;
   }
 

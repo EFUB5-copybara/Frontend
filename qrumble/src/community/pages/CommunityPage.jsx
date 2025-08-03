@@ -43,7 +43,8 @@ export default function CommunityPage() {
 }
 
 const Container = styled.div`
-  margin-bottom: 65px;
+  padding-bottom: 65px;
+  background-color: ${({ theme }) => theme.colors.ivory3};
 `;
 
 const Wrapper = styled.div`
