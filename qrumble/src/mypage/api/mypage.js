@@ -3,7 +3,7 @@ import axios from '../../api/axiosInstance';
 // 마이페이지 조회
 export const getMyPage = async () => {
   try {
-    const response = await axios.get('/members/mypage', {
+    const response = await axios.get('/mypage', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -19,7 +19,7 @@ export const getMyPage = async () => {
 export const updateMemberInfo = async ({ nickname, email }) => {
   try {
     const response = await axios.patch(
-      '/members',
+      '/mypage/my-info',
       { nickname, email },
       {
         headers: {
@@ -38,7 +38,7 @@ export const updateMemberInfo = async ({ nickname, email }) => {
 // 내 정보
 export const getMyInfo = async () => {
   try {
-    const response = await axios.get('/members/me', {
+    const response = await axios.get('/mypage/my-info', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -53,7 +53,7 @@ export const getMyInfo = async () => {
 // 내 기록
 export const getMyRecords = async () => {
   try {
-    const response = await axios.get('/members/me/answers', {
+    const response = await axios.get('/mypage/record', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -69,7 +69,7 @@ export const getMyRecords = async () => {
 // 북마크
 export const getMyBookmarks = async () => {
   try {
-    const response = await axios.get('/members/me/bookmarks', {
+    const response = await axios.get('/mypage/bookmarks', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
