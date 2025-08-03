@@ -31,7 +31,6 @@ import CommunityLayout from './layout/CommunityLayout';
 import navigation from './navigations';
 import { configRoutes } from './utils/configRoutes';
 import { getNavigationItems } from './utils/getNavigationItems';
-import ThemePage from './mypage/pages/ThemePage';
 
 export const routes = [
   {
