@@ -24,25 +24,48 @@ function HomePage() {
   const navigate = useNavigate();
 
   const [startY, setStartY] = useState(null);
+  const [startX, setStartX] = useState(null);
 
-  const handleStart = (e) => {
-    const y = e.touches ? e.touches[0].clientY : e.clientY;
-    setStartY(y);
+  const handleTouchStart = (e) => {
+    const touch = e.touches ? e.touches[0] : e;
+    setStartX(touch.clientX);
+    setStartY(touch.clientY);
   };
 
-  const handleEnd = (e) => {
-    const endY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+  const handleTouchEnd = (e) => {
+    const touch = e.changedTouches ? e.changedTouches[0] : e;
+    const endY = touch.clientY;
+    const endX = touch.clientX;
 
+    // 상하 스와이프 처리
     if (startY !== null) {
       const diffY = endY - startY;
-
-      if (diffY > 50) {
-        setCollapsed(true);
-      } else if (diffY < -50) {
-        setCollapsed(false);
-      }
+      if (diffY > 50) setCollapsed(true);
+      else if (diffY < -50) setCollapsed(false);
       setStartY(null);
     }
+
+    // 좌우 스와이프 처리
+    if (startX !== null) {
+      const diffX = endX - startX;
+      if (diffX > 50) animateMonthChange('prev');
+      else if (diffX < -50) animateMonthChange('next');
+      setStartX(null);
+    }
+  };
+
+  const moveToNextMonth = () => {
+    const nextMonth = month === 12 ? 1 : month + 1;
+    const nextYear = month === 12 ? year + 1 : year;
+    setMonth(nextMonth);
+    setYear(nextYear);
+  };
+
+  const moveToPreviousMonth = () => {
+    const prevMonth = month === 1 ? 12 : month - 1;
+    const prevYear = month === 1 ? year - 1 : year;
+    setMonth(prevMonth);
+    setYear(prevYear);
   };
 
   const handleWheel = (e) => {
@@ -100,6 +123,20 @@ function HomePage() {
     fetchQuestion();
   }, [selectedDate]);
 
+  const [isSliding, setIsSliding] = useState(false);
+  const [direction, setDirection] = useState('next');
+
+  const animateMonthChange = (dir) => {
+    setDirection(dir);
+    setIsSliding(true);
+
+    setTimeout(() => {
+      if (dir === 'next') moveToNextMonth();
+      else moveToPreviousMonth();
+      setIsSliding(false);
+    }, 70);
+  };
+
   return (
     <Container>
       <MissionBar />
@@ -114,7 +151,7 @@ function HomePage() {
           <MonthPickerModal
             selectedYear={year}
             selectedMonth={month}
-            selectedDate={1} // 기본 초기 날짜로 전달
+            selectedDate={0} // 기본 초기 날짜로 전달
             onSelect={handleMonthSelect}
             onClose={() => setIsMonthSelectorOpen(false)}
           />
@@ -122,33 +159,34 @@ function HomePage() {
       </SelectorWrapper>
 
       <SwipeArea
-        onTouchStart={handleStart}
-        onTouchEnd={handleEnd}
-        onMouseDown={handleStart}
-        onMouseUp={handleEnd}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleTouchStart}
+        onMouseUp={handleTouchEnd}
         onWheel={handleWheel}
       >
         <ContentArea $collapsed={collapsed}>
-          <Calendar
-            year={year}
-            month={month}
-            onSelectDate={({ day }) => {
-              const weekDates = getWeekDatesCenteredOnToday(
-                year,
-                month - 1,
-                day
-              );
-              setSelectedDate({
-                day,
-                month,
-                year,
-                weekDates,
-              });
-              setIsDailyPanelOpen(true);
-            }}
-            setMonthlyCookieJarLevel={setMonthlyCookieJarLevel}
-          />
-
+          <CalendarSlider $direction={direction} $animating={isSliding}>
+            <Calendar
+              year={year}
+              month={month}
+              onSelectDate={({ day }) => {
+                const weekDates = getWeekDatesCenteredOnToday(
+                  year,
+                  month - 1,
+                  day
+                );
+                setSelectedDate({
+                  day,
+                  month,
+                  year,
+                  weekDates,
+                });
+                setIsDailyPanelOpen(true);
+              }}
+              setMonthlyCookieJarLevel={setMonthlyCookieJarLevel}
+            />
+          </CalendarSlider>
           <DailyQuestion
             status={
               questionError ? 'error' : !dailyQuestion ? 'loading' : 'success'
@@ -227,3 +265,22 @@ function getWeekDatesCenteredOnToday(year, month, selectedDay) {
 
   return weekDates;
 }
+
+const CalendarSlider = styled.div`
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+
+  & > div {
+    width: 100%;
+    flex-shrink: 0;
+    transform: ${({ $direction, $animating }) =>
+      $animating
+        ? $direction === 'next'
+          ? 'translateX(100%)'
+          : 'translateX(-100%)'
+        : 'translateX(0)'};
+    transition: transform 0.3s ease;
+  }
+`;
