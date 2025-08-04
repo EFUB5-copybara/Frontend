@@ -1,11 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import MyPageTopBar from '../components/MyPageTopBar';
 import editImg from '../assets/pencil_line.svg';
 import ProfileModal from '../components/ProfileModal';
+import { getMyInfo } from '../api/mypage';
 
 function MyInfoPage() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [myInfo, setMyInfo] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getMyInfo();
+        setMyInfo(data);
+      } catch (err) {
+        console.error('내 정보 불러오기 실패:', err);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <Wrapper>
@@ -18,24 +32,29 @@ function MyInfoPage() {
               <EditButton>
                 <EditImg src={editImg} alt='edit' />
               </EditButton>
-              <UserName>사용자 이름</UserName>
+              <UserName>{myInfo?.nickname || '닉네임 없음'}</UserName>
             </NameWrapper>
-            <UserMail>user@email.com</UserMail>
+            <UserMail>{myInfo?.email || '이메일 없음'}</UserMail>
           </UserInfoWrapper>
         </UserInfo>
         <AccountInfo>
           <AccountText>계정 정보</AccountText>
           <InfoDetail>
             <DetailTitle>사용자 ID</DetailTitle>
-            <DetailContent>user123</DetailContent>
+            <DetailContent>{myInfo?.userId || 'ID 없음'}</DetailContent>
           </InfoDetail>
           <InfoDetail>
             <DetailTitle>가입일</DetailTitle>
-            <DetailContent>2025.04.06</DetailContent>
+            <DetailContent>
+              {' '}
+              {myInfo?.createdAt
+                ? new Date(myInfo.createdAt).toLocaleDateString('ko-KR')
+                : '가입일 없음'}
+            </DetailContent>
           </InfoDetail>
           <InfoDetail>
             <DetailTitle>비밀번호</DetailTitle>
-            <DetailContent>qru******</DetailContent>
+            <DetailContent>*********</DetailContent>
           </InfoDetail>
           <InfoDetail>
             <DetailTitle>탈퇴하기</DetailTitle>

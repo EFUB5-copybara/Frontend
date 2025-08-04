@@ -46,6 +46,7 @@ const Container = styled.div`
   flex-direction: column;
   position: relative;
   height: 800px;
+  background-color: white;
 `;
 
 const TextWrapper = styled.div`

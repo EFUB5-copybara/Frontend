@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import MissionBar from "../components/MissionBar";
-import MonthSelector from "../components/MonthSelector";
-import Calendar from "../components/Calendar";
-import DailyQuestion from "../components/DailyQuestion";
-import Cookiejar from "../components/Cookiejar";
-import MonthPickerModal from "../components/MonthPickerModal";
-import QuestionList from "../components/QuestionList";
-import DailyPanel from "../components/DailyPanel";
-import WriteFixButton from "../components/WriteFixButton";
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import MissionBar from '../components/MissionBar';
+import MonthSelector from '../components/MonthSelector';
+import Calendar from '../components/Calendar';
+import DailyQuestion from '../components/DailyQuestion';
+import Cookiejar from '../components/Cookiejar';
+import MonthPickerModal from '../components/MonthPickerModal';
+import QuestionList from '../components/QuestionList';
+import DailyPanel from '../components/DailyPanel';
+import WriteFixButton from '../components/WriteFixButton';
+import { getDailyQuestion } from '../api/homepage';
 
 function HomePage() {
   const [year, setYear] = useState(2025);
@@ -23,25 +24,48 @@ function HomePage() {
   const navigate = useNavigate();
 
   const [startY, setStartY] = useState(null);
+  const [startX, setStartX] = useState(null);
 
-  const handleStart = (e) => {
-    const y = e.touches ? e.touches[0].clientY : e.clientY;
-    setStartY(y);
+  const handleTouchStart = (e) => {
+    const touch = e.touches ? e.touches[0] : e;
+    setStartX(touch.clientX);
+    setStartY(touch.clientY);
   };
 
-  const handleEnd = (e) => {
-    const endY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+  const handleTouchEnd = (e) => {
+    const touch = e.changedTouches ? e.changedTouches[0] : e;
+    const endY = touch.clientY;
+    const endX = touch.clientX;
 
+    // 상하 스와이프 처리
     if (startY !== null) {
       const diffY = endY - startY;
-
-      if (diffY > 50) {
-        setCollapsed(true);
-      } else if (diffY < -50) {
-        setCollapsed(false);
-      }
+      if (diffY > 50) setCollapsed(true);
+      else if (diffY < -50) setCollapsed(false);
       setStartY(null);
     }
+
+    // 좌우 스와이프 처리
+    if (startX !== null) {
+      const diffX = endX - startX;
+      if (diffX > 50) animateMonthChange('prev');
+      else if (diffX < -50) animateMonthChange('next');
+      setStartX(null);
+    }
+  };
+
+  const moveToNextMonth = () => {
+    const nextMonth = month === 12 ? 1 : month + 1;
+    const nextYear = month === 12 ? year + 1 : year;
+    setMonth(nextMonth);
+    setYear(nextYear);
+  };
+
+  const moveToPreviousMonth = () => {
+    const prevMonth = month === 1 ? 12 : month - 1;
+    const prevYear = month === 1 ? year - 1 : year;
+    setMonth(prevMonth);
+    setYear(prevYear);
   };
 
   const handleWheel = (e) => {
@@ -73,6 +97,46 @@ function HomePage() {
     setIsDailyPanelOpen(true);
   };
 
+  const [dailyQuestion, setDailyQuestion] = useState('');
+  const [questionError, setQuestionError] = useState(null);
+
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      if (!selectedDate) return;
+
+      const { year, month, day } = selectedDate;
+      const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(
+        day
+      ).padStart(2, '0')}`;
+
+      try {
+        const data = await getDailyQuestion(formattedDate);
+        setDailyQuestion(data.content);
+        setQuestionError(null);
+      } catch (error) {
+        setDailyQuestion('');
+        const message = error.response?.data?.message || '질문 불러오기 실패';
+        setQuestionError(message);
+      }
+    };
+
+    fetchQuestion();
+  }, [selectedDate]);
+
+  const [isSliding, setIsSliding] = useState(false);
+  const [direction, setDirection] = useState('next');
+
+  const animateMonthChange = (dir) => {
+    setDirection(dir);
+    setIsSliding(true);
+
+    setTimeout(() => {
+      if (dir === 'next') moveToNextMonth();
+      else moveToPreviousMonth();
+      setIsSliding(false);
+    }, 70);
+  };
+
   return (
     <Container>
       <MissionBar />
@@ -87,7 +151,7 @@ function HomePage() {
           <MonthPickerModal
             selectedYear={year}
             selectedMonth={month}
-            selectedDate={1} // 기본 초기 날짜로 전달
+            selectedDate={0} // 기본 초기 날짜로 전달
             onSelect={handleMonthSelect}
             onClose={() => setIsMonthSelectorOpen(false)}
           />
@@ -95,33 +159,40 @@ function HomePage() {
       </SelectorWrapper>
 
       <SwipeArea
-        onTouchStart={handleStart}
-        onTouchEnd={handleEnd}
-        onMouseDown={handleStart}
-        onMouseUp={handleEnd}
-        onWheel={handleWheel}
-      >
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleTouchStart}
+        onMouseUp={handleTouchEnd}
+        onWheel={handleWheel}>
         <ContentArea $collapsed={collapsed}>
-          <Calendar
-            year={year}
-            month={month}
-            onSelectDate={({ day }) => {
-              const weekDates = getWeekDatesCenteredOnToday(
-                year,
-                month - 1,
-                day
-              );
-              setSelectedDate({
-                day,
-                month,
-                year,
-                weekDates,
-              });
-              setIsDailyPanelOpen(true);
-            }}
-            setMonthlyCookieJarLevel={setMonthlyCookieJarLevel}
+          <CalendarSlider $direction={direction} $animating={isSliding}>
+            <Calendar
+              year={year}
+              month={month}
+              onSelectDate={({ day }) => {
+                const weekDates = getWeekDatesCenteredOnToday(
+                  year,
+                  month - 1,
+                  day
+                );
+                setSelectedDate({
+                  day,
+                  month,
+                  year,
+                  weekDates,
+                });
+                setIsDailyPanelOpen(true);
+              }}
+              setMonthlyCookieJarLevel={setMonthlyCookieJarLevel}
+            />
+          </CalendarSlider>
+          <DailyQuestion
+            status={
+              questionError ? 'error' : !dailyQuestion ? 'loading' : 'success'
+            }
+            question={dailyQuestion}
+            onClick={() => navigate('/home/write')}
           />
-          <DailyQuestion onClick={() => navigate("/home/write")} />
           <Cookiejar level={monthlyCookieJarLevel} />
         </ContentArea>
 
@@ -147,13 +218,17 @@ const Container = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 50px 19px 0 18px;
+  align-items: center;
+  padding: 30px 20px 65px 20px;
+  /* padding: 50px 19px 0 18px; */
+  height: 800px;
   background-color: ${({ theme }) => theme.colors.ivory3};
   gap: 14px;
 `;
 
 const SelectorWrapper = styled.div`
   position: relative;
+  width: 100%;
 `;
 
 const SwipeArea = styled.div`
@@ -161,7 +236,7 @@ const SwipeArea = styled.div`
 `;
 
 const ContentArea = styled.div`
-  max-height: ${({ $collapsed }) => ($collapsed ? "0px" : "1000px")};
+  max-height: ${({ $collapsed }) => ($collapsed ? '0px' : '1000px')};
   opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
   transition: all 0.4s ease;
   display: flex;
@@ -170,7 +245,7 @@ const ContentArea = styled.div`
 `;
 
 const QuestionArea = styled.div`
-  max-height: ${({ $collapsed }) => ($collapsed ? "1000px" : "0px")};
+  max-height: ${({ $collapsed }) => ($collapsed ? '1000px' : '0px')};
   opacity: ${({ $collapsed }) => ($collapsed ? 1 : 0)};
   transition: all 0.4s ease;
   overflow: hidden;
@@ -192,3 +267,22 @@ function getWeekDatesCenteredOnToday(year, month, selectedDay) {
 
   return weekDates;
 }
+
+const CalendarSlider = styled.div`
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+
+  & > div {
+    width: 100%;
+    flex-shrink: 0;
+    transform: ${({ $direction, $animating }) =>
+      $animating
+        ? $direction === 'next'
+          ? 'translateX(100%)'
+          : 'translateX(-100%)'
+        : 'translateX(0)'};
+    transition: transform 0.3s ease;
+  }
+`;
