@@ -6,7 +6,7 @@ import browncommentImg from '../assets/svgs/brownmessage.svg';
 import brownbookmarkImg from '../assets/svgs/brownbookmark.svg';
 import { useNavigate } from 'react-router-dom';
 
-function AnswerCard({ id, title, subtitle, userId, rank }) {
+export default function AnswerCard({ id, title, subtitle, userId, rank }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -40,18 +40,17 @@ function AnswerCard({ id, title, subtitle, userId, rank }) {
   );
 }
 
-export default AnswerCard;
-
 const Wrapper = styled.div`
   display: flex;
-  padding: ${({ $hasRank }) => ($hasRank ? '0 10px 0 20px' : '0 20px')};
+  justify-content: space-between;
+  align-items: center;
+  padding: ${({ $hasRank }) =>
+    $hasRank ? '10px 10px 0 20px' : '10px 10px 0 10px'};
   height: 104px;
   border: 1px solid ${({ theme }) => theme.colors.brown1};
   border-radius: 10px;
   background-color: ${({ theme }) => theme.colors.white};
   gap: 10px;
-  justify-content: space-between;
-  align-items: center;
   cursor: pointer;
 `;
 
@@ -64,18 +63,19 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  flex-grow: 1;
 `;
 
 const AnswerTitle = styled.div`
   display: flex;
+  flex-grow: 1;
   flex-direction: column;
-  width: 261px;
+  border-radius: 10px;
   height: 52px;
   ${({ theme }) => theme.fonts.b16B};
   background-color: ${({ theme }) => theme.colors.ivory2};
   color: ${({ theme }) => theme.colors.primary};
   padding: 3px 9px 9px 8px;
-  margin-top: 10px;
 
   span {
     ${({ theme }) => theme.fonts.c12L};

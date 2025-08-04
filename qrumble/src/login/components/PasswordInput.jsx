@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import EyeIcon from '../assets/svgs/eye_option.svg?react';
 import EyeOffIcon from '../assets/svgs/eye_option_off.svg?react';
 
-export default function PasswordInput({ placeholder }) {
+export default function PasswordInput({ name, value, onChange, placeholder }) {
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => setShowPassword((prev) => !prev);
 
@@ -11,6 +11,9 @@ export default function PasswordInput({ placeholder }) {
     <InputWrapper>
       <StyledInput
         type={showPassword ? 'text' : 'password'}
+        name={name}
+        value={value}
+        onChange={onChange}
         placeholder={placeholder}
       />
       <ToggleButton type='button' onClick={toggleShowPassword}>

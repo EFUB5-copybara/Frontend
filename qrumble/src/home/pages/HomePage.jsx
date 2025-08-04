@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import MissionBar from '../components/MissionBar';
@@ -10,6 +10,7 @@ import MonthPickerModal from '../components/MonthPickerModal';
 import QuestionList from '../components/QuestionList';
 import DailyPanel from '../components/DailyPanel';
 import WriteFixButton from '../components/WriteFixButton';
+import { getDailyQuestion } from '../api/homepage';
 
 function HomePage() {
   const [year, setYear] = useState(2025);
@@ -73,6 +74,32 @@ function HomePage() {
     setIsDailyPanelOpen(true);
   };
 
+  const [dailyQuestion, setDailyQuestion] = useState('');
+  const [questionError, setQuestionError] = useState(null);
+
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      if (!selectedDate) return;
+
+      const { year, month, day } = selectedDate;
+      const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(
+        day
+      ).padStart(2, '0')}`;
+
+      try {
+        const data = await getDailyQuestion(formattedDate);
+        setDailyQuestion(data.content);
+        setQuestionError(null);
+      } catch (error) {
+        setDailyQuestion('');
+        const message = error.response?.data?.message || '질문 불러오기 실패';
+        setQuestionError(message);
+      }
+    };
+
+    fetchQuestion();
+  }, [selectedDate]);
+
   return (
     <Container>
       <MissionBar />
@@ -121,7 +148,15 @@ function HomePage() {
             }}
             setMonthlyCookieJarLevel={setMonthlyCookieJarLevel}
           />
-          <DailyQuestion onClick={() => navigate('/home/write')} />
+
+          <DailyQuestion
+            status={
+              questionError ? 'error' : !dailyQuestion ? 'loading' : 'success'
+            }
+            question={dailyQuestion}
+            onClick={() => navigate('/home/write')}
+          />
+
           <Cookiejar level={monthlyCookieJarLevel} />
         </ContentArea>
 
