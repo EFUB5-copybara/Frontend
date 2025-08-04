@@ -7,22 +7,12 @@ import { patchFont, patchPaper } from '../api/mypage';
 
 function ThemePage() {
   const [selectedTab, setSelectedTab] = useState('font');
+
+  const [fontItems, setFontItems] = useState([]);
+  const [paperItems, setPaperItems] = useState([]);
+
   const [selectedFontItem, setSelectedFontItem] = useState(0);
   const [selectedPaperItem, setSelectedPaperItem] = useState(2);
-
-  const fontItems = [
-    { name: 'Nanum', description: '따뜻한 느낌의 나눔 글꼴입니다' },
-    { name: 'Pretendard', description: '모던하고 균형 잡힌 고딕체입니다' },
-    { name: 'Sanserif', description: '깔끔하고 산뜻한 산세리프체입니다' },
-    { name: 'Cafe24', description: '개성 있는 카페24 글꼴입니다' },
-  ];
-
-  const paperItems = [
-    { name: 'Basic', description: '기본적인 종이 질감입니다' },
-    { name: 'Check', description: '체크무늬 종이입니다' },
-    { name: 'Ivory', description: '부드러운 아이보리톤 종이입니다' },
-    { name: 'Grid', description: '그리드가 있는 종이입니다' },
-  ];
 
   const [modalIndex, setModalIndex] = useState(null);
   const currentItems = selectedTab === 'font' ? fontItems : paperItems;
