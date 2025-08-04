@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
-function WriteQuestion() {
+function WriteQuestion({ question }) {
   return (
     <Container>
-      <Question>How was your relationship with your friends?</Question>
+      <Question>{question ? `${question}` : '질문을 불러오는 중...'}</Question>
     </Container>
   );
 }

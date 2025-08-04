@@ -1,17 +1,17 @@
-import React, { useMemo, useEffect } from "react";
-import styled from "styled-components";
+import React, { useMemo, useEffect } from 'react';
+import styled from 'styled-components';
 import {
   DayCell,
   DateBox,
   DateText,
   CookieIcon,
-} from "./styles/CalendarStyles";
-import cookieImg from "../assets/svgs/cookie.svg";
+} from './styles/CalendarStyles';
+import cookieImg from '../assets/svgs/cookie.svg';
 
-const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
-  const today = new Date(2025, 2, 11); // 테스트용 오늘
+  const today = new Date();
   const currentFirstDate = new Date(year, month - 1, 1);
   const currentLastDate = new Date(year, month, 0).getDate();
   const firstDay = currentFirstDate.getDay();
@@ -22,7 +22,7 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
 
   const days = [];
 
-  const attendedDates = [4, 5, 6, 7, 8];
+  const attendedDates = [3, 4, 5, 6, 7, 8];
 
   const weeks = {};
   for (let day = 1; day <= currentLastDate; day++) {
@@ -57,7 +57,7 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
   for (let i = 1; i <= currentLastDate; i++) {
     days.push({
       date: i,
-      type: "current",
+      type: 'current',
     });
   }
 
@@ -65,7 +65,7 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
   for (let i = 1; i <= nextMonthPreviewCount; i++) {
     days.push({
       date: i,
-      type: "next",
+      type: 'next',
     });
   }
 
@@ -84,27 +84,27 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
           ))}
         {days.map((item, idx) => {
           const isToday =
-            item.type === "current" &&
+            item.type === 'current' &&
             today.getFullYear() === year &&
             today.getMonth() === month - 1 &&
             today.getDate() === item.date;
 
           const isPast =
-            item.type === "current" &&
+            item.type === 'current' &&
             new Date(year, month - 1, item.date) < today;
 
           const isCookie =
-            item.type === "current" &&
+            item.type === 'current' &&
             attendedDates.includes(item.date) &&
             isPast;
 
           const isMissed =
-            item.type === "current" &&
+            item.type === 'current' &&
             isPast &&
             !attendedDates.includes(item.date);
 
           const handleClick = () => {
-            if (item.type === "current") {
+            if (item.type === 'current') {
               const weekDates = getWeekDates(year, month - 1, item.date);
               onSelectDate({
                 day: item.date,
@@ -115,14 +115,14 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
 
           return (
             <DayCell key={`day-${idx}`} onClick={handleClick}>
-              {item.type === "next" ? (
-                <DateText $color="brown3">{item.date}</DateText>
+              {item.type === 'next' ? (
+                <DateText $color='brown3'>{item.date}</DateText>
               ) : isCookie ? (
-                <CookieIcon src={cookieImg} alt="cookie" />
+                <CookieIcon src={cookieImg} alt='cookie' />
               ) : (
                 <DateBox $isToday={isToday}>
                   <DateText
-                    $color={isToday ? "white" : isMissed ? "error" : "primary"}
+                    $color={isToday ? 'white' : isMissed ? 'error' : 'primary'}
                   >
                     {item.date}
                   </DateText>

@@ -1,20 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import MyPageTopBar from '../components/MyPageTopBar';
 import Article from '../components/Article';
+import { getMyBookmarks } from '../api/mypage';
 
 function BookmarkPage() {
+  const [bookmarks, setBookmarks] = useState([]);
+  const [order, setOrder] = useState('latest');
+
+  useEffect(() => {
+    const fetchBookmarks = async () => {
+      try {
+        const data = await getMyBookmarks();
+        setBookmarks(data);
+      } catch (error) {
+        throw error;
+      }
+    };
+
+    fetchBookmarks();
+  }, []);
+
+  const sortedBookmarks = [...bookmarks].sort((a, b) => {
+    if (order === 'latest') {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    } else if (order === 'popular') {
+      return b.likes - a.likes;
+    }
+    return 0;
+  });
+
   return (
     <Wrapper>
       <MyPageTopBar title='북마크' />
       <OrderWrapper>
-        <LatestButton>최신순</LatestButton>
-        <PopularityButton>인기순</PopularityButton>
+        <LatestButton onClick={() => setOrder('latest')}>최신순</LatestButton>
+        <PopularityButton onClick={() => setOrder('popular')}>
+          인기순
+        </PopularityButton>
       </OrderWrapper>
       <ArticleWrapper>
-        <Article />
-        <Article />
-        <Article />
+        {sortedBookmarks.map((item) => (
+          <Article key={item.id} data={item} />
+        ))}
       </ArticleWrapper>
     </Wrapper>
   );

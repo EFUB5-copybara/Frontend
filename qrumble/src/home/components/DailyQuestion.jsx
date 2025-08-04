@@ -2,13 +2,20 @@ import React from 'react';
 import styled from 'styled-components';
 import arrowIcon from '../assets/svgs/chevronright.svg';
 
-function DailyQuestion({
-  question = 'Q. How was your relationship with your friends?',
-  onClick,
-}) {
+function DailyQuestion({ status = 'success', question, onClick }) {
+  let displayText;
+
+  if (status === 'loading') {
+    displayText = '질문을 불러오는 중...';
+  } else if (status === 'error') {
+    displayText = '질문을 불러올 수 없습니다.';
+  } else {
+    displayText = `Q. ${question}`;
+  }
+
   return (
     <Wrapper>
-      <QuestionText>{question}</QuestionText>
+      <QuestionText>{displayText}</QuestionText>
       <AnswerButton onClick={onClick}>
         답변하러 가기
         <Icon src={arrowIcon} alt='arrow' />
