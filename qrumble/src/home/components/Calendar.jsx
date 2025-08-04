@@ -22,7 +22,7 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
 
   const days = [];
 
-  const attendedDates = [4, 5, 6, 7, 8];
+  const attendedDates = [3, 4, 5, 6, 7, 8];
 
   const weeks = {};
   for (let day = 1; day <= currentLastDate; day++) {

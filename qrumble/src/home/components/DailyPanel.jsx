@@ -23,7 +23,7 @@ import { getDailyQuestion, getItemCounts } from '../api/homepage';
 import { useNavigate } from 'react-router-dom';
 
 function DailyPanel({ date, onClose }) {
-  const attendedDates = [4, 5, 6, 7, 8];
+  const attendedDates = [3, 4, 5, 6, 7, 8];
 
   const [items, setItems] = useState([]);
 
@@ -51,6 +51,17 @@ function DailyPanel({ date, onClose }) {
       console.log('타겟 날짜 갱신:', targetDate);
     }
   }, [targetDate]);
+
+  useEffect(() => {
+    if (date?.day && date?.weekDates) {
+      const selected = date.weekDates.find((d) => d.day === date.day);
+      if (selected) {
+        setTargetDate(
+          new Date(selected.year, selected.month - 1, selected.day)
+        );
+      }
+    }
+  }, [date]);
 
   const handleUseItem = (type) => {
     setItems((prev) =>
@@ -95,7 +106,7 @@ function DailyPanel({ date, onClose }) {
         <ModalContainer onClick={(e) => e.stopPropagation()}>
           <WeeklyRow>
             {date?.weekDates?.map(({ day, month, year }) => {
-              const today = new Date(2025, 2, 11); // 기준 오늘: 3월 11일
+              const today = new Date();
 
               const isToday =
                 new Date(year, month - 1, day).toDateString() ===
