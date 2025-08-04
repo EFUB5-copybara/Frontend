@@ -12,35 +12,81 @@ import shieldImg from '../assets/svgs/shield.svg';
 import eraserImg from '../assets/svgs/eraser.svg';
 import likeImg from '../assets/svgs/like.svg';
 import commentImg from '../assets/svgs/question-comments.svg';
-import userImg from '../assets/svgs/userimg.svg';
-import brownlikeImg from '../assets/svgs/brownlike.svg';
-import browncommentImg from '../assets/svgs/brownmessage.svg';
-import brownbookmarkImg from '../assets/svgs/brownbookmark.svg';
 import ItemButtons from './ItemButtons';
-import AlertModal from './AlertModal';
 import AnswerCard from './AnswerCard';
+import { getDailyQuestion, getItemCounts } from '../api/homepage';
+import { useNavigate } from 'react-router-dom';
 
 function DailyPanel({ date, onClose }) {
-  const attendedDates = [4, 5, 6, 7, 8];
+  const attendedDates = [3, 4, 5, 6, 7, 8];
 
-  const [items, setItems] = useState([
-    { name: 'key', img: keyImg, count: 10 },
-    { name: 'shield', img: shieldImg, count: 10 },
-    { name: 'eraser', img: eraserImg, count: 10 },
-  ]);
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const res = await getItemCounts();
+        setItems([
+          { name: 'key', img: keyImg, count: res.keyCount },
+          { name: 'shield', img: shieldImg, count: res.shieldCount },
+          { name: 'eraser', img: eraserImg, count: res.eraserCount },
+        ]);
+      } catch (err) {
+        console.error('아이템 개수 조회 실패:', err);
+      }
+    };
+
+    fetchItems();
+  }, []);
 
   const [targetDate, setTargetDate] = useState(null);
 
   useEffect(() => {
-    if (targetDate) {
-      console.log('타겟 날짜 갱신:', targetDate);
+    if (date?.day && date?.weekDates) {
+      const selected = date.weekDates.find((d) => d.day === date.day);
+      if (selected) {
+        setTargetDate(
+          new Date(selected.year, selected.month - 1, selected.day)
+        );
+      }
     }
-  }, [targetDate]);
+  }, [date]);
 
   const handleUseItem = (type) => {
     setItems((prev) =>
       prev.map((i) => (i.name === type ? { ...i, count: i.count - 1 } : i))
     );
+  };
+
+  const [questionText, setQuestionText] = useState('');
+  const [questionDate, setQuestionDate] = useState('');
+
+  useEffect(() => {
+    const getQuestion = async () => {
+      if (!targetDate) return;
+
+      const y = targetDate.getFullYear();
+      const m = String(targetDate.getMonth() + 1).padStart(2, '0');
+      const d = String(targetDate.getDate()).padStart(2, '0');
+      const formattedDate = `${y}-${m}-${d}`;
+
+      try {
+        const res = await getDailyQuestion(formattedDate);
+        setQuestionText(res.content);
+        setQuestionDate(formattedDate);
+      } catch (e) {
+        setQuestionText('질문을 불러올 수 없습니다.');
+        setQuestionDate(formattedDate);
+      }
+    };
+
+    getQuestion();
+  }, [targetDate]);
+
+  const navigate = useNavigate();
+
+  const handleQuestionClick = () => {
+    navigate('/home/detail');
   };
 
   return (
@@ -49,7 +95,7 @@ function DailyPanel({ date, onClose }) {
         <ModalContainer onClick={(e) => e.stopPropagation()}>
           <WeeklyRow>
             {date?.weekDates?.map(({ day, month, year }) => {
-              const today = new Date(2025, 2, 11); // 기준 오늘: 3월 11일
+              const today = new Date();
 
               const isToday =
                 new Date(year, month - 1, day).toDateString() ===
@@ -64,7 +110,8 @@ function DailyPanel({ date, onClose }) {
               return (
                 <DayCell
                   key={`${year}-${month}-${day}`}
-                  onClick={() => setTargetDate(new Date(year, month - 1, day))}>
+                  onClick={() => setTargetDate(new Date(year, month - 1, day))}
+                >
                   {isCookie ? (
                     <CookieIcon src={cookieImg} alt='cookie' />
                   ) : (
@@ -72,7 +119,8 @@ function DailyPanel({ date, onClose }) {
                       <DateText
                         $color={
                           isToday ? 'white' : isMissed ? 'error' : 'primary'
-                        }>
+                        }
+                      >
                         {day}
                       </DateText>
                     </DateBox>
@@ -92,14 +140,12 @@ function DailyPanel({ date, onClose }) {
           />
 
           <QnAWrapper>
-            <QuestionCard>
+            <QuestionCard onClick={handleQuestionClick}>
               <Header>
                 <Label>질문</Label>
-                <CardDateText>2025.04.02</CardDateText>
+                <CardDateText>{questionDate}</CardDateText>
               </Header>
-              <QuestionText>
-                Euismod id sapien mi massa tortor fames.
-              </QuestionText>
+              <QuestionText>{questionText}</QuestionText>
               <Bottom>
                 <BottomItem>
                   <BottomImg src={likeImg} alt='like' /> 공감
@@ -185,6 +231,8 @@ const QuestionCard = styled.div`
   padding: 14px 16px 2px 16px;
   border: 1px solid black;
   margin-bottom: 6px;
+
+  cursor: pointer;
 `;
 
 const Header = styled.div`

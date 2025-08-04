@@ -10,10 +10,12 @@ import SignUp from './login/pages/SignUp';
 import FortuneCookiePage from './home/pages/FortuneCookiePage';
 import MissionPage from './home/pages/MissionPage';
 import WritePage from './home/pages/WritePage';
+import ChartPage from './home/pages/ChartPage';
 
 import BookmarkPage from './mypage/pages/BookmarkPage';
 import MyInfoPage from './mypage/pages/MyInfoPage';
 import MyRecordPage from './mypage/pages/MyRecordPage';
+import ThemePage from './mypage/pages/ThemePage';
 
 import CommunityDetailPage from './community/pages/CommunityDetailPage';
 
@@ -29,7 +31,6 @@ import CommunityLayout from './layout/CommunityLayout';
 import navigation from './navigations';
 import { configRoutes } from './utils/configRoutes';
 import { getNavigationItems } from './utils/getNavigationItems';
-import ThemePage from './mypage/pages/ThemePage';
 
 export const routes = [
   {
@@ -80,12 +81,16 @@ export const routes = [
     element: <MyInfoPage />,
   },
   {
-    path: '/mypage/myrecords',
+    path: '/mypage/record',
     element: <MyRecordPage />,
   },
   {
     path: '/mypage/bookmarks',
     element: <BookmarkPage />,
+  },
+  {
+    path: '/mypage/theme',
+    element: <ThemePage />,
   },
   {
     path: '/home/write',
@@ -94,6 +99,10 @@ export const routes = [
   {
     path: '/home/fortune',
     element: <FortuneCookiePage />,
+  },
+  {
+    path: '/home/detail',
+    element: <ChartPage />,
   },
   {
     path: '/home/mission',
@@ -113,6 +122,10 @@ export const routes = [
   {
     path: '/report',
     element: <ReportPage />,
+  },
+  {
+    path: '/shop',
+    element: <ShopPage />,
   },
 ];
 

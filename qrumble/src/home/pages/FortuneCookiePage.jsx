@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import XImg from '../assets/svgs/X.svg';
 import bigfortuneImg from '../assets/svgs/fortune.svg';
@@ -6,11 +6,42 @@ import { useNavigate } from 'react-router-dom';
 import background1Img from '../assets/svgs/background1.svg';
 import background2Img from '../assets/svgs/background2.svg';
 import background3Img from '../assets/svgs/background3.svg';
+import { openFortuneCookie } from '../api/homepage';
 
 function FortuneCookiePage() {
   const [opened, setOpened] = useState(false);
+  const [fortuneData, setFortuneData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  const handleOpen = async () => {
+    try {
+      setLoading(true);
+      const data = await openFortuneCookie();
+      setFortuneData(data);
+      setOpened(true);
+    } catch (error) {
+      console.error('포춘쿠키 열기 실패:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchIfAlreadyOpened = async () => {
+      try {
+        if (data) {
+          setFortuneData(data);
+          setOpened(true);
+        }
+      } catch (error) {
+        console.error('포춘쿠키 조회 실패:', error);
+      }
+    };
+
+    fetchIfAlreadyOpened();
+  }, []);
 
   return (
     <Background>
@@ -22,7 +53,7 @@ function FortuneCookiePage() {
 
         {!opened ? (
           <>
-            <CookieButton onClick={() => setOpened(true)}>
+            <CookieButton onClick={handleOpen} disabled={loading}>
               <img src={bigfortuneImg} alt='포춘쿠키 버튼' />
             </CookieButton>
             <TouchCookieMsg>쿠키를 터치하세요!</TouchCookieMsg>
@@ -33,16 +64,13 @@ function FortuneCookiePage() {
           </>
         ) : (
           <OpenedContent>
-            <DateText>2025.04.02</DateText>
-            <Question>How was your relationship with your friends?</Question>
-            <Answer>
-              I felt good to meet my high school friend after a long time. We
-              went to a cafe, played games, and had fun together
-            </Answer>
+            <DateText>{fortuneData?.date}</DateText>
+            <Question>{fortuneData?.question}</Question>
+            <Answer>{fortuneData?.answer}</Answer>
             <TagList>
-              <Tag>#cafe</Tag>
-              <Tag>#game</Tag>
-              <Tag>#friend</Tag>
+              {fortuneData?.tags?.map((tag, idx) => (
+                <Tag key={idx}>#{tag}</Tag>
+              ))}
             </TagList>
           </OpenedContent>
         )}
