@@ -12,12 +12,7 @@ import shieldImg from '../assets/svgs/shield.svg';
 import eraserImg from '../assets/svgs/eraser.svg';
 import likeImg from '../assets/svgs/like.svg';
 import commentImg from '../assets/svgs/question-comments.svg';
-import userImg from '../assets/svgs/userimg.svg';
-import brownlikeImg from '../assets/svgs/brownlike.svg';
-import browncommentImg from '../assets/svgs/brownmessage.svg';
-import brownbookmarkImg from '../assets/svgs/brownbookmark.svg';
 import ItemButtons from './ItemButtons';
-import AlertModal from './AlertModal';
 import AnswerCard from './AnswerCard';
 import { getDailyQuestion, getItemCounts } from '../api/homepage';
 import { useNavigate } from 'react-router-dom';
@@ -45,12 +40,6 @@ function DailyPanel({ date, onClose }) {
   }, []);
 
   const [targetDate, setTargetDate] = useState(null);
-
-  useEffect(() => {
-    if (targetDate) {
-      console.log('타겟 날짜 갱신:', targetDate);
-    }
-  }, [targetDate]);
 
   useEffect(() => {
     if (date?.day && date?.weekDates) {
