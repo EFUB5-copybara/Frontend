@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import MissionBar from "../components/MissionBar";
-import MonthSelector from "../components/MonthSelector";
-import Calendar from "../components/Calendar";
-import DailyQuestion from "../components/DailyQuestion";
-import Cookiejar from "../components/Cookiejar";
-import MonthPickerModal from "../components/MonthPickerModal";
-import QuestionList from "../components/QuestionList";
-import DailyPanel from "../components/DailyPanel";
-import WriteFixButton from "../components/WriteFixButton";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import MissionBar from '../components/MissionBar';
+import MonthSelector from '../components/MonthSelector';
+import Calendar from '../components/Calendar';
+import DailyQuestion from '../components/DailyQuestion';
+import Cookiejar from '../components/Cookiejar';
+import MonthPickerModal from '../components/MonthPickerModal';
+import QuestionList from '../components/QuestionList';
+import DailyPanel from '../components/DailyPanel';
+import WriteFixButton from '../components/WriteFixButton';
 
 function HomePage() {
   const [year, setYear] = useState(2025);
@@ -99,8 +99,7 @@ function HomePage() {
         onTouchEnd={handleEnd}
         onMouseDown={handleStart}
         onMouseUp={handleEnd}
-        onWheel={handleWheel}
-      >
+        onWheel={handleWheel}>
         <ContentArea $collapsed={collapsed}>
           <Calendar
             year={year}
@@ -121,7 +120,7 @@ function HomePage() {
             }}
             setMonthlyCookieJarLevel={setMonthlyCookieJarLevel}
           />
-          <DailyQuestion onClick={() => navigate("/home/write")} />
+          <DailyQuestion onClick={() => navigate('/home/write')} />
           <Cookiejar level={monthlyCookieJarLevel} />
         </ContentArea>
 
@@ -147,13 +146,17 @@ const Container = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 50px 19px 0 18px;
+  align-items: center;
+  padding: 30px 20px 65px 20px;
+  /* padding: 50px 19px 0 18px; */
+  height: 800px;
   background-color: ${({ theme }) => theme.colors.ivory3};
   gap: 14px;
 `;
 
 const SelectorWrapper = styled.div`
   position: relative;
+  width: 100%;
 `;
 
 const SwipeArea = styled.div`
@@ -161,7 +164,7 @@ const SwipeArea = styled.div`
 `;
 
 const ContentArea = styled.div`
-  max-height: ${({ $collapsed }) => ($collapsed ? "0px" : "1000px")};
+  max-height: ${({ $collapsed }) => ($collapsed ? '0px' : '1000px')};
   opacity: ${({ $collapsed }) => ($collapsed ? 0 : 1)};
   transition: all 0.4s ease;
   display: flex;
@@ -170,7 +173,7 @@ const ContentArea = styled.div`
 `;
 
 const QuestionArea = styled.div`
-  max-height: ${({ $collapsed }) => ($collapsed ? "1000px" : "0px")};
+  max-height: ${({ $collapsed }) => ($collapsed ? '1000px' : '0px')};
   opacity: ${({ $collapsed }) => ($collapsed ? 1 : 0)};
   transition: all 0.4s ease;
   overflow: hidden;

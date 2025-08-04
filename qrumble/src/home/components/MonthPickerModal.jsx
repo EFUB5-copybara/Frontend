@@ -151,9 +151,7 @@ export default MonthPickerModal;
 const Wrapper = styled.div`
   position: absolute;
   top: 100%;
-  width: 360px;
-  left: -19px;
-  right: 0;
+  left: -1.25rem;
   display: flex;
   justify-content: center;
   z-index: 1000;
