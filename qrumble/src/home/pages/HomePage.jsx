@@ -163,8 +163,7 @@ function HomePage() {
         onTouchEnd={handleTouchEnd}
         onMouseDown={handleTouchStart}
         onMouseUp={handleTouchEnd}
-        onWheel={handleWheel}
-      >
+        onWheel={handleWheel}>
         <ContentArea $collapsed={collapsed}>
           <CalendarSlider $direction={direction} $animating={isSliding}>
             <Calendar
@@ -194,7 +193,6 @@ function HomePage() {
             question={dailyQuestion}
             onClick={() => navigate('/home/write')}
           />
-
           <Cookiejar level={monthlyCookieJarLevel} />
         </ContentArea>
 
@@ -220,13 +218,17 @@ const Container = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 50px 19px 0 18px;
+  align-items: center;
+  padding: 30px 20px 65px 20px;
+  /* padding: 50px 19px 0 18px; */
+  height: 800px;
   background-color: ${({ theme }) => theme.colors.ivory3};
   gap: 14px;
 `;
 
 const SelectorWrapper = styled.div`
   position: relative;
+  width: 100%;
 `;
 
 const SwipeArea = styled.div`
