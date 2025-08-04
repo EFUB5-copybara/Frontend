@@ -3,7 +3,7 @@ import AnswerCard from '@/home/components/AnswerCard';
 import React from 'react';
 import styled from 'styled-components';
 
-const dummyAnswers = [
+/* const dummyAnswers = [
   {
     id: 1,
     title: 'name',
@@ -46,19 +46,19 @@ const dummyAnswers = [
     subtitle: 'about a diary in english...',
     userId: '아이디',
   },
-];
+]; */
 
-export default function AnswerList({ ranked = false }) {
+export default function AnswerList({ answers, ranked = false }) {
   return (
     <ListWrapper>
-      {dummyAnswers.map((answer, index) => (
+      {answers.map((answer, index) => (
         <AnswerCard
           key={answer.id}
           id={answer.id}
           rank={ranked ? index + 1 : undefined}
           title={answer.title}
-          subtitle={answer.subtitle}
-          userId={answer.userId}
+          subtitle={answer.content}
+          userId={answer.username}
         />
       ))}
     </ListWrapper>
