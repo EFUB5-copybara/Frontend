@@ -11,6 +11,7 @@ import QuestionList from '../components/QuestionList';
 import DailyPanel from '../components/DailyPanel';
 import WriteFixButton from '../components/WriteFixButton';
 import { getDailyQuestion } from '../api/homepage';
+import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 
 function HomePage() {
   const today = new Date();
@@ -98,11 +99,12 @@ function HomePage() {
     setIsDailyPanelOpen(true);
   };
 
-  const [dailyQuestion, setDailyQuestion] = useState('');
-  const [todayQuestion, setTodayQuestion] = useState('');
-
-  const [questionError, setQuestionError] = useState(null);
-  const [todayQuestionError, setTodayQuestionError] = useState(null);
+  const {
+    todayQuestion,
+    todayQuestionError,
+    setTodayQuestion,
+    setTodayQuestionError,
+  } = useTodayQuestionStore();
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -143,6 +145,26 @@ function HomePage() {
         const message =
           error.response?.data?.message || '오늘 질문을 불러올 수 없습니다.';
         setTodayQuestionError(message);
+      }
+    };
+
+    fetchTodayQuestion();
+  }, []);
+
+  useEffect(() => {
+    const fetchTodayQuestion = async () => {
+      const today = new Date();
+      const formattedDate = `${today.getFullYear()}-${String(
+        today.getMonth() + 1
+      ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+      try {
+        const data = await getDailyQuestion(formattedDate);
+        setTodayQuestion(data.content);
+        setTodayQuestionError(null);
+      } catch (error) {
+        setTodayQuestion('');
+        setTodayQuestionError(error.response?.data?.message || '질문 오류');
       }
     };
 

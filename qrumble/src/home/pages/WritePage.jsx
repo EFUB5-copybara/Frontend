@@ -11,6 +11,7 @@ import background2Img from '../assets/svgs/background2.svg';
 import background3Img from '../assets/svgs/background3.svg';
 import { getDailyQuestion, getQuestionHints } from '../api/homepage';
 import { createAnswer } from '../api/homepage';
+import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 
 function WritePage() {
   const [hintActive, setHintActive] = useState(false);
@@ -18,8 +19,7 @@ function WritePage() {
   const [hintKeywords, setHintKeywords] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  const [todayQuestion, setTodayQuestion] = useState('');
-  const [todayQuestionError, setTodayQuestionError] = useState(null);
+  const { todayQuestion, todayQuestionError } = useTodayQuestionStore();
 
   const [isPublic, setIsPublic] = useState(true);
 
@@ -78,6 +78,7 @@ function WritePage() {
         <Top>
           <WriteTopBar onCheck={handleSubmit} textLength={text.trim().length} />
           <WriteQuestion
+            question={todayQuestion}
             status={
               todayQuestionError
                 ? 'error'
@@ -85,7 +86,6 @@ function WritePage() {
                 ? 'loading'
                 : 'success'
             }
-            question={todayQuestion}
           />
 
           {hintActive && (
