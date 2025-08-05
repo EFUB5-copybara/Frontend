@@ -6,12 +6,15 @@ import LogoImg from '../components/Logo';
 
 import LoginSupportLinks from '../components/LoginSupportLinks';
 import BackButton from '../components/BackButton';
+import { useNavigate } from 'react-router-dom';
 
 export default function FindId() {
+  const navigate = useNavigate();
+  const handleGoBack = () => navigate(-1);
   return (
     <Container>
       <ButtonWrapper>
-        <BackButton />
+        <BackButton onClick={handleGoBack} />
       </ButtonWrapper>
       <LogoImg />
       <TitleWrapper>
@@ -30,7 +33,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0.3125rem 1.25rem;
+  padding: 1.875rem 1.25rem 0 1.25rem;
+  height: 800px;
+  background-color: ${({ theme }) => theme.colors.ivory3};
 `;
 
 const ButtonWrapper = styled.div`

@@ -63,7 +63,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0.3125rem 1.25rem;
+  padding: 1.875rem 1.25rem 0 1.25rem;
+  height: 800px;
+  background-color: ${({ theme }) => theme.colors.ivory3};
 `;
 
 const ButtonWrapper = styled.div`
