@@ -100,15 +100,11 @@ export const checkGrammar = async (text) => {
 // 포춘쿠키 열기
 export const openFortuneCookie = async () => {
   try {
-    const response = await axiosInstance.post(
-      '/items/fortune-cookie',
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
+    const response = await axiosInstance.get('/items/fortune-cookie', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;
