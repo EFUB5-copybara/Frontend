@@ -53,18 +53,14 @@ export default function CommunityPage() {
         selected={selectedTab}
         onSelect={setSelectedTab}
       />
-      <Wrapper>
-        <AnswerList answers={answers} ranked={selectedTab === 'popular'} />
-      </Wrapper>
+
+      <AnswerList answers={answers} ranked={selectedTab === 'popular'} />
     </Container>
   );
 }
 
 const Container = styled.div`
-  padding-bottom: 65px;
+  height: 800px;
+  padding: 30px 20px 65px 20px;
   background-color: ${({ theme }) => theme.colors.ivory3};
-`;
-
-const Wrapper = styled.div`
-  margin: 0 16px;
 `;

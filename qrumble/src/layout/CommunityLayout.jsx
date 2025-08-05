@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import BackIc from '@/community/assets/svgs/arrow_back.svg?react';
@@ -9,12 +9,31 @@ import BookMarkLineIc from '@/community/assets/svgs/bookmark.svg?react';
 import MoreIc from '@/community/assets/svgs/more_horizontal.svg?react';
 
 import ActionModal from '@/community/components/ActionModal';
+import axios from 'axios';
 
 export default function CommunityLayout() {
+  const { postId } = useParams();
+  const [post, setPost] = useState(null);
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
+
+  useEffect(() => {
+    const fetchPostDetail = async () => {
+      try {
+        const result = await axios.get(`/community/posts/${postId}`);
+        setPost(result.data);
+      } catch (err) {
+        setError(
+          err.response?.data?.message || '게시글 정보를 불러오지 못했습니다.'
+        );
+      }
+    };
+    fetchPostDetail();
+  }, [postId]);
 
   const handleProfileClick = (userId) => {
     navigate(`/user-profile/${userId}`);

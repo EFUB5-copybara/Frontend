@@ -28,31 +28,31 @@ export default function SignUp() {
     switch (name) {
       case 'username':
         if (!/^[a-zA-Z0-9]{5,15}$/.test(value)) {
-          error = '5~15자의 영문과 숫자만 사용 가능합니다.';
+          error = '· 5~15자의 영문과 숫자만 사용 가능합니다.';
         }
         break;
 
       case 'password':
         if (!/^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/.test(value)) {
-          error = '영문, 숫자, 특수문자를 포함한 8자 이상이어야 합니다.';
+          error = '· 숫자, 문자, 특수문자 포함 8자 이상';
         }
         break;
 
       case 'confirmPassword':
         if (value !== updatedForm.password) {
-          error = '비밀번호가 일치하지 않습니다.';
+          error = '· 비밀번호가 일치하지 않습니다.';
         }
         break;
 
       case 'nickname':
         if (value.length < 2 || value.length > 10) {
-          error = '2~10자 사이로 입력해주세요.';
+          error = '· 2~10자 사이로 입력해주세요.';
         }
         break;
 
       case 'email':
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          error = '올바른 이메일 형식이 아닙니다.';
+          error = '· 올바른 이메일 형식이 아닙니다.';
         }
         break;
 
@@ -118,11 +118,12 @@ export default function SignUp() {
 }
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0 1.25rem;
-  position: relative;
+  background-color: ${({ theme }) => theme.colors.ivory3};
 `;
 
 const ButtonWrapper = styled.div`

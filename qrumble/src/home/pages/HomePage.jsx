@@ -221,11 +221,10 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 14px;
   padding: 30px 20px 65px 20px;
-  /* padding: 50px 19px 0 18px; */
   height: 800px;
   background-color: ${({ theme }) => theme.colors.ivory3};
-  gap: 14px;
 `;
 
 const SelectorWrapper = styled.div`
