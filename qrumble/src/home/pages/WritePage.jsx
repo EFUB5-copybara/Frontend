@@ -19,6 +19,7 @@ function WritePage() {
   const [showModal, setShowModal] = useState(false);
 
   const [todayQuestion, setTodayQuestion] = useState('');
+  const [todayQuestionError, setTodayQuestionError] = useState(null);
 
   const [isPublic, setIsPublic] = useState(true);
 
@@ -45,20 +46,30 @@ function WritePage() {
   };
 
   useEffect(() => {
-    const loadContent = async () => {
+    const fetchTodayQuestion = async () => {
+      const today = new Date();
+      const formattedDate = `${today.getFullYear()}-${String(
+        today.getMonth() + 1
+      ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
       try {
-        const today = new Date().toISOString().slice(0, 10);
-        const resQ = await getDailyQuestion(today);
-        const resH = await getQuestionHints(today);
-        setTodayQuestion(resQ.content);
-        setHintKeywords(resH.map((hint) => hint.content));
-      } catch (e) {
-        setTodayQuestion('질문을 불러오지 못했습니다.');
-        setHintKeywords([]);
+        const [data, hint] = await Promise.all([
+          getDailyQuestion(formattedDate),
+          getQuestionHints(formattedDate),
+        ]);
+        setTodayQuestion(data.content);
+        setHintKeywords(hint.map((hints) => hints.content));
+
+        setTodayQuestionError(null);
+      } catch (error) {
+        setTodayQuestion('');
+        const message =
+          error.response?.data?.message || '오늘 질문을 불러올 수 없습니다.';
+        setTodayQuestionError(message);
       }
     };
 
-    loadContent();
+    fetchTodayQuestion();
   }, []);
 
   return (
@@ -66,7 +77,16 @@ function WritePage() {
       <Container>
         <Top>
           <WriteTopBar onCheck={handleSubmit} textLength={text.trim().length} />
-          <WriteQuestion question={todayQuestion} />
+          <WriteQuestion
+            status={
+              todayQuestionError
+                ? 'error'
+                : !todayQuestion
+                ? 'loading'
+                : 'success'
+            }
+            question={todayQuestion}
+          />
 
           {hintActive && (
             <HintTagList

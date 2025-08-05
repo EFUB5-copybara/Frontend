@@ -4,7 +4,7 @@ import axios from 'axios';
 // 일별 질문 조회
 export const getDailyQuestion = async (date) => {
   try {
-    const response = await axios.get(`/questions/${date}`);
+    const response = await axiosInstance.get(`/questions/${date}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -58,7 +58,7 @@ export const getAnswerStreak = async () => {
 // 힌트 조회
 export const getQuestionHints = async (date) => {
   try {
-    const response = await axios.get(`/questions/${date}/hints`);
+    const response = await axiosInstance.get(`/questions/${date}/hints`);
     return response.data;
   } catch (error) {
     throw error;
