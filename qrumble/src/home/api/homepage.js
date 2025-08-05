@@ -171,3 +171,36 @@ export const useShieldItem = async () => {
 export const useEraserItem = async () => {
   return await useItem('ERASER');
 };
+
+// 답변 조회
+export const getAnswer = async (date) => {
+  try {
+    const response = await axios.get(`/questions/${date}/answer`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 답변 생성
+export const createAnswer = async (date, content, isPublic) => {
+  try {
+    const response = await axios.post(
+      `/questions/${date}/answer`,
+      {
+        content,
+        isPublic,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('답변 생성 실패:', error);
+    throw error;
+  }
+};
