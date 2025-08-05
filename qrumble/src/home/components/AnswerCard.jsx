@@ -1,19 +1,26 @@
 import React from 'react';
 import styled from 'styled-components';
 import userImg from '../assets/svgs/userimg.svg';
-import brownlikeImg from '../assets/svgs/brownlike.svg';
-import browncommentImg from '../assets/svgs/brownmessage.svg';
-import brownbookmarkImg from '../assets/svgs/brownbookmark.svg';
+import LikeIc from '../assets/svgs/brownlike.svg?react';
+import CommentIc from '../assets/svgs/brownmessage.svg?react';
+import BookmarkIc from '../assets/svgs/brownbookmark.svg?react';
 import { useNavigate } from 'react-router-dom';
 
-export default function AnswerCard({ postId, title, subtitle, userId, rank }) {
+export default function AnswerCard({
+  postId,
+  title,
+  subtitle,
+  userId,
+  rank,
+  bookmarkCount,
+  likeCount,
+  commentCount,
+}) {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(`/community/${postId}`);
   };
-
-  const bottomIcons = [brownlikeImg, browncommentImg, brownbookmarkImg];
 
   return (
     <Wrapper onClick={handleClick} $hasRank={!!rank}>
@@ -27,13 +34,17 @@ export default function AnswerCard({ postId, title, subtitle, userId, rank }) {
             <AnswerIdImg src={userImg} alt='user' />
             {userId}
           </AnswerId>
-          <AnswerBottomWrapper>
-            {bottomIcons.map((img, idx) => (
-              <AnswerBottomItem key={idx}>
-                <AnswerBottomImg src={img} alt='icon' />
-              </AnswerBottomItem>
-            ))}
-          </AnswerBottomWrapper>
+          <BottomIconWrapper>
+            <IconWrapper>
+              <LikeIcon /> {likeCount}
+            </IconWrapper>
+            <IconWrapper>
+              <CommentIcon /> {commentCount}
+            </IconWrapper>
+            <IconWrapper>
+              <BookmarkIcon /> {bookmarkCount}
+            </IconWrapper>
+          </BottomIconWrapper>
         </Meta>
       </Content>
     </Wrapper>
@@ -105,20 +116,27 @@ const AnswerIdImg = styled.img`
   border-radius: 50%;
 `;
 
-const AnswerBottomWrapper = styled.div`
+const BottomIconWrapper = styled.div`
   display: flex;
   align-items: center;
+  gap: 0.75rem;
 `;
 
-const AnswerBottomItem = styled.div`
+const IconWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 3px;
-  ${({ theme }) => theme.fonts.c12M};
-  color: ${({ theme }) => theme.colors.brown1};
+  gap: 0.1875rem;
 `;
 
-const AnswerBottomImg = styled.img`
+const LikeIcon = styled(LikeIc)`
+  width: 14px;
+  height: 14px;
+`;
+const BookmarkIcon = styled(BookmarkIc)`
+  width: 14px;
+  height: 14px;
+`;
+const CommentIcon = styled(CommentIc)`
   width: 14px;
   height: 14px;
 `;
