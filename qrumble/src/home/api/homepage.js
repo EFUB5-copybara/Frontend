@@ -100,15 +100,11 @@ export const checkGrammar = async (text) => {
 // 포춘쿠키 열기
 export const openFortuneCookie = async () => {
   try {
-    const response = await axiosInstance.post(
-      '/items/fortune-cookie',
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
+    const response = await axiosInstance.get('/items/fortune-cookie', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;
@@ -174,4 +170,37 @@ export const useShieldItem = async () => {
 // 지우개 아이템 사용
 export const useEraserItem = async () => {
   return await useItem('ERASER');
+};
+
+// 답변 조회
+export const getAnswer = async (date) => {
+  try {
+    const response = await axios.get(`/questions/${date}/answer`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// 답변 생성
+export const createAnswer = async (date, content, isPublic) => {
+  try {
+    const response = await axios.post(
+      `/questions/${date}/answer`,
+      {
+        content,
+        isPublic,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('답변 생성 실패:', error);
+    throw error;
+  }
 };

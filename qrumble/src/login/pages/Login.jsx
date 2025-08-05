@@ -22,4 +22,5 @@ const Container = styled.div`
   align-items: center;
   gap: 5.25rem;
   margin: 5.3125rem 1.25rem;
+  background-color: ${({ theme }) => theme.colors.ivory3};
 `;
