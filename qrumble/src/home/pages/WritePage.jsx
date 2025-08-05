@@ -38,7 +38,7 @@ function WritePage() {
     try {
       const today = new Date().toISOString().slice(0, 10);
       await createAnswer(today, text.trim(), isPublic);
-      navigate('/home/chart');
+      navigate('/home/detail');
     } catch (error) {
       console.error('답변 저장 중 오류 발생:', error);
       alert('답변 저장에 실패했습니다. 다시 시도해 주세요.');
