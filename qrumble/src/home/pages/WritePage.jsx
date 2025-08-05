@@ -9,7 +9,7 @@ import AlertModal from '../components/AlertModal';
 import background1Img from '../assets/svgs/background1.svg';
 import background2Img from '../assets/svgs/background2.svg';
 import background3Img from '../assets/svgs/background3.svg';
-import { getTodayQuestion, getQuestionHints } from '../api/homepage';
+import { getDailyQuestion, getQuestionHints } from '../api/homepage';
 import { createAnswer } from '../api/homepage';
 
 function WritePage() {
@@ -47,8 +47,8 @@ function WritePage() {
   useEffect(() => {
     const loadContent = async () => {
       try {
-        const today = new Date().toISOString().slice(0, 10); // 나중에 현재 날짜 기반으로 바꿀 수도 있음
-        const resQ = await getTodayQuestion();
+        const today = new Date().toISOString().slice(0, 10);
+        const resQ = await getDailyQuestion(today);
         const resH = await getQuestionHints(today);
         setTodayQuestion(resQ.content);
         setHintKeywords(resH.map((hint) => hint.content));

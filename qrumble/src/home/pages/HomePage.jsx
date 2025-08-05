@@ -13,8 +13,9 @@ import WriteFixButton from '../components/WriteFixButton';
 import { getDailyQuestion } from '../api/homepage';
 
 function HomePage() {
-  const [year, setYear] = useState(2025);
-  const [month, setMonth] = useState(3);
+  const today = new Date();
+  const [year, setYear] = useState(today.getFullYear());
+  const [month, setMonth] = useState(today.getMonth() + 1);
   const [isMonthSelectorOpen, setIsMonthSelectorOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [monthlyCookieJarLevel, setMonthlyCookieJarLevel] = useState(0);
@@ -98,7 +99,10 @@ function HomePage() {
   };
 
   const [dailyQuestion, setDailyQuestion] = useState('');
+  const [todayQuestion, setTodayQuestion] = useState('');
+
   const [questionError, setQuestionError] = useState(null);
+  const [todayQuestionError, setTodayQuestionError] = useState(null);
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -122,6 +126,28 @@ function HomePage() {
 
     fetchQuestion();
   }, [selectedDate]);
+
+  useEffect(() => {
+    const fetchTodayQuestion = async () => {
+      const today = new Date();
+      const formattedDate = `${today.getFullYear()}-${String(
+        today.getMonth() + 1
+      ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+      try {
+        const data = await getDailyQuestion(formattedDate);
+        setTodayQuestion(data.content);
+        setTodayQuestionError(null);
+      } catch (error) {
+        setTodayQuestion('');
+        const message =
+          error.response?.data?.message || '오늘 질문을 불러올 수 없습니다.';
+        setTodayQuestionError(message);
+      }
+    };
+
+    fetchTodayQuestion();
+  }, []);
 
   const [isSliding, setIsSliding] = useState(false);
   const [direction, setDirection] = useState('next');
@@ -163,7 +189,8 @@ function HomePage() {
         onTouchEnd={handleTouchEnd}
         onMouseDown={handleTouchStart}
         onMouseUp={handleTouchEnd}
-        onWheel={handleWheel}>
+        onWheel={handleWheel}
+      >
         <ContentArea $collapsed={collapsed}>
           <CalendarSlider $direction={direction} $animating={isSliding}>
             <Calendar
@@ -188,9 +215,13 @@ function HomePage() {
           </CalendarSlider>
           <DailyQuestion
             status={
-              questionError ? 'error' : !dailyQuestion ? 'loading' : 'success'
+              todayQuestionError
+                ? 'error'
+                : !todayQuestion
+                ? 'loading'
+                : 'success'
             }
-            question={dailyQuestion}
+            question={todayQuestion}
             onClick={() => navigate('/home/write')}
           />
           <Cookiejar level={monthlyCookieJarLevel} />
