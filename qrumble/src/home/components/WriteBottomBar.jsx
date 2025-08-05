@@ -6,8 +6,14 @@ import PublicOImg from '../assets/svgs/public-o.svg';
 import PublicXImg from '../assets/svgs/public-x.svg';
 import { checkGrammar } from '../api/homepage';
 
-function WriteButtonBar({ hintActive, setHintActive, text, setGrammarResult }) {
-  const [isPublic, setIsPublic] = useState(true);
+function WriteButtonBar({
+  hintActive,
+  setHintActive,
+  text,
+  isPublic,
+  setIsPublic,
+  setGrammarResult,
+}) {
   const [grammarChecked, setGrammarChecked] = useState(true);
 
   const handleGrammarCheck = async () => {

@@ -20,6 +20,8 @@ function WritePage() {
 
   const [todayQuestion, setTodayQuestion] = useState('');
 
+  const [isPublic, setIsPublic] = useState(true);
+
   const [grammarResult, setGrammarResult] = useState(null);
 
   const MIN_TEXT_LENGTH = 50;
@@ -34,7 +36,7 @@ function WritePage() {
 
     try {
       const today = new Date().toISOString().slice(0, 10);
-      await createAnswer(today, text.trim(), true);
+      await createAnswer(today, text.trim(), isPublic);
       navigate('/home/chart');
     } catch (error) {
       console.error('답변 저장 중 오류 발생:', error);
@@ -79,6 +81,8 @@ function WritePage() {
             hintActive={hintActive}
             setHintActive={setHintActive}
             text={text}
+            isPublic={isPublic}
+            setIsPublic={setIsPublic}
             setGrammarResult={setGrammarResult}
           />
         </Bottom>
