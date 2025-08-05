@@ -33,7 +33,6 @@ const Wrapper = styled.div`
   width: 360px;
   display: flex;
   justify-content: center;
-  margin-top: 50px;
 `;
 
 const Bar = styled.div`
