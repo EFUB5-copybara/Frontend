@@ -10,6 +10,7 @@ import background1Img from '../assets/svgs/background1.svg';
 import background2Img from '../assets/svgs/background2.svg';
 import background3Img from '../assets/svgs/background3.svg';
 import { getTodayQuestion, getQuestionHints } from '../api/homepage';
+import { createAnswer } from '../api/homepage';
 
 function WritePage() {
   const [hintActive, setHintActive] = useState(false);
@@ -25,12 +26,19 @@ function WritePage() {
 
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (text.trim().length < MIN_TEXT_LENGTH) {
       setShowModal(true);
       return;
-    } else {
+    }
+
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      await createAnswer(today, text.trim(), true);
       navigate('/home/chart');
+    } catch (error) {
+      console.error('답변 저장 중 오류 발생:', error);
+      alert('답변 저장에 실패했습니다. 다시 시도해 주세요.');
     }
   };
 
