@@ -25,7 +25,6 @@ export default function DateSelector({ dates, onSelect }) {
 const Container = styled.div`
   display: flex;
   justify-content: center;
-  padding: 0.8125rem 0;
 `;
 
 const ScrollWrapper = styled.div`
