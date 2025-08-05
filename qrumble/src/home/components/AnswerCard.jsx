@@ -6,11 +6,11 @@ import browncommentImg from '../assets/svgs/brownmessage.svg';
 import brownbookmarkImg from '../assets/svgs/brownbookmark.svg';
 import { useNavigate } from 'react-router-dom';
 
-export default function AnswerCard({ id, title, subtitle, userId, rank }) {
+export default function AnswerCard({ postId, title, subtitle, userId, rank }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/community/${id}`);
+    navigate(`/community/${postId}`);
   };
 
   const bottomIcons = [brownlikeImg, browncommentImg, brownbookmarkImg];
