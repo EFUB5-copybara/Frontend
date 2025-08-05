@@ -54,7 +54,7 @@ export default function AnswerList({ answers, ranked = false }) {
       {answers.map((answer, index) => (
         <AnswerCard
           key={answer.id}
-          id={answer.id}
+          postId={answer.id}
           rank={ranked ? index + 1 : undefined}
           title={answer.title}
           subtitle={answer.content}

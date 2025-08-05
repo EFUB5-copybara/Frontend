@@ -1,5 +1,5 @@
 import CommunityLayout from '@/layout/CommunityLayout';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CommentList from '../components/CommentList';
 import CommentInput from '../components/CommentInput';
@@ -7,35 +7,55 @@ import CommentInput from '../components/CommentInput';
 import EyeIc from '@/community/assets/svgs/eye.svg?react';
 import LikeIc from '@/community/assets/svgs/like.svg?react';
 import CommentIc from '@/community/assets/svgs/message.svg?react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
-export default function CommunityDetailPage() {
-  const comments = Array.from({ length: 7 }, (_, i) => ({
+export default function PostDetailPage() {
+  /* const dummyComments = Array.from({ length: 7 }, (_, i) => ({
     user: '아이디',
     text: '글 잘 쓰시네요^^',
-  }));
+  })); */
+
+  const { postId } = useParams();
+  const [post, setPost] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchPostDetail = async () => {
+      try {
+        const result = await axios.get(`/community/posts/${postId}`);
+        setPost(result.data);
+      } catch (err) {
+        setError(
+          err.response?.data?.message || '게시글을 불러오지 못했습니다.'
+        );
+      }
+    };
+    fetchPostDetail();
+  }, [postId]);
+
+  if (error) return <div>{error}</div>;
+  if (!post) return <div>로딩 중...</div>;
 
   return (
     <Container>
       <TextWrapper>
-        <Title>How was your relationship with your friends?</Title>
-        <Content>
-          I felt good to meet my high school friend after a long time. We went
-          to a cafe, played games, and had fun together
-        </Content>
+        <Title>{post.title}</Title>
+        <Content>{post.content}</Content>
       </TextWrapper>
       <Stats>
         <Stat>
           <LikeIcon />
-          101
+          {post.likeCount}
         </Stat>
         <Stat>
-          <EyeIcon /> 101
+          <EyeIcon /> {post.viewCount}
         </Stat>
         <Stat>
-          <CommentIcon /> 101
+          <CommentIcon /> {post.commentCount}
         </Stat>
       </Stats>
-      <CommentList comments={comments} />
+      <CommentList comments={post.comments} />
       <CommentInput />
     </Container>
   );
