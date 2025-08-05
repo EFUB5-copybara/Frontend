@@ -99,7 +99,10 @@ function HomePage() {
   };
 
   const [dailyQuestion, setDailyQuestion] = useState('');
+  const [todayQuestion, setTodayQuestion] = useState('');
+
   const [questionError, setQuestionError] = useState(null);
+  const [todayQuestionError, setTodayQuestionError] = useState(null);
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -123,6 +126,28 @@ function HomePage() {
 
     fetchQuestion();
   }, [selectedDate]);
+
+  useEffect(() => {
+    const fetchTodayQuestion = async () => {
+      const today = new Date();
+      const formattedDate = `${today.getFullYear()}-${String(
+        today.getMonth() + 1
+      ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+      try {
+        const data = await getDailyQuestion(formattedDate);
+        setTodayQuestion(data.content);
+        setTodayQuestionError(null);
+      } catch (error) {
+        setTodayQuestion('');
+        const message =
+          error.response?.data?.message || '오늘 질문을 불러올 수 없습니다.';
+        setTodayQuestionError(message);
+      }
+    };
+
+    fetchTodayQuestion();
+  }, []);
 
   const [isSliding, setIsSliding] = useState(false);
   const [direction, setDirection] = useState('next');
@@ -190,9 +215,13 @@ function HomePage() {
           </CalendarSlider>
           <DailyQuestion
             status={
-              questionError ? 'error' : !dailyQuestion ? 'loading' : 'success'
+              todayQuestionError
+                ? 'error'
+                : !todayQuestion
+                ? 'loading'
+                : 'success'
             }
-            question={dailyQuestion}
+            question={todayQuestion}
             onClick={() => navigate('/home/write')}
           />
           <Cookiejar level={monthlyCookieJarLevel} />

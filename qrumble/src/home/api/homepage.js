@@ -11,20 +11,6 @@ export const getDailyQuestion = async (date) => {
   }
 };
 
-// 오늘 질문 조회
-export const getTodayQuestion = async () => {
-  try {
-    const response = await axios.get(`/questions/today`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
 // 월별 답변 여부 조회
 export const getMonthlyAnswerStatus = async (year, month) => {
   try {
