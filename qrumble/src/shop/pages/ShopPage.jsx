@@ -119,13 +119,21 @@ export default function ShopPage() {
   const handleBuy = (idx) => {
     switch (activeTab) {
       case 'item':
-        setItems(items.map((item, i) => (i === idx ? { ...item, owned: true } : item)));
+        setItems(
+          items.map((item, i) => (i === idx ? { ...item, owned: true } : item))
+        );
         break;
       case 'font':
-        setFonts(fonts.map((font, i) => (i === idx ? { ...font, owned: true } : font)));
+        setFonts(
+          fonts.map((font, i) => (i === idx ? { ...font, owned: true } : font))
+        );
         break;
       case 'paper':
-        setPapers(papers.map((paper, i) => (i === idx ? { ...paper, owned: true } : paper)));
+        setPapers(
+          papers.map((paper, i) =>
+            i === idx ? { ...paper, owned: true } : paper
+          )
+        );
         break;
       default:
         break;
@@ -136,11 +144,17 @@ export default function ShopPage() {
     <PageContainer>
       <ItemBar />
       <ShopTab activeTab={activeTab} onTabChange={setActiveTab} />
-      
-      {activeTab === 'item' && <ItemList items={items} onCardClick={setModalIndex} />}
-      {activeTab === 'font' && <FontList fonts={fonts} onCardClick={setModalIndex} />}
-      {activeTab === 'paper' && <PaperList papers={papers} onCardClick={setModalIndex} />}
-      
+
+      {activeTab === 'item' && (
+        <ItemList items={items} onCardClick={setModalIndex} />
+      )}
+      {activeTab === 'font' && (
+        <FontList fonts={fonts} onCardClick={setModalIndex} />
+      )}
+      {activeTab === 'paper' && (
+        <PaperList papers={papers} onCardClick={setModalIndex} />
+      )}
+
       {modalIndex !== null && (
         <ShopModal
           items={getCurrentItems()}
@@ -157,8 +171,11 @@ export default function ShopPage() {
 
 const PageContainer = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 360px;
-  min-height: 100vh;
-  margin: 0 auto;
+  height: 800px;
+  padding: 30px 20px 65px 20px;
   background: ${({ theme }) => theme.colors.ivory3};
 `;
