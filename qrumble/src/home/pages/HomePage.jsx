@@ -13,8 +13,9 @@ import WriteFixButton from '../components/WriteFixButton';
 import { getDailyQuestion } from '../api/homepage';
 
 function HomePage() {
-  const [year, setYear] = useState(2025);
-  const [month, setMonth] = useState(3);
+  const today = new Date();
+  const [year, setYear] = useState(today.getFullYear());
+  const [month, setMonth] = useState(today.getMonth() + 1);
   const [isMonthSelectorOpen, setIsMonthSelectorOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [monthlyCookieJarLevel, setMonthlyCookieJarLevel] = useState(0);
@@ -163,7 +164,8 @@ function HomePage() {
         onTouchEnd={handleTouchEnd}
         onMouseDown={handleTouchStart}
         onMouseUp={handleTouchEnd}
-        onWheel={handleWheel}>
+        onWheel={handleWheel}
+      >
         <ContentArea $collapsed={collapsed}>
           <CalendarSlider $direction={direction} $animating={isSliding}>
             <Calendar
