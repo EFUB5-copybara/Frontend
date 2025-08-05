@@ -118,11 +118,12 @@ export default function SignUp() {
 }
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0 1.25rem;
-  position: relative;
+  background-color: ${({ theme }) => theme.colors.ivory3};
 `;
 
 const ButtonWrapper = styled.div`

@@ -60,6 +60,7 @@ export default function CommunityPage() {
 }
 
 const Container = styled.div`
+  height: 800px;
   padding: 30px 20px 65px 20px;
   background-color: ${({ theme }) => theme.colors.ivory3};
 `;
