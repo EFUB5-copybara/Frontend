@@ -6,8 +6,14 @@ import PublicOImg from '../assets/svgs/public-o.svg';
 import PublicXImg from '../assets/svgs/public-x.svg';
 import { checkGrammar } from '../api/homepage';
 
-function WriteButtonBar({ hintActive, setHintActive, text, setGrammarResult }) {
-  const [isPublic, setIsPublic] = useState(true);
+function WriteButtonBar({
+  hintActive,
+  setHintActive,
+  text,
+  isPublic,
+  setIsPublic,
+  setGrammarResult,
+}) {
   const [grammarChecked, setGrammarChecked] = useState(true);
 
   const handleGrammarCheck = async () => {
@@ -36,7 +42,7 @@ function WriteButtonBar({ hintActive, setHintActive, text, setGrammarResult }) {
         <GrammarCheck
           disabled={!grammarChecked}
           onClick={handleGrammarCheck}
-          grammarChecked={grammarChecked}
+          $grammarChecked={grammarChecked}
         >
           <CheckText>문법 검사 {grammarChecked ? '1/1' : '0/1'}</CheckText>
         </GrammarCheck>
@@ -89,8 +95,8 @@ const ButtonImg = styled.img`
 `;
 
 const GrammarCheck = styled.button`
-  background-color: ${({ theme, grammarChecked }) =>
-    grammarChecked ? theme.colors.brown2 : theme.colors.brown3};
+  background-color: ${({ theme, $grammarChecked }) =>
+    $grammarChecked ? theme.colors.brown2 : theme.colors.brown3};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,13 +114,13 @@ const GrammarCheck = styled.button`
   }
 
   &:hover {
-    background-color: ${({ theme, grammarChecked }) =>
-      grammarChecked ? 'rgba(185, 156, 127, 1)' : theme.colors.brown3};
+    background-color: ${({ theme, $grammarChecked }) =>
+      $grammarChecked ? 'rgba(185, 156, 127, 1)' : theme.colors.brown3};
   }
 
   &:active {
-    background-color: ${({ theme, grammarChecked }) =>
-      grammarChecked ? 'rgba(163, 130, 96, 1)' : theme.colors.brown3};
+    background-color: ${({ theme, $grammarChecked }) =>
+      $grammarChecked ? 'rgba(163, 130, 96, 1)' : theme.colors.brown3};
   }
 `;
 
