@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ShareModal from '../components/ShareModal';
 import arrowbackImg from '../assets/svgs/arrow_back.svg';
@@ -9,6 +9,8 @@ import shareImg from '../assets/svgs/share.svg';
 import background1Img from '../assets/svgs/background1.svg';
 import background2Img from '../assets/svgs/background2.svg';
 import background3Img from '../assets/svgs/background3.svg';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { getAnswer } from '../api/homepage';
 
 function ChartPage() {
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -17,19 +19,47 @@ function ChartPage() {
     setIsShareOpen(true);
   };
 
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [date, setDate] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchAnswer = async () => {
+      const targetDate = location.state?.date;
+
+      if (!targetDate) {
+        alert('날짜 정보가 없습니다.');
+        navigate('/home'); // fallback
+        return;
+      }
+
+      try {
+        const res = await getAnswer(targetDate);
+        setDate(targetDate);
+        setQuestion(res.question);
+        setAnswer(res.answer);
+      } catch (error) {
+        console.error('답변 로딩 실패:', error);
+        alert('답변을 불러오지 못했습니다.');
+        navigate('/home'); // fallback
+      }
+    };
+
+    fetchAnswer();
+  }, [location, navigate]);
+
   return (
     <Background>
       <Container>
         <Button>
           <ArrowIcon src={arrowbackImg} alt='arrow back' />
         </Button>
-        <Date>2025.04.02</Date>
+        <Date>{date}</Date>
         <Wrapper>
-          <Question>How was your relationship with your friend?</Question>
-          <Answer>
-            I felt good to meet my high school friend after a long time. We went
-            to a cafe, played games, and had fun together
-          </Answer>
+          <Question>{question}</Question>
+          <Answer>{answer}</Answer>
           <ChartBottomBar>
             <BottomBtn>
               <BottomBtnImg src={thumbsupImg} alt='like' />
