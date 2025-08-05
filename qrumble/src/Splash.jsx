@@ -23,6 +23,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: ${({ theme }) => theme.colors.ivory3};
 `;
 
 const LogoImg = styled(Logo)`

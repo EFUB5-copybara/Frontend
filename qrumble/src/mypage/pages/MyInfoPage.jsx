@@ -4,6 +4,7 @@ import MyPageTopBar from '../components/MyPageTopBar';
 import editImg from '../assets/pencil_line.svg';
 import ProfileModal from '../components/ProfileModal';
 import { getMyInfo } from '../api/mypage';
+import { useNavigate } from 'react-router-dom';
 
 function MyInfoPage() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -20,6 +21,14 @@ function MyInfoPage() {
     };
     fetchData();
   }, []);
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+
+    navigate('/login');
+  };
 
   return (
     <Wrapper>
@@ -57,8 +66,7 @@ function MyInfoPage() {
             <DetailContent>*********</DetailContent>
           </InfoDetail>
           <InfoDetail>
-            <DetailTitle>탈퇴하기</DetailTitle>
-            <DetailContent></DetailContent>
+            <LogoutContent onClick={handleLogout}>로그아웃</LogoutContent>
           </InfoDetail>
         </AccountInfo>
       </Container>
@@ -189,4 +197,11 @@ const DetailContent = styled.p`
   color: ${({ theme }) => theme.colors.brown1};
   ${({ theme }) => theme.fonts.c14L};
   margin: 0;
+`;
+
+const LogoutContent = styled.p`
+  color: ${({ theme }) => theme.colors.brown2};
+  ${({ theme }) => theme.fonts.c14M};
+  margin: 0;
+  cursor: pointer;
 `;
