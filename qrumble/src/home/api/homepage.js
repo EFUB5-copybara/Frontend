@@ -11,20 +11,6 @@ export const getDailyQuestion = async (date) => {
   }
 };
 
-// 오늘 질문 조회
-export const getTodayQuestion = async () => {
-  try {
-    const response = await axios.get(`/questions/today`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
 // 월별 답변 여부 조회
 export const getMonthlyAnswerStatus = async (year, month) => {
   try {
@@ -100,7 +86,7 @@ export const checkGrammar = async (text) => {
 // 포춘쿠키 열기
 export const openFortuneCookie = async () => {
   try {
-    const response = await axiosInstance.get('/items/fortune-cookie', {
+    const response = await axiosInstance.get('/item/fortune-cookie', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -114,12 +100,8 @@ export const openFortuneCookie = async () => {
 // 포춘쿠키 사용 여부 확인
 export const checkFortuneCookieUsed = async () => {
   try {
-    const response = await axiosInstance.get('/items/fortune-cookie/used', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    return response.data.alreadyOpened;
+    const response = await axiosInstance.get('/item/fortune-cookie/used');
+    return response.data.todayUsed;
   } catch (error) {
     throw error;
   }
@@ -128,11 +110,7 @@ export const checkFortuneCookieUsed = async () => {
 // 아이템 보유 개수 조회
 export const getItemCounts = async () => {
   try {
-    const response = await axios.get('/items/count', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
+    const response = await axios.get('/items/count');
     return response.data;
   } catch (error) {
     throw error;

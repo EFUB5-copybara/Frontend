@@ -9,10 +9,31 @@ import { getAnswerStreak, checkFortuneCookieUsed } from '../api/homepage';
 
 function MissionBar() {
   const navigate = useNavigate();
-  const [isClicked, setIsClicked] = useState(false);
+  const [fortuneUsed, setFortuneUsed] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const isFortuneDisabled = clicked || fortuneUsed;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [streakData, opened] = await Promise.all([
+          getAnswerStreak(),
+          checkFortuneCookieUsed(),
+        ]);
+        setStreak(streakData);
+        setFortuneUsed(opened);
+      } catch (error) {
+        console.error('데이터 로드 실패:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleFortuneClick = () => {
-    setIsClicked(true);
+    if (isFortuneDisabled) return;
+
+    setClicked(true);
     setTimeout(() => {
       navigate('/home/fortune');
     }, 100);
@@ -27,27 +48,6 @@ function MissionBar() {
 
   const [streak, setStreak] = useState(0);
 
-  const [alreadyOpened, setAlreadyOpened] = useState(false);
-
-  const isFortuneDisabled = isClicked || alreadyOpened;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [streakData, opened] = await Promise.all([
-          getAnswerStreak(),
-          checkFortuneCookieUsed(),
-        ]);
-        setStreak(streakData);
-        setAlreadyOpened(opened);
-      } catch (error) {
-        console.error('데이터 로드 실패:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   return (
     <Bar>
       <Left>
@@ -61,7 +61,7 @@ function MissionBar() {
       </Left>
       <FortuneButton onClick={handleFortuneClick} disabled={isFortuneDisabled}>
         <CookieIcon
-          src={alreadyOpened ? fortunecookieOpenedIcon : fortunecookieIcon}
+          src={fortuneUsed ? fortunecookieOpenedIcon : fortunecookieIcon}
           alt='포춘쿠키 버튼'
         />
       </FortuneButton>
