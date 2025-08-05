@@ -86,7 +86,7 @@ function DailyPanel({ date, onClose }) {
   const navigate = useNavigate();
 
   const handleQuestionClick = () => {
-    navigate('/home/detail');
+    navigate('/home/detail', { state: { date: targetDate } });
   };
 
   return (
