@@ -64,7 +64,7 @@ const CookieRow = styled.div`
 const CookieIcon = styled.img`
   width: 49px;
   height: 49px;
-  opacity: ${({ $active }) => ($active ? 1 : 0.2)};
+  opacity: ${({ $active }) => ($active ? 1 : 0)};
 `;
 
 export default CookieCard;

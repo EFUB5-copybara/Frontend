@@ -8,7 +8,7 @@ import ActionModal from './ActionModal'; // 모달 컴포넌트 import
 export default function CommentList({ comments }) {
   const [openModalIndex, setOpenModalIndex] = useState(null);
   const modalRef = useRef(null);
-  const commentsItems = comments.comments;
+
   const handleToggleModal = (index) => {
     setOpenModalIndex((prev) => (prev === index ? null : index));
   };
@@ -27,7 +27,7 @@ export default function CommentList({ comments }) {
 
   return (
     <Comments>
-      {commentsItems.map((comment, index) => {
+      {comments.map((comment, index) => {
         const isMine = comment.user === myId;
         return (
           <Comment key={index}>

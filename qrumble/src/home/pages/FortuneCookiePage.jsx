@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import background1Img from '../assets/svgs/background1.svg';
 import background2Img from '../assets/svgs/background2.svg';
 import background3Img from '../assets/svgs/background3.svg';
-import { openFortuneCookie } from '../api/homepage';
+import { openFortuneCookie, checkFortuneCookieUsed } from '../api/homepage';
 
 function FortuneCookiePage() {
   const [opened, setOpened] = useState(false);
@@ -18,8 +18,8 @@ function FortuneCookiePage() {
   const handleOpen = async () => {
     try {
       setLoading(true);
-      const data = await openFortuneCookie();
-      setFortuneData(data);
+      const result = await openFortuneCookie(); // 랜덤 과거 데이터 받아오기
+      setFortuneData(result);
       setOpened(true);
     } catch (error) {
       console.error('포춘쿠키 열기 실패:', error);
@@ -29,18 +29,19 @@ function FortuneCookiePage() {
   };
 
   useEffect(() => {
-    const fetchIfAlreadyOpened = async () => {
+    const checkIfUsedToday = async () => {
       try {
-        if (data) {
-          setFortuneData(data);
+        const result = await checkFortuneCookieUsed();
+        if (result?.isUsed) {
+          setFortuneData(result.fortuneAnswer);
           setOpened(true);
         }
       } catch (error) {
-        console.error('포춘쿠키 조회 실패:', error);
+        console.error('포춘쿠키 사용 여부 조회 실패:', error);
       }
     };
 
-    fetchIfAlreadyOpened();
+    checkIfUsedToday();
   }, []);
 
   return (

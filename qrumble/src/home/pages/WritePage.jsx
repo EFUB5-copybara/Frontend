@@ -9,8 +9,9 @@ import AlertModal from '../components/AlertModal';
 import background1Img from '../assets/svgs/background1.svg';
 import background2Img from '../assets/svgs/background2.svg';
 import background3Img from '../assets/svgs/background3.svg';
-import { getTodayQuestion, getQuestionHints } from '../api/homepage';
+import { getDailyQuestion, getQuestionHints } from '../api/homepage';
 import { createAnswer } from '../api/homepage';
+import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 
 function WritePage() {
   const [hintActive, setHintActive] = useState(false);
@@ -18,7 +19,7 @@ function WritePage() {
   const [hintKeywords, setHintKeywords] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  const [todayQuestion, setTodayQuestion] = useState('');
+  const { todayQuestion, todayQuestionError } = useTodayQuestionStore();
 
   const [isPublic, setIsPublic] = useState(true);
 
@@ -37,7 +38,7 @@ function WritePage() {
     try {
       const today = new Date().toISOString().slice(0, 10);
       await createAnswer(today, text.trim(), isPublic);
-      navigate('/home/chart');
+      navigate('/home/detail', { state: { date: today } });
     } catch (error) {
       console.error('답변 저장 중 오류 발생:', error);
       alert('답변 저장에 실패했습니다. 다시 시도해 주세요.');
@@ -45,20 +46,30 @@ function WritePage() {
   };
 
   useEffect(() => {
-    const loadContent = async () => {
+    const fetchTodayQuestion = async () => {
+      const today = new Date();
+      const formattedDate = `${today.getFullYear()}-${String(
+        today.getMonth() + 1
+      ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
       try {
-        const today = new Date().toISOString().slice(0, 10); // 나중에 현재 날짜 기반으로 바꿀 수도 있음
-        const resQ = await getTodayQuestion();
-        const resH = await getQuestionHints(today);
-        setTodayQuestion(resQ.content);
-        setHintKeywords(resH.map((hint) => hint.content));
-      } catch (e) {
-        setTodayQuestion('질문을 불러오지 못했습니다.');
-        setHintKeywords([]);
+        const [data, hint] = await Promise.all([
+          getDailyQuestion(formattedDate),
+          getQuestionHints(formattedDate),
+        ]);
+        setTodayQuestion(data.content);
+        setHintKeywords(hint.map((hints) => hints.content));
+
+        setTodayQuestionError(null);
+      } catch (error) {
+        setTodayQuestion('');
+        const message =
+          error.response?.data?.message || '오늘 질문을 불러올 수 없습니다.';
+        setTodayQuestionError(message);
       }
     };
 
-    loadContent();
+    fetchTodayQuestion();
   }, []);
 
   return (
@@ -66,7 +77,16 @@ function WritePage() {
       <Container>
         <Top>
           <WriteTopBar onCheck={handleSubmit} textLength={text.trim().length} />
-          <WriteQuestion question={todayQuestion} />
+          <WriteQuestion
+            question={todayQuestion}
+            status={
+              todayQuestionError
+                ? 'error'
+                : !todayQuestion
+                ? 'loading'
+                : 'success'
+            }
+          />
 
           {hintActive && (
             <HintTagList

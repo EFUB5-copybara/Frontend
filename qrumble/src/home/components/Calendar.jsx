@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
   DayCell,
@@ -7,6 +7,7 @@ import {
   CookieIcon,
 } from './styles/CalendarStyles';
 import cookieImg from '../assets/svgs/cookie.svg';
+import { getMonthlyAnswerStatus } from '../api/homepage';
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -22,7 +23,27 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
 
   const days = [];
 
-  const attendedDates = [3, 4, 5, 6, 7, 8];
+  const [attendedDates, setAttendedDates] = useState([]);
+
+  useEffect(() => {
+    const fetchAttendedDates = async () => {
+      try {
+        const answered = await getMonthlyAnswerStatus(year, month); // ['2025-08-05', ...]
+        const dates = answered
+          .map((d) => {
+            const day = new Date(d).getDate();
+            return day;
+          })
+          .filter((day) => !isNaN(day));
+        setAttendedDates(dates);
+      } catch (error) {
+        console.error('월별 답변 여부 불러오기 실패:', error);
+        setAttendedDates([]); // 실패 시 빈 배열
+      }
+    };
+
+    fetchAttendedDates();
+  }, [year, month]);
 
   const weeks = {};
   for (let day = 1; day <= currentLastDate; day++) {
