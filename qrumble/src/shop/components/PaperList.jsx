@@ -1,19 +1,56 @@
 import styled from 'styled-components';
+import BlueImg from '../assets/background1.svg?react';
+import GreenImg from '../assets/background2.svg?react';
+import PinkImg from '../assets/background3.svg?react';
+
+const paperImgMap = {
+  1: BlueImg,
+  2: GreenImg,
+  3: PinkImg,
+};
 
 export default function PaperList({ papers, onCardClick }) {
   return (
     <PaperGrid>
-      {papers.map((paper, idx) => (
-        <Item key={paper.id} onClick={() => onCardClick(idx)}>
-          <PaperImg $owned={paper.owned}>
-            {paper.img && <img src={paper.img} alt={paper.name} />}
-          </PaperImg>
-          <ItemName>{paper.name}</ItemName>
-          <ItemPrice $owned={paper.owned}>
-            {paper.owned ? '보유함' : `${paper.price}P`}
-          </ItemPrice>
-        </Item>
-      ))}
+      {papers.map((paper, idx) => {
+        const PaperSvg = paperImgMap[paper.id];
+        return (
+          <Item key={paper.id} onClick={() => onCardClick(idx)}>
+            <PaperImg $owned={paper.owned}>
+              {paper.img && (
+                <img
+                  src={paper.img}
+                  alt={paper.name}
+                  style={{
+                    width: '74.9px',
+                    height: '74.9px',
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    background: '#fff',
+                  }}
+                />
+              )}
+              {!paper.img && PaperSvg && (
+                <PaperSvg
+                  width="74.9"
+                  height="74.9"
+                  style={{
+                    borderRadius: '8px',
+                    background: '#fff',
+                    display: 'block',
+                  }}
+                />
+              )}
+            </PaperImg>
+            <ItemNameRow>
+              <ItemName>{paper.name}</ItemName>
+              <ItemPrice $owned={paper.owned}>
+                {paper.owned ? '보유함' : `${paper.price}P`}
+              </ItemPrice>
+            </ItemNameRow>
+          </Item>
+        );
+      })}
     </PaperGrid>
   );
 }
@@ -43,32 +80,40 @@ const PaperImg = styled.div`
   width: 155px;
   height: 76px;
   border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.colors.brown1};
+  border: 1.5px solid ${({ theme }) => theme.colors.brown1};
   background-color: ${({ theme }) => theme.colors.white};
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   opacity: ${({ $owned }) => ($owned ? 0.6 : 1)};
+`;
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+const ItemNameRow = styled.div`
+  display: flex;
+  width: 155px;
+  padding: 0 8px;
+  justify-content: space-between;
+  align-items: center;
+  height: 26px;
+  margin-top: 8px;
 `;
 
 const ItemName = styled.div`
   ${({ theme }) => theme.fonts.c14M};
   color: ${({ theme }) => theme.colors.primary};
-  margin-top: 4px;
-  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: Pretendard, sans-serif;
+  line-height: 26px;
 `;
 
 const ItemPrice = styled.div`
-  ${({ theme }) => theme.fonts.c14M};
   color: ${({ $owned, theme }) =>
-    $owned ? theme.colors.green : theme.colors.brown2};
-  margin-top: 2px;
-  text-align: center;
+    $owned ? theme.colors.green : theme.colors.primary};
+  font-size: 16px;
+  font-weight: 700;
+  font-family: Pretendard, sans-serif;
+  line-height: 26px;
+  text-align: right;
 `;
