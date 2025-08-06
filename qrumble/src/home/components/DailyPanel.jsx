@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore'; // 추가
 import { getMonthlyAnswerStatus } from '../api/homepage';
 import { format } from 'date-fns';
+import { fetchPopularPosts } from '@/community/api/community';
 
 function DailyPanel({ date, onClose }) {
   const [targetDate, setTargetDate] = useState(null);
@@ -102,6 +103,25 @@ function DailyPanel({ date, onClose }) {
     navigate('/home/detail', { state: { date: targetDate } });
   };
 
+  const [popularPosts, setPopularPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchPopular = async () => {
+      if (!targetDate) return;
+      const dateStr = format(targetDate, 'yyyy-MM-dd');
+
+      try {
+        const res = await fetchPopularPosts(dateStr); // API 호출
+        setPopularPosts(res.posts); // posts 배열 저장
+      } catch (err) {
+        console.error('인기 게시글 조회 실패:', err);
+        setPopularPosts([]);
+      }
+    };
+
+    fetchPopular();
+  }, [targetDate]);
+
   return (
     <>
       <Dim onClick={onClose}>
@@ -179,15 +199,21 @@ function DailyPanel({ date, onClose }) {
 
             <BestAnswerText>최고 인기 답변</BestAnswerText>
             <AnswerList>
-              {[1, 2, 3].map((rank) => (
-                <AnswerCard
-                  key={rank}
-                  rank={rank}
-                  title='name'
-                  subtitle='about a diary in english...'
-                  userId='아이디'
-                />
-              ))}
+              {!Array.isArray(popularPosts) || popularPosts.length === 0 ? (
+                <EmptyMessage>인기 게시글이 없습니다.</EmptyMessage>
+              ) : (
+                popularPosts
+                  .slice(0, 3)
+                  .map((post, idx) => (
+                    <AnswerCard
+                      key={post.id}
+                      rank={idx + 1}
+                      title={post.username}
+                      subtitle={post.content}
+                      userId={`@${post.username}`}
+                    />
+                  ))
+              )}
             </AnswerList>
           </QnAWrapper>
         </ModalContainer>
@@ -307,4 +333,11 @@ const AnswerList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+`;
+
+const EmptyMessage = styled.div`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.primary};
+  ${({ theme }) => theme.fonts.b16L};
+  padding: 20px 0;
 `;
