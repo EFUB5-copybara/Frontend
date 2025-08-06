@@ -18,6 +18,7 @@ import { getItemCounts } from '../api/homepage';
 import { useNavigate } from 'react-router-dom';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore'; // 추가
 import { getMonthlyAnswerStatus } from '../api/homepage';
+import { format } from 'date-fns';
 
 function DailyPanel({ date, onClose }) {
   const [targetDate, setTargetDate] = useState(null);
@@ -148,7 +149,9 @@ function DailyPanel({ date, onClose }) {
             <QuestionCard onClick={handleQuestionClick}>
               <Header>
                 <Label>질문</Label>
-                <CardDateText>{todayQuestionDate}</CardDateText>
+                <CardDateText>
+                  {targetDate ? format(targetDate, 'yyyy.MM.dd') : ''}
+                </CardDateText>
               </Header>
               <QuestionText>
                 {todayQuestionError ? todayQuestionError : todayQuestion}
