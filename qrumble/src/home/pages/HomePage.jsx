@@ -10,7 +10,7 @@ import MonthPickerModal from '../components/MonthPickerModal';
 import QuestionList from '../components/QuestionList';
 import DailyPanel from '../components/DailyPanel';
 import WriteFixButton from '../components/WriteFixButton';
-import { getDailyQuestion } from '../api/homepage';
+import { getDailyQuestion, getMonthlyAnswer } from '../api/homepage';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 
 function HomePage() {
@@ -22,6 +22,34 @@ function HomePage() {
   const [monthlyCookieJarLevel, setMonthlyCookieJarLevel] = useState(0);
   const [isDailyPanelOpen, setIsDailyPanelOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [monthlyAnswers, setMonthlyAnswers] = useState([]);
+
+  useEffect(() => {
+    const fetchMonthlyAnswers = async () => {
+      try {
+        const data = await getMonthlyAnswer(year, month);
+        const parsed = data.map((item) => ({
+          id: item.id,
+          date: new Date(item.createdAt)
+            .toLocaleDateString('ko-KR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            })
+            .replace(/\. /g, '.')
+            .replace('.', ''), // 2025.08.06 형식
+          question: item.question,
+          answer: item.content,
+        }));
+        setMonthlyAnswers(parsed);
+      } catch (e) {
+        setMonthlyAnswers([]);
+        console.error('월별 답변 불러오기 실패:', e);
+      }
+    };
+
+    fetchMonthlyAnswers();
+  }, [year, month]);
 
   const navigate = useNavigate();
 
@@ -190,7 +218,7 @@ function HomePage() {
         </ContentArea>
 
         <QuestionArea $collapsed={collapsed}>
-          <QuestionList />
+          <QuestionList questions={monthlyAnswers} month={month} />
         </QuestionArea>
       </SwipeArea>
 
