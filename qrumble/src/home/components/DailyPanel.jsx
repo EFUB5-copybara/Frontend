@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore'; // 추가
 import { getMonthlyAnswerStatus } from '../api/homepage';
 import { format } from 'date-fns';
-import { fetchPopularPosts } from '@/community/api/community';
+import { fetchPopularPosts, fetchPostDetail } from '@/community/api/community';
 
 function DailyPanel({ date, onClose }) {
   const [targetDate, setTargetDate] = useState(null);

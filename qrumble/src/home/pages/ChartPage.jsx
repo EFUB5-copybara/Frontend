@@ -12,6 +12,7 @@ import background3Img from '../assets/svgs/background3.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAnswer, getDailyQuestion } from '../api/homepage';
 import { format } from 'date-fns';
+import { fetchPostDetail } from '@/community/api/community';
 
 function ChartPage() {
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -25,6 +26,10 @@ function ChartPage() {
   const [date, setDate] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [likeCount, setLikeCount] = useState(0);
+  const [viewCount, setViewCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,6 +56,15 @@ function ChartPage() {
       } catch (error) {
         console.error('답변 불러오기 실패:', error);
       }
+
+      try {
+        const postRes = await fetchPostDetail(postId);
+        setLikeCount(postRes.likeCount || 0);
+        setViewCount(postRes.viewCount || 0);
+        setCommentCount(postRes.commentCount || 0);
+      } catch (error) {
+        console.error('게시글 정보 불러오기 실패:', error);
+      }
     };
 
     fetchData();
@@ -70,15 +84,15 @@ function ChartPage() {
           <ChartBottomBar>
             <BottomBtn>
               <BottomBtnImg src={thumbsupImg} alt='like' />
-              101
+              {likeCount}
             </BottomBtn>
             <BottomBtn>
               <BottomBtnImg src={eyeImg} alt='eye' />
-              101
+              {viewCount}
             </BottomBtn>
             <BottomBtn>
               <BottomBtnImg src={commentImg} alt='comment' />
-              101
+              {commentCount}
             </BottomBtn>
             <BottomBtn onClick={handleShareClick}>
               <BottomBtnImg src={shareImg} alt='share' />
