@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import KeyIcon from '../assets/key.svg?react';
-import ShieldIcon from '../assets/shield.svg?react';
-import EraserIcon from '../assets/eraser.svg?react';
-import { getItemDetail } from '../api/shopApi';
+import { getFontsDetail } from '../api/shopApi';
 
-export default function ShopModal({
-  items,
+export default function FontModal({
+  fonts,
   currentIndex,
   setCurrentIndex,
   onBuy,
@@ -16,14 +13,13 @@ export default function ShopModal({
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 아이템 상세 정보 불러오기
   useEffect(() => {
     const fetchDetail = async () => {
       setLoading(true);
       try {
-        const item = items[currentIndex];
-        if (item && item.id) {
-          const res = await getItemDetail(item.id);
+        const font = fonts[currentIndex];
+        if (font && font.id) {
+          const res = await getFontsDetail(font.id);
           setDetail(res);
         }
       } catch (e) {
@@ -33,7 +29,7 @@ export default function ShopModal({
       }
     };
     fetchDetail();
-  }, [currentIndex, items]);
+  }, [currentIndex, fonts]);
 
   if (loading || !detail) {
     return (
@@ -50,49 +46,29 @@ export default function ShopModal({
   return (
     <Overlay onClick={onClose}>
       <ModalWrap onClick={(e) => e.stopPropagation()}>
-        <SwipeContainer>
-          <ModalContainer>
-            <PreviewBox>
-              {detail.img && (
-                <img
-                  src={detail.img}
-                  alt={detail.name}
-                  style={{
-                    width: '158px',
-                    height: '130px',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                    background: '#fff'
-                  }}
-                />
-              )}
-              {!detail.img && detail.name === '열쇠' && <KeyIcon width="158" height="130" />}
-              {!detail.img && detail.name === '방패' && <ShieldIcon width="158" height="130" />}
-              {!detail.img && detail.name === '지우개' && <EraserIcon width="158" height="130" />}
-              {!detail.img && detail.name !== '열쇠' && detail.name !== '방패' && detail.name !== '지우개' && (
-                <FontPreview $fontName={detail.name}>{detail.name}</FontPreview>
-              )}
-            </PreviewBox>
-            <ItemText>
-              <ItemName>{detail.name}</ItemName>
-              <ItemDesc>{detail.description}</ItemDesc>
-            </ItemText>
-            <Points>{detail.price}P</Points>
-            <BuyButton
-              disabled={detail.isOwned || insufficient}
-              owned={detail.isOwned}
-              insufficient={insufficient}
-              onClick={() => {
-                if (!detail.isOwned && !insufficient) onBuy(currentIndex);
-              }}
-            >
-              {detail.isOwned ? "보유함" : "구매하기"}
-            </BuyButton>
-            {insufficient && !detail.isOwned && (
-              <Message>포인트가 부족합니다</Message>
-            )}
-          </ModalContainer>
-        </SwipeContainer>
+        <ModalContainer>
+          <PreviewBox>
+            <FontPreview fontName={detail.name}>{detail.name}</FontPreview>
+          </PreviewBox>
+          <ItemText>
+            <ItemName>{detail.name}</ItemName>
+            <ItemDesc>{detail.description}</ItemDesc>
+          </ItemText>
+          <Points>{detail.price}P</Points>
+          <BuyButton
+            disabled={detail.isOwned || insufficient}
+            owned={detail.isOwned}
+            insufficient={insufficient}
+            onClick={() => {
+              if (!detail.isOwned && !insufficient) onBuy(currentIndex);
+            }}
+          >
+            {detail.isOwned ? "보유함" : "구매하기"}
+          </BuyButton>
+          {insufficient && !detail.isOwned && (
+            <Message>포인트가 부족합니다</Message>
+          )}
+        </ModalContainer>
       </ModalWrap>
     </Overlay>
   );

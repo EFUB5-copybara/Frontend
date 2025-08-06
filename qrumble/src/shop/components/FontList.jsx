@@ -8,10 +8,12 @@ export default function FontList({ fonts, onCardClick }) {
           <FontImg $owned={font.owned}>
             <FontText $fontName={font.name}>{font.name}</FontText>
           </FontImg>
-          <ItemName>{font.name}</ItemName>
-          <ItemPrice $owned={font.owned}>
-            {font.owned ? '보유함' : `${font.price}P`}
-          </ItemPrice>
+          <ItemNameRow>
+            <ItemName>{font.name}</ItemName>
+            <ItemPrice $owned={font.owned}>
+              {font.owned ? '보유함' : `${font.price}P`}
+            </ItemPrice>
+          </ItemNameRow>
         </Item>
       ))}
     </FontGrid>
@@ -43,7 +45,7 @@ const FontImg = styled.div`
   width: 155px;
   height: 76px;
   border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.colors.brown1};
+  border: 1.5px solid ${({ theme }) => theme.colors.primary};
   background-color: ${({ $owned, theme }) =>
     $owned ? theme.colors.brown4 : theme.colors.brown1};
   display: flex;
@@ -85,17 +87,35 @@ const FontText = styled.div`
   }};
 `;
 
+const ItemNameRow = styled.div`
+  display: flex;
+  width: 155px;
+  padding: 0 8px;
+  justify-content: space-between;
+  align-items: center;
+  height: 26px;
+  margin-top: 8px;
+`;
+
 const ItemName = styled.div`
   ${({ theme }) => theme.fonts.c14M};
   color: ${({ theme }) => theme.colors.primary};
-  margin-top: 4px;
-  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: Pretendard, sans-serif;
+  line-height: 26px;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const ItemPrice = styled.div`
-  ${({ theme }) => theme.fonts.c14M};
   color: ${({ $owned, theme }) =>
-    $owned ? theme.colors.green : theme.colors.brown2};
-  margin-top: 2px;
-  text-align: center;
+    $owned ? theme.colors.green : theme.colors.primary};
+  font-size: 16px;
+  font-weight: 700;
+  font-family: Pretendard, sans-serif;
+  line-height: 26px;
+  text-align: right;
 `;
