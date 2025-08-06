@@ -1,23 +1,40 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ShieldIcon from '../assets/shield_bar.svg?react';
 import KeyIcon from '../assets/key_bar.svg?react';
-
-// 목업 데이터
-const shieldCount = 2;
-const keyCount = 0;
+import { getMyItems } from '../api/shopApi';
 
 export default function ItemBar({ userPoint }) {
+  const [counts, setCounts] = useState({ key: 0, shield: 0 });
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const data = await getMyItems();
+        const keyItem = data.find(item => item.type === "KEY");
+        const shieldItem = data.find(item => item.type === "SHIELD");
+        setCounts({
+          key: keyItem ? keyItem.quantity : 0,
+          shield: shieldItem ? shieldItem.quantity : 0,
+        });
+      } catch (e) {
+        setCounts({ key: 0, shield: 0 });
+      }
+    };
+    fetchCounts();
+  }, []);
+
   return (
     <Wrapper>
       <Bar>
         <Left>
           <ItemBox>
             <KeyIcon width={20} height={20} />
-            <Text>{keyCount}개</Text>
+            <Text>{counts.key}개</Text>
           </ItemBox>
           <ItemBox>
             <ShieldIcon width={20} height={20} />
-            <Text>{shieldCount}개</Text>
+            <Text>{counts.shield}개</Text>
           </ItemBox>
         </Left>
         <Point>
