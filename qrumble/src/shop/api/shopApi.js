@@ -1,7 +1,7 @@
 import axiosInstance from '@/api/axiosInstance';
 
 // 아이템
-export const fetchItems = async () => {
+export const getItemList = async () => {
   try {
     const response = await axiosInstance.get('/shops/items');
     return response.data;
@@ -11,7 +11,7 @@ export const fetchItems = async () => {
   }
 };
 
-export const fetchItemDetail = async (itemId) => {
+export const getItemDetail = async (itemId) => {
   try {
     const response = await axiosInstance.get(`/shops/items/${itemId}/details`);
     return response.data;
@@ -32,7 +32,7 @@ export const purchaseItem = async (itemId) => {
 };
 
 // 폰트
-export const fetchFonts = async () => {
+export const getFontsList = async () => {
   try {
     const response = await axiosInstance.get('/shops/fonts');
     return response.data;
@@ -42,7 +42,7 @@ export const fetchFonts = async () => {
   }
 };
 
-export const fetchFontDetail = async (fontId) => {
+export const getFontsDetail = async (fontId) => {
   try {
     const response = await axiosInstance.get(`/shops/fonts/${fontId}/details`);
     return response.data;
@@ -63,7 +63,7 @@ export const purchaseFont = async (fontId) => {
 };
 
 // 종이
-export const fetchPapers = async () => {
+export const getPapersList = async () => {
   try {
     const response = await axiosInstance.get('/shops/papers');
     return response.data;
@@ -73,7 +73,7 @@ export const fetchPapers = async () => {
   }
 };
 
-export const fetchPaperDetail = async (paperId) => {
+export const getPapersDetail = async (paperId) => {
   try {
     const response = await axiosInstance.get(`/shops/papers/${paperId}/details`);
     return response.data;
@@ -92,3 +92,23 @@ export const purchasePaper = async (paperId) => {
     throw error;
   }
 };
+
+export const getMyPoint = async () => {
+  try {
+    const response = await axiosInstance.get('/shops/points');
+    return response.data;
+  } catch (error) {
+    console.error('내 포인트 조회 실패:', error);
+    throw error;
+  }
+};
+
+export const getMyItems = async () => {
+  try {
+    const response = await axiosInstance.get('/items/count');
+    return response.data;
+  } catch (error) {
+    console.error('내 아이템 조회 실패:', error);
+    throw error;
+  }
+}
