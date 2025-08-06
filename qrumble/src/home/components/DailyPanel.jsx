@@ -192,7 +192,8 @@ function DailyPanel({ date, onClose }) {
                   <BottomImg src={likeImg} alt='like' /> 공감
                 </BottomItem>
                 <BottomItem>
-                  <BottomImg src={commentImg} alt='comment' /> 101
+                  <BottomImg src={commentImg} alt='comment' />
+                  댓글
                 </BottomItem>
               </Bottom>
             </QuestionCard>
