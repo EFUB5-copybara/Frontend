@@ -14,13 +14,22 @@ import likeImg from '../assets/svgs/like.svg';
 import commentImg from '../assets/svgs/question-comments.svg';
 import ItemButtons from './ItemButtons';
 import AnswerCard from './AnswerCard';
-import { getDailyQuestion, getItemCounts } from '../api/homepage';
+import { getItemCounts } from '../api/homepage';
 import { useNavigate } from 'react-router-dom';
+import useTodayQuestionStore from '../stores/useTodayQuestionStore'; // 추가
+import { getMonthlyAnswerStatus } from '../api/homepage';
 
 function DailyPanel({ date, onClose }) {
-  const attendedDates = [3, 4, 5, 6, 7, 8];
-
+  const [targetDate, setTargetDate] = useState(null);
   const [items, setItems] = useState([]);
+  const [attendedDates, setAttendedDates] = useState([]);
+
+  const {
+    todayQuestion,
+    todayQuestionDate,
+    todayQuestionError,
+    fetchTodayQuestion,
+  } = useTodayQuestionStore();
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -39,8 +48,6 @@ function DailyPanel({ date, onClose }) {
     fetchItems();
   }, []);
 
-  const [targetDate, setTargetDate] = useState(null);
-
   useEffect(() => {
     if (date?.day && date?.weekDates) {
       const selected = date.weekDates.find((d) => d.day === date.day);
@@ -52,36 +59,34 @@ function DailyPanel({ date, onClose }) {
     }
   }, [date]);
 
+  useEffect(() => {
+    const fetchAttendedDates = async () => {
+      if (!targetDate) return;
+
+      const year = targetDate.getFullYear();
+      const month = targetDate.getMonth() + 1;
+
+      try {
+        const answered = await getMonthlyAnswerStatus(year, month); // ["2025-08-01", ...]
+        const days = answered
+          .map((d) => new Date(d).getDate())
+          .filter((n) => !isNaN(n)); // 숫자 날짜만 추출
+
+        setAttendedDates(days);
+      } catch (err) {
+        console.error('출석 정보 불러오기 실패:', err);
+        setAttendedDates([]);
+      }
+    };
+
+    fetchAttendedDates();
+  }, [targetDate]);
+
   const handleUseItem = (type) => {
     setItems((prev) =>
       prev.map((i) => (i.name === type ? { ...i, count: i.count - 1 } : i))
     );
   };
-
-  const [questionText, setQuestionText] = useState('');
-  const [questionDate, setQuestionDate] = useState('');
-
-  useEffect(() => {
-    const getQuestion = async () => {
-      if (!targetDate) return;
-
-      const y = targetDate.getFullYear();
-      const m = String(targetDate.getMonth() + 1).padStart(2, '0');
-      const d = String(targetDate.getDate()).padStart(2, '0');
-      const formattedDate = `${y}-${m}-${d}`;
-
-      try {
-        const res = await getDailyQuestion(formattedDate);
-        setQuestionText(res.content);
-        setQuestionDate(formattedDate);
-      } catch (e) {
-        setQuestionText('질문을 불러올 수 없습니다.');
-        setQuestionDate(formattedDate);
-      }
-    };
-
-    getQuestion();
-  }, [targetDate]);
 
   const navigate = useNavigate();
 
@@ -143,9 +148,11 @@ function DailyPanel({ date, onClose }) {
             <QuestionCard onClick={handleQuestionClick}>
               <Header>
                 <Label>질문</Label>
-                <CardDateText>{questionDate}</CardDateText>
+                <CardDateText>{todayQuestionDate}</CardDateText>
               </Header>
-              <QuestionText>{questionText}</QuestionText>
+              <QuestionText>
+                {todayQuestionError ? todayQuestionError : todayQuestion}
+              </QuestionText>
               <Bottom>
                 <BottomItem>
                   <BottomImg src={likeImg} alt='like' /> 공감

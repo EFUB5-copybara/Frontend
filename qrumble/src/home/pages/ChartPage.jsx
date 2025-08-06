@@ -10,7 +10,7 @@ import background1Img from '../assets/svgs/background1.svg';
 import background2Img from '../assets/svgs/background2.svg';
 import background3Img from '../assets/svgs/background3.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getAnswer } from '../api/homepage';
+import { getAnswer, getDailyQuestion } from '../api/homepage';
 
 function ChartPage() {
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -26,28 +26,32 @@ function ChartPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAnswer = async () => {
+    const fetchData = async () => {
       const targetDate = location.state?.date;
 
       if (!targetDate) {
         alert('날짜 정보가 없습니다.');
-        navigate('/home'); // fallback
+        navigate('/home');
         return;
       }
 
       try {
-        const res = await getAnswer(targetDate);
+        const [answerRes, questionRes] = await Promise.all([
+          getAnswer(targetDate),
+          getDailyQuestion(targetDate),
+        ]);
+
         setDate(targetDate);
-        setQuestion(res.question);
-        setAnswer(res.answer);
+        setAnswer(answerRes.content);
+        setQuestion(questionRes.content);
       } catch (error) {
-        console.error('답변 로딩 실패:', error);
-        alert('답변을 불러오지 못했습니다.');
-        navigate('/home'); // fallback
+        console.error('질문/답변 불러오기 실패:', error);
+        alert('답변을 불러오는 데 실패했습니다.');
+        navigate('/home');
       }
     };
 
-    fetchAnswer();
+    fetchData();
   }, [location, navigate]);
 
   return (
