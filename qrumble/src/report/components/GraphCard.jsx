@@ -11,7 +11,7 @@ function GraphCard({ children, title }) {
 }
 
 const Card = styled.div`
-  width: 320px;
+  width: 100%;
   height: 234px;
   border-radius: 14px;
   border: 1px solid ${({ theme }) => theme.colors.brown1};

@@ -21,6 +21,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 5.25rem;
-  margin: 5.3125rem 1.25rem;
+  padding: 7.1875rem 1.25rem;
+  height: 800px;
   background-color: ${({ theme }) => theme.colors.ivory3};
 `;
