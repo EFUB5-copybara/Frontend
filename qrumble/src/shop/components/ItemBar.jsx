@@ -1,13 +1,12 @@
 import styled from 'styled-components';
-import ShieldIcon from '../assets/shield.svg?react';
-import KeyIcon from '../assets/key.svg?react';
+import ShieldIcon from '../assets/shield_bar.svg?react';
+import KeyIcon from '../assets/key_bar.svg?react';
 
 // 목업 데이터
 const shieldCount = 2;
 const keyCount = 0;
-const point = 120;
 
-export default function ItemBar() {
+export default function ItemBar({ userPoint }) {
   return (
     <Wrapper>
       <Bar>
@@ -22,7 +21,7 @@ export default function ItemBar() {
           </ItemBox>
         </Left>
         <Point>
-          <PointText>{point}P</PointText>
+          <PointText>{userPoint}P</PointText>
         </Point>
       </Bar>
     </Wrapper>

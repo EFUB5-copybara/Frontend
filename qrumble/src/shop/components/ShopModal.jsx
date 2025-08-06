@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import KeyIcon from '../assets/key.svg?react';
 import ShieldIcon from '../assets/shield.svg?react';
 import EraserIcon from '../assets/eraser.svg?react';
+import { getItemDetail } from '../api/shopApi';
 
 export default function ShopModal({
   items,
@@ -12,85 +13,85 @@ export default function ShopModal({
   onClose,
   userPoint = 120,
 }) {
-  const [startX, setStartX] = useState(null);
-  const [deltaX, setDeltaX] = useState(0);
-  const [isSwiping, setIsSwiping] = useState(false);
+  const [detail, setDetail] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleStart = (e) => {
-    const x = e.touches ? e.touches[0].clientX : e.clientX;
-    setStartX(x);
-    setIsSwiping(true);
-  };
+  // 아이템 상세 정보 불러오기
+  useEffect(() => {
+    const fetchDetail = async () => {
+      setLoading(true);
+      try {
+        const item = items[currentIndex];
+        if (item && item.id) {
+          const res = await getItemDetail(item.id);
+          setDetail(res);
+        }
+      } catch (e) {
+        setDetail(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDetail();
+  }, [currentIndex, items]);
 
-  const handleMove = (e) => {
-    if (startX !== null) {
-      const currentX = e.touches ? e.touches[0].clientX : e.clientX;
-      setDeltaX(currentX - startX);
-    }
-  };
+  if (loading || !detail) {
+    return (
+      <Overlay onClick={onClose}>
+        <ModalWrap onClick={e => e.stopPropagation()}>
+          <LoadingBox>로딩 중...</LoadingBox>
+        </ModalWrap>
+      </Overlay>
+    );
+  }
 
-  const handleEnd = () => {
-    if (deltaX > 50 && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    } else if (deltaX < -50 && currentIndex < items.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
-    setDeltaX(0);
-    setStartX(null);
-    setIsSwiping(false);
-  };
+  const insufficient = userPoint < detail.price;
 
   return (
     <Overlay onClick={onClose}>
       <ModalWrap onClick={(e) => e.stopPropagation()}>
-        <SwipeContainer
-          currentIndex={currentIndex}
-          deltaX={deltaX}
-          isSwiping={isSwiping}
-          onTouchStart={handleStart}
-          onTouchMove={handleMove}
-          onTouchEnd={handleEnd}
-          onMouseDown={handleStart}
-          onMouseMove={(e) => isSwiping && handleMove(e)}
-          onMouseUp={handleEnd}
-          onMouseLeave={() => isSwiping && handleEnd()}
-        >
-          {items.map((item, idx) => {
-            const insufficient = userPoint < item.price;
-            return (
-              <ModalContainer key={idx}>
-                <PreviewBox>
-                  {item.img && <img src={item.img} alt={item.name} />}
-                  {!item.img && item.name === '열쇠' && <KeyIcon width="70" height="70" />}
-                  {!item.img && item.name === '방패' && <ShieldIcon width="70" height="70" />}
-                  {!item.img && item.name === '지우개' && <EraserIcon width="70" height="70" />}
-                  {!item.img && item.name !== '열쇠' && item.name !== '방패' && item.name !== '지우개' && (
-                    <FontPreview fontName={item.name}>{item.name}</FontPreview>
-                  )}
-                </PreviewBox>
-                <ItemText>
-                  <ItemName>{item.name}</ItemName>
-                  <ItemDesc>{item.desc}</ItemDesc>
-                </ItemText>
-                <Points>{item.price}P</Points>
-                <BuyButton
-                  disabled={item.owned || insufficient}
-                  owned={item.owned}
-                  insufficient={insufficient}
-                  onClick={() => {
-                    if (!item.owned && !insufficient) onBuy(idx);
+        <SwipeContainer>
+          <ModalContainer>
+            <PreviewBox>
+              {detail.img && (
+                <img
+                  src={detail.img}
+                  alt={detail.name}
+                  style={{
+                    width: '158px',
+                    height: '130px',
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    background: '#fff'
                   }}
-                >
-                  {item.owned
-                    ? "보유함"
-                    : "구매하기"}
-                </BuyButton>
-                {insufficient && !item.owned && (
-                  <Message>포인트가 부족합니다</Message>
-                )}
-              </ModalContainer>
-            );
-          })}
+                />
+              )}
+              {!detail.img && detail.name === '열쇠' && <KeyIcon width="158" height="130" />}
+              {!detail.img && detail.name === '방패' && <ShieldIcon width="158" height="130" />}
+              {!detail.img && detail.name === '지우개' && <EraserIcon width="158" height="130" />}
+              {!detail.img && detail.name !== '열쇠' && detail.name !== '방패' && detail.name !== '지우개' && (
+                <FontPreview fontName={detail.name}>{detail.name}</FontPreview>
+              )}
+            </PreviewBox>
+            <ItemText>
+              <ItemName>{detail.name}</ItemName>
+              <ItemDesc>{detail.description}</ItemDesc>
+            </ItemText>
+            <Points>{detail.price}P</Points>
+            <BuyButton
+              disabled={detail.isOwned || insufficient}
+              owned={detail.isOwned}
+              insufficient={insufficient}
+              onClick={() => {
+                if (!detail.isOwned && !insufficient) onBuy(currentIndex);
+              }}
+            >
+              {detail.isOwned ? "보유함" : "구매하기"}
+            </BuyButton>
+            {insufficient && !detail.isOwned && (
+              <Message>포인트가 부족합니다</Message>
+            )}
+          </ModalContainer>
         </SwipeContainer>
       </ModalWrap>
     </Overlay>
@@ -149,11 +150,7 @@ const PreviewBox = styled.div`
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+  padding: 7.8px 10px 7.8px 10px;
 `;
 
 const FontPreview = styled.div`
@@ -261,4 +258,19 @@ const Message = styled.div`
   color: ${({ theme }) => theme.colors.error};
   font-size: 13px;
   margin-top: 4px;
+`;
+
+const LoadingBox = styled.div`
+  width: 317px;
+  height: 343px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+`;
+
+const QuantityText = styled.div`
+  margin-top: 8px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.brown2};
 `;
