@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-function WriteQuestion({ question }) {
+function WriteQuestion({ question, status }) {
+  let displayText;
+
+  if (status === 'loading') {
+    displayText = '질문을 불러오는 중...';
+  } else if (status === 'error') {
+    displayText = '질문을 불러올 수 없습니다.';
+  } else {
+    displayText = `${question}`;
+  }
+
   return (
     <Container>
-      <Question>{question ? `${question}` : '질문을 불러오는 중...'}</Question>
+      <Question>{displayText}</Question>
     </Container>
   );
 }

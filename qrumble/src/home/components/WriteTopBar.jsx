@@ -14,12 +14,17 @@ function WriteTopBar({ onCheck, textLength }) {
     navigate('/home');
   };
 
+  const today = new Date();
+  const formattedDate = `${today.getFullYear()}.${String(
+    today.getMonth() + 1
+  ).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+
   return (
     <Bar>
       <Button onClick={handleBack}>
         <ArrowIcon src={arrowbackImg} alt='arrow back' />
       </Button>
-      <Date>2025.04.02</Date>
+      <TodayDate>{formattedDate}</TodayDate>
       <CheckButton onClick={onCheck} disabled={!isActive}>
         <CheckIcon src={isActive ? browncheckImg : checkImg} alt='check' />
       </CheckButton>
@@ -71,7 +76,7 @@ const CheckIcon = styled.img`
   height: 30px;
 `;
 
-const Date = styled.div`
+const TodayDate = styled.div`
   ${({ theme }) => theme.fonts.ns14SB};
   color: ${({ theme }) => theme.colors.green};
   text-align: center;

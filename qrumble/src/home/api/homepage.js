@@ -1,24 +1,9 @@
 import axiosInstance from '@/api/axiosInstance';
-import axios from 'axios';
 
 // 일별 질문 조회
 export const getDailyQuestion = async (date) => {
   try {
-    const response = await axios.get(`/questions/${date}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// 오늘 질문 조회
-export const getTodayQuestion = async () => {
-  try {
-    const response = await axios.get(`/questions/today`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
+    const response = await axiosInstance.get(`/questions/${date}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -28,11 +13,8 @@ export const getTodayQuestion = async () => {
 // 월별 답변 여부 조회
 export const getMonthlyAnswerStatus = async (year, month) => {
   try {
-    const response = await axios.get('/calendar/answers', {
+    const response = await axiosInstance.get('/calendar/answers', {
       params: { year, month },
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
     });
     return response.data.answeredDates;
   } catch (error) {
@@ -43,7 +25,7 @@ export const getMonthlyAnswerStatus = async (year, month) => {
 // 월별 답변 조회
 export const getMonthlyAnswer = async (year, month) => {
   try {
-    const response = await axios.get('/answers/me', {
+    const response = await axiosInstance.get('/answers/me', {
       params: { year, month },
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -55,14 +37,38 @@ export const getMonthlyAnswer = async (year, month) => {
   }
 };
 
+// 월별 답변에서 질문 추출
+export const getMonthlyQuestions = async (year, month) => {
+  try {
+    const response = await axiosInstance.get('/answers/me', {
+      params: { year, month },
+    });
+
+    // 필요한 데이터만 추출
+    const rawAnswers = response.data.answers;
+    const filtered = rawAnswers.map((item) => ({
+      id: item.id,
+      date: new Date(item.createdAt)
+        .toISOString()
+        .slice(0, 10)
+        .replace(/-/g, '.'),
+      question: item.question,
+      answer: item.content,
+      likeCount: item.likeCount,
+      bookmarkCount: item.bookmarkCount,
+    }));
+
+    return filtered;
+  } catch (error) {
+    console.error('월별 질문 로딩 실패:', error);
+    return [];
+  }
+};
+
 // 연속 답변 일수 조회
 export const getAnswerStreak = async () => {
   try {
-    const response = await axios.get('/answers/streak', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
+    const response = await axiosInstance.get('/answers/streak');
     return response.data.streak;
   } catch (error) {
     throw error;
@@ -72,7 +78,7 @@ export const getAnswerStreak = async () => {
 // 힌트 조회
 export const getQuestionHints = async (date) => {
   try {
-    const response = await axios.get(`/questions/${date}/hints`);
+    const response = await axiosInstance.get(`/questions/${date}/hints`);
     return response.data;
   } catch (error) {
     throw error;
@@ -82,15 +88,7 @@ export const getQuestionHints = async (date) => {
 // 문법 검사
 export const checkGrammar = async (text) => {
   try {
-    const response = await axiosInstance.post(
-      '/api/grammar/check',
-      { text },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
+    const response = await axiosInstance.post('/api/grammar/check', { text });
     return response.data;
   } catch (error) {
     throw error;
@@ -100,11 +98,7 @@ export const checkGrammar = async (text) => {
 // 포춘쿠키 열기
 export const openFortuneCookie = async () => {
   try {
-    const response = await axiosInstance.get('/items/fortune-cookie', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
+    const response = await axiosInstance.get('/item/fortune-cookie');
     return response.data;
   } catch (error) {
     throw error;
@@ -114,12 +108,8 @@ export const openFortuneCookie = async () => {
 // 포춘쿠키 사용 여부 확인
 export const checkFortuneCookieUsed = async () => {
   try {
-    const response = await axiosInstance.get('/items/fortune-cookie/used', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    return response.data.alreadyOpened;
+    const response = await axiosInstance.get('/item/fortune-cookie/used');
+    return response.data.todayUsed;
   } catch (error) {
     throw error;
   }
@@ -128,11 +118,7 @@ export const checkFortuneCookieUsed = async () => {
 // 아이템 보유 개수 조회
 export const getItemCounts = async () => {
   try {
-    const response = await axios.get('/items/count', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
+    const response = await axiosInstance.get('/items/count');
     return response.data;
   } catch (error) {
     throw error;
@@ -142,15 +128,7 @@ export const getItemCounts = async () => {
 // 아이템 사용 함수
 const useItem = async (type) => {
   try {
-    const response = await axios.post(
-      '/items/use',
-      { type },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
+    const response = await axiosInstance.post('/items/use', { type });
     return response.data;
   } catch (error) {
     throw error;
@@ -175,7 +153,7 @@ export const useEraserItem = async () => {
 // 답변 조회
 export const getAnswer = async (date) => {
   try {
-    const response = await axios.get(`/questions/${date}/answer`);
+    const response = await axiosInstance.get(`/questions/${date}/answer`);
     return response.data;
   } catch (error) {
     throw error;
@@ -185,19 +163,10 @@ export const getAnswer = async (date) => {
 // 답변 생성
 export const createAnswer = async (date, content, isPublic) => {
   try {
-    const response = await axios.post(
-      `/questions/${date}/answer`,
-      {
-        content,
-        isPublic,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
+    const response = await axiosInstance.post(`/questions/${date}/answer`, {
+      content,
+      isPublic,
+    });
     return response.data;
   } catch (error) {
     console.error('답변 생성 실패:', error);

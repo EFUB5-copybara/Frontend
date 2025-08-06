@@ -3,28 +3,18 @@ import styled from 'styled-components';
 import likeImg from '../assets/svgs/like.svg';
 import commentImg from '../assets/svgs/question-comments.svg';
 
-const dummyQuestions = [
-  {
-    id: 1,
-    date: '2025.04.02',
-    question: 'How was your relationship with your friends?',
-    answer: 'I met my high school friend and we had a great time.',
-  },
-  {
-    id: 2,
-    date: '2025.04.01',
-    question: 'What made you smile today?',
-    answer: 'I saw a cute dog while walking to school.',
-  },
-  {
-    id: 3,
-    date: '2025.03.31',
-    question: 'What was the most challenging part of your day?',
-    answer: 'I had a tough math test but managed to stay focused.',
-  },
-];
+function QuestionList({ questions, month }) {
+  if (!questions || questions.length === 0) {
+    return (
+      <Wrapper>
+        <Header />
+        <EmptyCard>
+          <EmptyText>{month}월에는 아직 작성된 답변이 없어요</EmptyText>
+        </EmptyCard>
+      </Wrapper>
+    );
+  }
 
-function QuestionList({ questions = dummyQuestions }) {
   return (
     <Wrapper>
       {questions.map((item) => (
@@ -109,4 +99,17 @@ const BottomItem = styled.div`
 const BottomImg = styled.img`
   width: 14px;
   height: 14px;
+`;
+
+const EmptyCard = styled.div`
+  background-color: ${({ theme }) => theme.colors.white};
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid black;
+`;
+
+const EmptyText = styled.div`
+  ${({ theme }) => theme.fonts.c14M};
+  color: ${({ theme }) => theme.colors.black};
+  margin: 4px 0px;
 `;

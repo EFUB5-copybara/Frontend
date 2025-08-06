@@ -1,37 +1,32 @@
-import CommunityLayout from '@/layout/CommunityLayout';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import CommentList from '../components/CommentList';
 import CommentInput from '../components/CommentInput';
+import CommentList from '../components/CommentList';
 
 import EyeIc from '@/community/assets/svgs/eye.svg?react';
 import LikeIc from '@/community/assets/svgs/like.svg?react';
 import CommentIc from '@/community/assets/svgs/message.svg?react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { fetchPostDetail } from '../api/community';
 
 export default function PostDetailPage() {
-  /* const dummyComments = Array.from({ length: 7 }, (_, i) => ({
-    user: '아이디',
-    text: '글 잘 쓰시네요^^',
-  })); */
-
   const { postId } = useParams();
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPostDetail = async () => {
+    const getPost = async () => {
       try {
-        const result = await axios.get(`/community/posts/${postId}`);
-        setPost(result.data);
+        const { data } = await fetchPostDetail(postId);
+        setPost(data);
+        console.log('post:', data);
       } catch (err) {
         setError(
           err.response?.data?.message || '게시글을 불러오지 못했습니다.'
         );
       }
     };
-    fetchPostDetail();
+    getPost();
   }, [postId]);
 
   if (error) return <div>{error}</div>;
@@ -55,7 +50,7 @@ export default function PostDetailPage() {
           <CommentIcon /> {post.commentCount}
         </Stat>
       </Stats>
-      <CommentList comments={post.comments} />
+      <CommentList comments={post.comments.comments} />
       <CommentInput />
     </Container>
   );
