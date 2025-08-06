@@ -40,7 +40,7 @@ function MissionBar() {
   };
 
   const handleMissionClick = () => {
-    setIsClicked(true);
+    setClicked(true);
     setTimeout(() => {
       navigate('/home/mission');
     }, 100);
