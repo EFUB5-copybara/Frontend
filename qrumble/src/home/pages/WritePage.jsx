@@ -95,6 +95,22 @@ function WritePage() {
             />
           )}
           <TextArea value={text} onChange={(e) => setText(e.target.value)} />
+
+          {/* {grammarResult && grammarResult.errors.length > 0 && (
+            <GrammarResultBox>
+              <p>
+                {grammarResult.errors.length}개의 문법 오류가 발견되었습니다.
+              </p>
+              <ul>
+                {grammarResult.errors.map((e, idx) => (
+                  <li key={idx}>
+                    📌 <strong>{e.message}</strong> (위치 {e.offset}) <br />
+                    👉 추천: {e.replacements.join(', ')}
+                  </li>
+                ))}
+              </ul>
+            </GrammarResultBox>
+          )} */}
         </Top>
         <Bottom>
           <WriteBottomBar
@@ -163,3 +179,21 @@ const TextArea = styled.textarea`
     outline: none;
   }
 `;
+
+// const GrammarResultBox = styled.div`
+//   margin-top: 12px;
+//   width: 100%;
+//   max-width: 320px;
+//   padding: 12px;
+//   background-color: ${({ theme }) => theme.colors.gray1 || '#f7f7f7'};
+//   border-radius: 8px;
+//   font-size: 14px;
+//   color: ${({ theme }) => theme.colors.black};
+//   ul {
+//     margin-top: 8px;
+//     padding-left: 16px;
+//   }
+//   li {
+//     margin-bottom: 6px;
+//   }
+// `;
