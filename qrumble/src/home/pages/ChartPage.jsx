@@ -12,7 +12,6 @@ import background3Img from '../assets/svgs/background3.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAnswer, getDailyQuestion } from '../api/homepage';
 import { format } from 'date-fns';
-import { fetchPostDetail } from '@/community/api/community';
 
 function ChartPage() {
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -26,10 +25,6 @@ function ChartPage() {
   const [date, setDate] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
-
-  const [likeCount, setLikeCount] = useState(0);
-  const [viewCount, setViewCount] = useState(0);
-  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,7 +76,7 @@ function ChartPage() {
         <Wrapper>
           <Question>{question}</Question>
           <Answer>{answer}</Answer>
-          <ChartBottomBar>
+          {/* <ChartBottomBar>
             <BottomBtn>
               <BottomBtnImg src={thumbsupImg} alt='like' />
               {likeCount}
@@ -97,7 +92,7 @@ function ChartPage() {
             <BottomBtn onClick={handleShareClick}>
               <BottomBtnImg src={shareImg} alt='share' />
             </BottomBtn>
-          </ChartBottomBar>
+          </ChartBottomBar> */}
         </Wrapper>
       </Container>
       {isShareOpen && <ShareModal onClose={() => setIsShareOpen(false)} />}
