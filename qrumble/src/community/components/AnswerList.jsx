@@ -59,6 +59,9 @@ export default function AnswerList({ answers, ranked = false }) {
           title={answer.title}
           subtitle={answer.content}
           userId={answer.username}
+          bookmarkCount={answer.bookmarkCount}
+          commentCount={answer.commentCount}
+          likeCount={answer.likeCount}
         />
       ))}
     </ListWrapper>
