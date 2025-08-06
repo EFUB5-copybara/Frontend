@@ -99,76 +99,16 @@ function HomePage() {
     setIsDailyPanelOpen(true);
   };
 
-  const {
-    todayQuestion,
-    todayQuestionError,
-    setTodayQuestion,
-    setTodayQuestionError,
-  } = useTodayQuestionStore();
+  const { todayQuestion, todayQuestionError, fetchTodayQuestion } =
+    useTodayQuestionStore();
 
   useEffect(() => {
-    const fetchQuestion = async () => {
-      if (!selectedDate) return;
+    const today = new Date();
+    const formattedDate = `${today.getFullYear()}-${String(
+      today.getMonth() + 1
+    ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-      const { year, month, day } = selectedDate;
-      const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(
-        day
-      ).padStart(2, '0')}`;
-
-      try {
-        const data = await getDailyQuestion(formattedDate);
-        setDailyQuestion(data.content);
-        setQuestionError(null);
-      } catch (error) {
-        setDailyQuestion('');
-        const message = error.response?.data?.message || '질문 불러오기 실패';
-        setQuestionError(message);
-      }
-    };
-
-    fetchQuestion();
-  }, [selectedDate]);
-
-  useEffect(() => {
-    const fetchTodayQuestion = async () => {
-      const today = new Date();
-      const formattedDate = `${today.getFullYear()}-${String(
-        today.getMonth() + 1
-      ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
-      try {
-        const data = await getDailyQuestion(formattedDate);
-        setTodayQuestion(data.content);
-        setTodayQuestionError(null);
-      } catch (error) {
-        setTodayQuestion('');
-        const message =
-          error.response?.data?.message || '오늘 질문을 불러올 수 없습니다.';
-        setTodayQuestionError(message);
-      }
-    };
-
-    fetchTodayQuestion();
-  }, []);
-
-  useEffect(() => {
-    const fetchTodayQuestion = async () => {
-      const today = new Date();
-      const formattedDate = `${today.getFullYear()}-${String(
-        today.getMonth() + 1
-      ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
-      try {
-        const data = await getDailyQuestion(formattedDate);
-        setTodayQuestion(data.content);
-        setTodayQuestionError(null);
-      } catch (error) {
-        setTodayQuestion('');
-        setTodayQuestionError(error.response?.data?.message || '질문 오류');
-      }
-    };
-
-    fetchTodayQuestion();
+    fetchTodayQuestion(formattedDate);
   }, []);
 
   const [isSliding, setIsSliding] = useState(false);
