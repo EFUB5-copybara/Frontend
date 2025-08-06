@@ -12,6 +12,7 @@ import background3Img from '../assets/svgs/background3.svg';
 import { getDailyQuestion, getQuestionHints } from '../api/homepage';
 import { createAnswer } from '../api/homepage';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore';
+import GrammarPopup from '../components/GrammarPopup';
 
 function WritePage() {
   const [hintActive, setHintActive] = useState(false);
@@ -24,6 +25,46 @@ function WritePage() {
   const [isPublic, setIsPublic] = useState(true);
 
   const [grammarResult, setGrammarResult] = useState(null);
+
+  const [popupInfo, setPopupInfo] = useState(null);
+
+  const handleErrorClick = (e, error) => {
+    const rect = e.target.getBoundingClientRect();
+    setPopupInfo({
+      x: rect.left + window.scrollX,
+      y: rect.bottom + window.scrollY,
+      message: error.message,
+      replacements: error.replacements,
+      offset: error.offset,
+      length: error.length,
+    });
+  };
+
+  const handleReplacementSelect = (replacement) => {
+    const { offset, length } = popupInfo;
+    const originalFragment = text.slice(offset, offset + length);
+    const newText =
+      text.slice(0, offset) + replacement + text.slice(offset + length);
+    setText(newText);
+
+    const delta = replacement.length - length;
+
+    const updatedErrors = grammarResult.errors
+      .filter((err) => !(err.offset === offset && err.length === length))
+      .map((err) => {
+        if (err.offset > offset) {
+          return { ...err, offset: err.offset + delta };
+        }
+        return err;
+      });
+
+    setGrammarResult((prev) => ({
+      ...prev,
+      errors: updatedErrors,
+    }));
+
+    setPopupInfo(null);
+  };
 
   const MIN_TEXT_LENGTH = 50;
 
@@ -96,26 +137,25 @@ function WritePage() {
           )}
           <TextArea value={text} onChange={(e) => setText(e.target.value)} />
 
-          {/* {grammarResult && grammarResult.errors.length > 0 && (
-            <GrammarResultBox>
-              <p>
-                {grammarResult.errors.length}개의 문법 오류가 발견되었습니다.
-              </p>
-              <ul>
-                {grammarResult.errors.map((e, idx) => (
-                  <li key={idx}>
-                    📌 <strong>{e.message}</strong> (위치 {e.offset}) <br />
-                    👉 추천: {e.replacements.join(', ')}
-                  </li>
-                ))}
-              </ul>
-            </GrammarResultBox>
-          )} */}
-          {/* {grammarResult && grammarResult.errors.length > 0 && (
+          {grammarResult && grammarResult.errors.length > 0 && (
             <StyledTextOutput>
-              {renderWithHighlights(text, grammarResult.errors)}
+              {renderWithHighlights(
+                text,
+                grammarResult.errors,
+                handleErrorClick
+              )}
             </StyledTextOutput>
-          )} */}
+          )}
+
+          {popupInfo && (
+            <GrammarPopup
+              x={popupInfo.x}
+              y={popupInfo.y}
+              message={popupInfo.message}
+              replacements={popupInfo.replacements}
+              onSelect={handleReplacementSelect}
+            />
+          )}
         </Top>
         <Bottom>
           <WriteBottomBar
@@ -173,11 +213,7 @@ const TextArea = styled.textarea`
   padding: 0;
   border: none;
   resize: none;
-  font-family: 'Nunito', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 26px;
-  letter-spacing: 0;
+  ${({ theme }) => theme.fonts.ns16M};
   color: ${({ theme }) => theme.colors.black};
   background-color: transparent;
   &:focus {
@@ -185,63 +221,43 @@ const TextArea = styled.textarea`
   }
 `;
 
-// const GrammarResultBox = styled.div`
-//   margin-top: 12px;
-//   width: 100%;
-//   max-width: 320px;
-//   padding: 12px;
-//   background-color: ${({ theme }) => theme.colors.gray1 || '#f7f7f7'};
-//   border-radius: 8px;
-//   font-size: 14px;
-//   color: ${({ theme }) => theme.colors.black};
-//   ul {
-//     margin-top: 8px;
-//     padding-left: 16px;
-//   }
-//   li {
-//     margin-bottom: 6px;
-//   }
-// `;
+function renderWithHighlights(text, errors, onClickError) {
+  let result = [];
+  let lastIndex = 0;
 
-// function renderWithHighlights(text, errors) {
-//   let result = [];
-//   let lastIndex = 0;
+  errors.forEach((error, i) => {
+    const { offset, length } = error;
+    const before = text.slice(lastIndex, offset);
+    const wrong = text.slice(offset, offset + length);
 
-//   errors.forEach((error, i) => {
-//     const { offset, length, message } = error;
-//     const before = text.slice(lastIndex, offset);
-//     const wrong = text.slice(offset, offset + length);
+    result.push(<span key={`before-${i}`}>{before}</span>);
+    result.push(
+      <span
+        key={`error-${i}`}
+        style={{ borderBottom: '2px dashed red', cursor: 'pointer' }}
+        onClick={(e) => onClickError(e, error)}
+      >
+        {wrong}
+      </span>
+    );
 
-//     result.push(<span key={`before-${i}`}>{before}</span>);
-//     result.push(
-//       <span
-//         key={`error-${i}`}
-//         style={{ borderBottom: '2px dashed red' }}
-//         title={message}
-//       >
-//         {wrong}
-//       </span>
-//     );
+    lastIndex = offset + length;
+  });
 
-//     lastIndex = offset + length;
-//   });
+  result.push(<span key='after'>{text.slice(lastIndex)}</span>);
+  return result;
+}
 
-//   result.push(<span key='after'>{text.slice(lastIndex)}</span>);
-//   return result;
-// }
-
-// const StyledTextOutput = styled.div`
-//   margin-top: 12px;
-//   width: 320px;
-//   min-height: 78px;
-//   padding: 8px;
-//   font-family: 'Nunito', sans-serif;
-//   font-size: 16px;
-//   line-height: 26px;
-//   background-color: #fefefe;
-//   border: 1px solid #ddd;
-//   border-radius: 8px;
-//   white-space: pre-wrap;
-//   word-break: break-word;
-//   color: ${({ theme }) => theme.colors.black};
-// `;
+const StyledTextOutput = styled.div`
+  margin-top: 12px;
+  width: 320px;
+  min-height: 78px;
+  padding: 8px;
+  ${({ theme }) => theme.fonts.ns16M};
+  background-color: ${({ theme }) => theme.colors.white};
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: ${({ theme }) => theme.colors.black};
+`;
