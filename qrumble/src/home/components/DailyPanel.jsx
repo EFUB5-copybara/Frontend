@@ -30,6 +30,7 @@ function DailyPanel({ date, onClose }) {
     todayQuestionDate,
     todayQuestionError,
     fetchTodayQuestion,
+    isLoading,
   } = useTodayQuestionStore();
 
   useEffect(() => {
@@ -81,6 +82,12 @@ function DailyPanel({ date, onClose }) {
     };
 
     fetchAttendedDates();
+  }, [targetDate]);
+
+  useEffect(() => {
+    if (!targetDate) return;
+    const dateStr = format(targetDate, 'yyyy-MM-dd');
+    fetchTodayQuestion(dateStr);
   }, [targetDate]);
 
   const handleUseItem = (type) => {
@@ -154,7 +161,11 @@ function DailyPanel({ date, onClose }) {
                 </CardDateText>
               </Header>
               <QuestionText>
-                {todayQuestionError ? todayQuestionError : todayQuestion}
+                {todayQuestionError
+                  ? todayQuestionError
+                  : isLoading
+                  ? '질문을 불러오는 중입니다...'
+                  : todayQuestion || '질문이 없습니다.'}
               </QuestionText>
               <Bottom>
                 <BottomItem>

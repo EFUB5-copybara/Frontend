@@ -26,7 +26,7 @@ function MyInfoPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-
+    localStorage.removeItem('refreshToken');
     navigate('/login');
   };
 
