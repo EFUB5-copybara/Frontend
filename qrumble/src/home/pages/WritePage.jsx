@@ -111,6 +111,11 @@ function WritePage() {
               </ul>
             </GrammarResultBox>
           )} */}
+          {/* {grammarResult && grammarResult.errors.length > 0 && (
+            <StyledTextOutput>
+              {renderWithHighlights(text, grammarResult.errors)}
+            </StyledTextOutput>
+          )} */}
         </Top>
         <Bottom>
           <WriteBottomBar
@@ -196,4 +201,47 @@ const TextArea = styled.textarea`
 //   li {
 //     margin-bottom: 6px;
 //   }
+// `;
+
+// function renderWithHighlights(text, errors) {
+//   let result = [];
+//   let lastIndex = 0;
+
+//   errors.forEach((error, i) => {
+//     const { offset, length, message } = error;
+//     const before = text.slice(lastIndex, offset);
+//     const wrong = text.slice(offset, offset + length);
+
+//     result.push(<span key={`before-${i}`}>{before}</span>);
+//     result.push(
+//       <span
+//         key={`error-${i}`}
+//         style={{ borderBottom: '2px dashed red' }}
+//         title={message}
+//       >
+//         {wrong}
+//       </span>
+//     );
+
+//     lastIndex = offset + length;
+//   });
+
+//   result.push(<span key='after'>{text.slice(lastIndex)}</span>);
+//   return result;
+// }
+
+// const StyledTextOutput = styled.div`
+//   margin-top: 12px;
+//   width: 320px;
+//   min-height: 78px;
+//   padding: 8px;
+//   font-family: 'Nunito', sans-serif;
+//   font-size: 16px;
+//   line-height: 26px;
+//   background-color: #fefefe;
+//   border: 1px solid #ddd;
+//   border-radius: 8px;
+//   white-space: pre-wrap;
+//   word-break: break-word;
+//   color: ${({ theme }) => theme.colors.black};
 // `;
