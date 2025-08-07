@@ -97,8 +97,11 @@ export default function CommunityPage() {
         selected={selectedTab}
         onSelect={setSelectedTab}
       />
-      {error && <ErrorMessage>{error}</ErrorMessage>}
-      <AnswerList answers={answers} ranked={selectedTab === 'popular'} />
+      {error ? (
+        <ErrorMessage>{error}</ErrorMessage>
+      ) : (
+        <AnswerList answers={answers} ranked={selectedTab === 'popular'} />
+      )}
     </Container>
   );
 }
