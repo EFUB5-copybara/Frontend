@@ -2,7 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import arrowIcon from '../assets/svgs/chevronright.svg';
 
-function DailyQuestion({ status = 'success', question, onClick }) {
+function DailyQuestion({
+  status = 'success',
+  question,
+  onClick,
+  hasAnsweredToday = false,
+}) {
   let displayText;
 
   if (status === 'loading') {
@@ -16,10 +21,12 @@ function DailyQuestion({ status = 'success', question, onClick }) {
   return (
     <Wrapper>
       <QuestionText>{displayText}</QuestionText>
-      <AnswerButton onClick={onClick}>
-        답변하러 가기
-        <Icon src={arrowIcon} alt='arrow' />
-      </AnswerButton>
+      {!hasAnsweredToday && (
+        <AnswerButton onClick={onClick}>
+          답변하러 가기
+          <Icon src={arrowIcon} alt='arrow' />
+        </AnswerButton>
+      )}
     </Wrapper>
   );
 }

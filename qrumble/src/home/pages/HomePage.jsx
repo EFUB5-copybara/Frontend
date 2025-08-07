@@ -205,6 +205,7 @@ function HomePage() {
             }
             question={todayQuestion}
             onClick={() => navigate('/home/write')}
+            hasAnsweredToday={!!todayQuestion}
           />
           <Cookiejar level={monthlyCookieJarLevel} />
         </ContentArea>
@@ -220,7 +221,7 @@ function HomePage() {
           onClose={() => setIsDailyPanelOpen(false)}
         />
       )}
-      <WriteFixButton />
+      {!todayQuestion && <WriteFixButton />}
     </Container>
   );
 }
