@@ -11,13 +11,18 @@ export default function ItemList({ items, onCardClick }) {
   return (
     <ItemGrid>
       {items.map((item, idx) => (
-        <Item key={item.id} onClick={() => onCardClick(idx)}>
+        <Item 
+          key={item.id} 
+          onClick={() => onCardClick(idx)}
+          $owned={item.owned}
+        >
           <ItemImg $owned={item.owned}>
             <IconWrapper>
               {item.name === '열쇠' && <KeyIcon width="74.9" height="74.9" />}
               {item.name === '방패' && <ShieldIcon width="74.9" height="74.9" />}
               {item.name === '지우개' && <EraserIcon width="74.9" height="74.9" />}
             </IconWrapper>
+            {item.owned && <OwnedOverlay>보유중</OwnedOverlay>}
           </ItemImg>
           <ItemNameRow>
             <ItemName>{item.name}</ItemName>
@@ -41,6 +46,21 @@ const ItemGrid = styled.div`
   padding: 0 10px;
 `;
 
+const OwnedOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: ${({ theme }) => theme.colors.white};
+  font-family: ${({ theme }) => theme.fonts.b16B};
+  border-radius: 12px;
+`;
+
 const Item = styled.button`
   display: flex;
   flex-direction: column;
@@ -48,11 +68,12 @@ const Item = styled.button`
   background: transparent;
   border: none;
   padding: 0;
-  cursor: pointer;
+  cursor: ${({ $owned }) => ($owned ? 'default' : 'pointer')};
   width: 155px;
 `;
 
 const ItemImg = styled.div`
+  position: relative;
   width: 155px;
   height: 76px;
   border-radius: 12px;

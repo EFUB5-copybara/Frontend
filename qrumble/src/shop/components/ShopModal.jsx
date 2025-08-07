@@ -16,7 +16,6 @@ export default function ShopModal({
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 아이템 상세 정보 불러오기
   useEffect(() => {
     const fetchDetail = async () => {
       setLoading(true);
@@ -24,7 +23,10 @@ export default function ShopModal({
         const item = items[currentIndex];
         if (item && item.id) {
           const res = await getItemDetail(item.id);
-          setDetail(res);
+          setDetail({
+            ...res,
+            isOwned: res.isOwned === true
+          });
         }
       } catch (e) {
         setDetail(null);
@@ -78,18 +80,23 @@ export default function ShopModal({
               <ItemDesc>{detail.description}</ItemDesc>
             </ItemText>
             <Points>{detail.price}P</Points>
-            <BuyButton
-              disabled={detail.isOwned || insufficient}
-              owned={detail.isOwned}
-              insufficient={insufficient}
-              onClick={() => {
-                if (!detail.isOwned && !insufficient) onBuy(currentIndex);
-              }}
-            >
-              {detail.isOwned ? "보유함" : "구매하기"}
-            </BuyButton>
-            {insufficient && !detail.isOwned && (
-              <Message>포인트가 부족합니다</Message>
+            {detail.isOwned ? (
+              <OwnedButton disabled>
+                보유함
+              </OwnedButton>
+            ) : insufficient ? (
+              <>
+                <InsufficientButton disabled>
+                  구매하기
+                </InsufficientButton>
+                <Message>포인트가 부족합니다</Message>
+              </>
+            ) : (
+              <BuyButton
+                onClick={() => onBuy(currentIndex)}
+              >
+                구매하기
+              </BuyButton>
             )}
           </ModalContainer>
         </SwipeContainer>
@@ -156,8 +163,8 @@ const PreviewBox = styled.div`
 const FontPreview = styled.div`
   font-size: 24px;
   color: ${({ theme }) => theme.colors.primary};
-  font-weight: ${({ fontName }) => {
-    switch (fontName) {
+  font-weight: ${({ $fontName }) => {
+    switch ($fontName) {
       case 'Como':
         return '500';
       case 'MuseoModerno':
@@ -170,8 +177,8 @@ const FontPreview = styled.div`
         return '500';
     }
   }};
-  font-family: ${({ fontName }) => {
-    switch (fontName) {
+  font-family: ${({ $fontName }) => {
+    switch ($fontName) {
       case 'Como':
         return 'Arial, sans-serif';
       case 'MuseoModerno':
@@ -212,44 +219,57 @@ const Points = styled.div`
   color: ${({ theme }) => theme.colors.error};
 `;
 
+const OwnedButton = styled.button`
+  width: 100%;
+  height: 41px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.brown3};
+  color: ${({ theme }) => theme.colors.brown2};
+  border: none;
+  border-radius: 10px;
+  font-family: ${({ theme }) => theme.fonts.b16B};
+  cursor: default;
+  margin-top: 8px;
+`;
+
 const BuyButton = styled.button`
   width: 100%;
   height: 41px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ disabled, owned, insufficient, theme }) =>
-    owned
-      ? theme.colors.brown3
-      : insufficient
-      ? theme.colors.white
-      : theme.colors.primary};
-  color: ${({ owned, insufficient, theme }) =>
-    owned
-      ? theme.colors.brown2
-      : insufficient
-      ? theme.colors.error
-      : theme.colors.white};
-  border: ${({ insufficient, theme }) =>
-    insufficient ? `1.5px solid ${theme.colors.error}` : "none"};
+  background-color: ${({ theme }) => theme.colors.primary};
+  color: ${({ theme }) => theme.colors.white};
+  border: none;
   border-radius: 10px;
   font-family: ${({ theme }) => theme.fonts.b16B};
-  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
+  cursor: pointer;
   margin-top: 8px;
   
   &:hover {
-    background-color: ${({ disabled, owned, insufficient, theme }) =>
-      disabled || owned
-        ? owned ? theme.colors.brown3 : theme.colors.white
-        : insufficient ? theme.colors.white : "rgba(92, 57, 20, 1)"};
+    background-color: rgba(92, 57, 20, 1);
   }
 
   &:active {
-    background-color: ${({ disabled, owned, insufficient, theme }) =>
-      disabled || owned
-        ? owned ? theme.colors.brown3 : theme.colors.white
-        : insufficient ? theme.colors.white : "rgba(78, 46, 13, 1)"};
+    background-color: rgba(78, 46, 13, 1);
   }
+`;
+
+const InsufficientButton = styled.button`
+  width: 100%;
+  height: 41px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.error};
+  border: 1.5px solid ${({ theme }) => theme.colors.error};
+  border-radius: 10px;
+  font-family: ${({ theme }) => theme.fonts.b16B};
+  cursor: default;
+  margin-top: 8px;
 `;
 
 const Message = styled.div`
