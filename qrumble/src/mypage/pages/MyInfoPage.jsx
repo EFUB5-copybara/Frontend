@@ -6,6 +6,7 @@ import ProfileModal from '../components/ProfileModal';
 import { getMyInfo } from '../api/mypage';
 import { useNavigate } from 'react-router-dom';
 import { updateMemberInfo } from '../api/mypage';
+import profile1Img from '../assets/profile1.svg';
 
 function MyInfoPage() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -19,17 +20,30 @@ function MyInfoPage() {
     setIsEditingNickname(true);
   };
 
-  const handleNicknameSubmit = () => {
-    if (editedNickname.trim() === '') return;
-
-    // API 연동하기
-    setMyInfo((prev) => ({ ...prev, nickname: editedNickname }));
-    setIsEditingNickname(false);
-  };
-
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       handleNicknameSubmit();
+    }
+  };
+
+  const handleNicknameSubmit = async () => {
+    const trimmed = editedNickname.trim();
+    if (trimmed === '') return;
+
+    try {
+      const result = await updateMemberInfo(trimmed);
+
+      if (result?.updatedFields?.nickname) {
+        setMyInfo((prev) => ({
+          ...prev,
+          nickname: result.updatedFields.nickname,
+        }));
+      }
+
+      setIsEditingNickname(false);
+    } catch (error) {
+      console.error('닉네임 수정 실패:', error);
+      alert('닉네임 수정에 실패했습니다.');
     }
   };
 
