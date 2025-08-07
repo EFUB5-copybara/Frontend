@@ -8,7 +8,13 @@ import { useKeyItem, useShieldItem, useEraserItem } from '../api/homepage.js';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
-function ItemButtons({ items, onUse, attendedDates, targetDate }) {
+function ItemButtons({
+  items,
+  onUse,
+  attendedDates,
+  targetDate,
+  setAttendedDates,
+}) {
   const [modalInfo, setModalInfo] = useState({
     isOpen: false,
     type: '',
@@ -78,8 +84,20 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
         } else {
           alert('열쇠 아이템을 사용할 수 없습니다.');
         }
-      } else if (modalInfo.type === 'shield') {
-        await useShieldItem();
+      }
+      if (modalInfo.type === 'shield') {
+        const dateStr = format(targetDate, 'yyyy-MM-dd');
+        const result = await useShieldItem(dateStr);
+
+        if (result.used && result.recoveredDate) {
+          const recoveredDay = new Date(result.recoveredDate).getDate();
+
+          // 해당 날짜에 쿠키가 보이도록 attendedDates에 추가
+          onUse('shield'); // 아이템 수량 감소
+          setAttendedDates((prev) => [...new Set([...prev, recoveredDay])]);
+        } else {
+          alert('방패 아이템 사용에 실패했습니다.');
+        }
       } else if (modalInfo.type === 'eraser') {
         await useEraserItem();
       }

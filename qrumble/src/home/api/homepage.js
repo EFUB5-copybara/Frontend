@@ -148,8 +148,15 @@ export const useKeyItem = async (date) => {
 };
 
 // 방패 아이템 사용
-export const useShieldItem = async () => {
-  return await useItem('SHIELD');
+export const useShieldItem = async (date) => {
+  try {
+    const res = await axiosInstance.post('/items/use?type=SHIELD', {
+      date,
+    });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // 지우개 아이템 사용

@@ -177,6 +177,7 @@ function DailyPanel({ date, onClose }) {
             onUse={handleUseItem}
             attendedDates={attendedDates}
             targetDate={targetDate}
+            setAttendedDates={setAttendedDates}
           />
 
           <QnAWrapper>
