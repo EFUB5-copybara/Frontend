@@ -12,6 +12,7 @@ export default function ShopModal({
   onBuy,
   onClose,
   userPoint = 120,
+  updateOwnership
 }) {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -23,10 +24,15 @@ export default function ShopModal({
         const item = items[currentIndex];
         if (item && item.id) {
           const res = await getItemDetail(item.id);
+          
           setDetail({
             ...res,
-            isOwned: res.isOwned === true
+            isOwned: res.isOwned
           });
+          
+          if (res.isOwned && !item.owned && updateOwnership) {
+            updateOwnership('item', item.id, true);
+          }
         }
       } catch (e) {
         setDetail(null);
@@ -35,7 +41,7 @@ export default function ShopModal({
       }
     };
     fetchDetail();
-  }, [currentIndex, items]);
+  }, [currentIndex, items, updateOwnership]);
 
   if (loading || !detail) {
     return (
@@ -80,23 +86,18 @@ export default function ShopModal({
               <ItemDesc>{detail.description}</ItemDesc>
             </ItemText>
             <Points>{detail.price}P</Points>
-            {detail.isOwned ? (
-              <OwnedButton disabled>
-                보유함
-              </OwnedButton>
-            ) : insufficient ? (
-              <>
-                <InsufficientButton disabled>
-                  구매하기
-                </InsufficientButton>
-                <Message>포인트가 부족합니다</Message>
-              </>
-            ) : (
-              <BuyButton
-                onClick={() => onBuy(currentIndex)}
-              >
-                구매하기
-              </BuyButton>
+            <BuyButton
+              disabled={detail.isOwned || insufficient}
+              $owned={detail.isOwned}
+              $insufficient={insufficient}
+              onClick={() => {
+                if (!detail.isOwned && !insufficient) onBuy(currentIndex);
+              }}
+            >
+              {detail.isOwned ? "보유함" : "구매하기"}
+            </BuyButton>
+            {insufficient && !detail.isOwned && (
+              <Message>포인트가 부족합니다</Message>
             )}
           </ModalContainer>
         </SwipeContainer>
@@ -219,57 +220,41 @@ const Points = styled.div`
   color: ${({ theme }) => theme.colors.error};
 `;
 
-const OwnedButton = styled.button`
-  width: 100%;
-  height: 41px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ theme }) => theme.colors.brown3};
-  color: ${({ theme }) => theme.colors.brown2};
-  border: none;
-  border-radius: 10px;
-  font-family: ${({ theme }) => theme.fonts.b16B};
-  cursor: default;
-  margin-top: 8px;
-`;
-
 const BuyButton = styled.button`
   width: 100%;
   height: 41px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.white};
-  border: none;
+  margin-top: 8px;
   border-radius: 10px;
   font-family: ${({ theme }) => theme.fonts.b16B};
-  cursor: pointer;
-  margin-top: 8px;
+  
+  background-color: ${({ $owned, $insufficient, theme }) => 
+    $owned ? theme.colors.brown3 : 
+    $insufficient ? theme.colors.white : theme.colors.primary};
+  
+  color: ${({ $owned, $insufficient, theme }) => 
+    $owned ? theme.colors.brown2 : 
+    $insufficient ? theme.colors.error : theme.colors.white};
+  
+  border: ${({ $insufficient, theme }) => 
+    $insufficient ? `1.5px solid ${theme.colors.error}` : 'none'};
+  
+  cursor: ${({ $owned, $insufficient }) => 
+    $owned || $insufficient ? 'default' : 'pointer'};
   
   &:hover {
-    background-color: rgba(92, 57, 20, 1);
+    background-color: ${({ $owned, $insufficient, theme }) => 
+      $owned ? theme.colors.brown3 : 
+      $insufficient ? theme.colors.white : 'rgba(92, 57, 20, 1)'};
   }
 
   &:active {
-    background-color: rgba(78, 46, 13, 1);
+    background-color: ${({ $owned, $insufficient, theme }) => 
+      $owned ? theme.colors.brown3 : 
+      $insufficient ? theme.colors.white : 'rgba(78, 46, 13, 1)'};
   }
-`;
-
-const InsufficientButton = styled.button`
-  width: 100%;
-  height: 41px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ theme }) => theme.colors.white};
-  color: ${({ theme }) => theme.colors.error};
-  border: 1.5px solid ${({ theme }) => theme.colors.error};
-  border-radius: 10px;
-  font-family: ${({ theme }) => theme.fonts.b16B};
-  cursor: default;
-  margin-top: 8px;
 `;
 
 const Message = styled.div`
