@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import { format } from 'date-fns';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import WriteTopBar from '../components/WriteTopBar';
-import WriteQuestion from '../components/WriteQuestion';
-import WriteBottomBar from '../components/WriteBottomBar';
-import HintTagList from '../components/HintTagList';
-import AlertModal from '../components/AlertModal';
+import styled from 'styled-components';
+import {
+  createAnswer,
+  getDailyQuestion,
+  getQuestionHints,
+} from '../api/homepage';
 import background1Img from '../assets/svgs/background1.svg';
-import background2Img from '../assets/svgs/background2.svg';
-import background3Img from '../assets/svgs/background3.svg';
-import { getDailyQuestion, getQuestionHints } from '../api/homepage';
-import { createAnswer } from '../api/homepage';
+import AlertModal from '../components/AlertModal';
+import HintTagList from '../components/HintTagList';
+import WriteBottomBar from '../components/WriteBottomBar';
+import WriteQuestion from '../components/WriteQuestion';
+import WriteTopBar from '../components/WriteTopBar';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 
 function WritePage() {
@@ -36,7 +38,8 @@ function WritePage() {
     }
 
     try {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = format(new Date(), 'yyyy-MM-dd');
+      console.log('생성날짜: ', today);
       await createAnswer(today, text.trim(), isPublic);
       navigate('/home/detail', { state: { date: today } });
     } catch (error) {

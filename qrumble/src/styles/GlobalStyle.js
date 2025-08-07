@@ -5,6 +5,8 @@ const GlobalStyle = createGlobalStyle`
   *::before,
   *::after {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
   body {
     font-family: 'Pretendard','Nunito', sans-serif;
@@ -19,6 +21,7 @@ const GlobalStyle = createGlobalStyle`
     width: 360px;
     height: 800px;
     overflow: hidden;
+
     /* background-color: ${({ theme }) => theme.colors.ivory3}; */
     border: 1px solid #ccc;
   }
