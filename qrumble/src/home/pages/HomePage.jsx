@@ -14,6 +14,7 @@ import {
   getDailyQuestion,
   getMonthlyAnswer,
   getCookiesNumber,
+  getTodayQuestion,
 } from '../api/homepage';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 
@@ -133,16 +134,11 @@ function HomePage() {
     setIsDailyPanelOpen(true);
   };
 
-  const { todayQuestion, todayQuestionError, fetchTodayQuestion } =
+  const { todayQuestion, todayQuestionError, isLoading, fetchTodayQuestion } =
     useTodayQuestionStore();
 
   useEffect(() => {
-    const today = new Date();
-    const formattedDate = `${today.getFullYear()}-${String(
-      today.getMonth() + 1
-    ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
-    fetchTodayQuestion(formattedDate);
+    fetchTodayQuestion();
   }, []);
 
   const [isSliding, setIsSliding] = useState(false);
@@ -211,11 +207,7 @@ function HomePage() {
           </CalendarSlider>
           <DailyQuestion
             status={
-              todayQuestionError
-                ? 'error'
-                : !todayQuestion
-                ? 'loading'
-                : 'success'
+              todayQuestionError ? 'error' : isLoading ? 'loading' : 'success'
             }
             question={todayQuestion}
             onClick={() => navigate('/home/write')}

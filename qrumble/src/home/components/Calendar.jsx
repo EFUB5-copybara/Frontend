@@ -46,17 +46,18 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
     const fetchAttendedDatesAndCookieLevel = async () => {
       try {
         const answered = await getMonthlyAnswerStatus(year, month);
-        const dates = answered
-          .map((d) => new Date(d).getDate())
-          .filter((day) => !isNaN(day));
+
+        const dates = answered.map((d) => new Date(d).getDate());
         setAttendedDates(dates);
+
+        console.log('✅ answered:', answered);
+        console.log('📆 today:', new Date().toISOString().slice(0, 10));
+        console.log('✅ attendedDates:', dates);
 
         const cookieData = await getCookiesNumber(year, month); // { level: 4 }
         setMonthlyCookieJarLevel(cookieData.level ?? 0);
       } catch (error) {
         console.error('데이터 로드 실패:', error);
-        setAttendedDates([]);
-        setMonthlyCookieJarLevel(0);
       }
     };
 
@@ -87,10 +88,7 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
             new Date(year, month - 1, item.date) < today;
 
           const isCookie =
-            item.type === 'current' &&
-            attendedDates.includes(item.date) &&
-            (isPast || isToday);
-
+            item.type === 'current' && attendedDates.includes(item.date);
           const isMissed =
             item.type === 'current' &&
             isPast &&

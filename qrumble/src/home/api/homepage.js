@@ -10,6 +10,16 @@ export const getDailyQuestion = async (date) => {
   }
 };
 
+// 오늘 질문 조회
+export const getTodayQuestion = async () => {
+  try {
+    const response = await axiosInstance.get(`/questions/today`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // 월별 답변 여부 조회
 export const getMonthlyAnswerStatus = async (year, month) => {
   try {
