@@ -32,6 +32,7 @@ function HomePage() {
     const fetchMonthlyAnswers = async () => {
       try {
         const data = await getMonthlyAnswer(year, month);
+
         const parsed = data.map((item) => ({
           id: item.id,
           date: new Date(item.createdAt)
@@ -40,11 +41,12 @@ function HomePage() {
               month: '2-digit',
               day: '2-digit',
             })
-            .replace(/\. /g, '.')
-            .replace('.', ''), // 2025.08.06 형식
+            .replace(/\. /g, '.'),
+
           question: item.question,
           answer: item.content,
         }));
+
         setMonthlyAnswers(parsed);
       } catch (e) {
         setMonthlyAnswers([]);

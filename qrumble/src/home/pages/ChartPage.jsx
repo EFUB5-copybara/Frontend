@@ -75,7 +75,7 @@ function ChartPage() {
   return (
     <Background>
       <Container>
-        <Button onClick={() => navigate(-1)}>
+        <Button onClick={() => navigate('/home')}>
           <ArrowIcon src={arrowbackImg} alt='arrow back' />
         </Button>
 
@@ -147,6 +147,7 @@ const Button = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+  z-index: 10;
 `;
 
 const ArrowIcon = styled.img`
@@ -162,6 +163,7 @@ const Datetext = styled.div`
   align-items: center;
   ${({ theme }) => theme.fonts.ns14SB};
   color: ${({ theme }) => theme.colors.green};
+  pointer-events: none;
 `;
 
 const Wrapper = styled.div`

@@ -27,11 +27,8 @@ export const getMonthlyAnswer = async (year, month) => {
   try {
     const response = await axiosInstance.get('/answers/me', {
       params: { year, month },
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
     });
-    return response.data.answers;
+    return response.data;
   } catch (error) {
     throw error;
   }

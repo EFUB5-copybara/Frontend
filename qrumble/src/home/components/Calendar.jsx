@@ -7,7 +7,11 @@ import {
   CookieIcon,
 } from './styles/CalendarStyles';
 import cookieImg from '../assets/svgs/cookie.svg';
-import { getMonthlyAnswerStatus, getCookiesNumber } from '../api/homepage';
+import {
+  getMonthlyAnswerStatus,
+  getCookiesNumber,
+  getMonthlyAnswer,
+} from '../api/homepage';
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -117,7 +121,7 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
           const isCookie =
             item.type === 'current' &&
             attendedDates.includes(item.date) &&
-            isPast;
+            (isPast || isToday);
 
           const isMissed =
             item.type === 'current' &&
