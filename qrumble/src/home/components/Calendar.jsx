@@ -7,11 +7,7 @@ import {
   CookieIcon,
 } from './styles/CalendarStyles';
 import cookieImg from '../assets/svgs/cookie.svg';
-import {
-  getMonthlyAnswerStatus,
-  getCookiesNumber,
-  getMonthlyAnswer,
-} from '../api/homepage';
+import { getMonthlyAnswerStatus, getCookiesNumber } from '../api/homepage';
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -25,29 +21,18 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
   const displayCells = totalCellsNeeded <= 35 ? 35 : 42;
   const nextMonthPreviewCount = displayCells - totalCellsNeeded;
 
-  const days = [];
+  const days = useMemo(() => {
+    const d = [];
+    for (let i = 1; i <= currentLastDate; i++) {
+      d.push({ date: i, type: 'current' });
+    }
+    for (let i = 1; i <= nextMonthPreviewCount; i++) {
+      d.push({ date: i, type: 'next' });
+    }
+    return d;
+  }, [currentLastDate, nextMonthPreviewCount]);
 
   const [attendedDates, setAttendedDates] = useState([]);
-
-  useEffect(() => {
-    const fetchAttendedDates = async () => {
-      try {
-        const answered = await getMonthlyAnswerStatus(year, month); // ['2025-08-05', ...]
-        const dates = answered
-          .map((d) => {
-            const day = new Date(d).getDate();
-            return day;
-          })
-          .filter((day) => !isNaN(day));
-        setAttendedDates(dates);
-      } catch (error) {
-        console.error('월별 답변 여부 불러오기 실패:', error);
-        setAttendedDates([]); // 실패 시 빈 배열
-      }
-    };
-
-    fetchAttendedDates();
-  }, [year, month]);
 
   const weeks = {};
   for (let day = 1; day <= currentLastDate; day++) {
@@ -78,22 +63,6 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
     fetchAttendedDatesAndCookieLevel();
   }, [year, month, setMonthlyCookieJarLevel]);
 
-  // 현재 월 날짜들
-  for (let i = 1; i <= currentLastDate; i++) {
-    days.push({
-      date: i,
-      type: 'current',
-    });
-  }
-
-  // 다음 달 날짜들
-  for (let i = 1; i <= nextMonthPreviewCount; i++) {
-    days.push({
-      date: i,
-      type: 'next',
-    });
-  }
-
   return (
     <Wrapper>
       <WeekRow>
@@ -110,9 +79,8 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
         {days.map((item, idx) => {
           const isToday =
             item.type === 'current' &&
-            today.getFullYear() === year &&
-            today.getMonth() === month - 1 &&
-            today.getDate() === item.date;
+            new Date(year, month - 1, item.date).toDateString() ===
+              today.toDateString();
 
           const isPast =
             item.type === 'current' &&
