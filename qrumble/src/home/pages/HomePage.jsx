@@ -17,6 +17,7 @@ import {
   getTodayQuestion,
 } from '../api/homepage';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore';
+import { format, parseISO } from 'date-fns';
 
 function HomePage() {
   const today = new Date();
@@ -33,20 +34,14 @@ function HomePage() {
     const fetchMonthlyAnswers = async () => {
       try {
         const data = await getMonthlyAnswer(year, month);
+        console.log('📦 API 응답:', data);
 
         const parsed = data.map((item) => ({
           id: item.id,
-          date: new Date(item.createdAt)
-            .toLocaleDateString('ko-KR', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-            })
-            .replace(/\. /g, '.'),
+          date: format(parseISO(item.createdAt), 'yyyy.MM.dd'),
           question: item.question,
           answer: item.content,
         }));
-
         setMonthlyAnswers(parsed);
       } catch (e) {
         setMonthlyAnswers([]);
@@ -262,10 +257,25 @@ const ContentArea = styled.div`
 `;
 
 const QuestionArea = styled.div`
-  max-height: ${({ $collapsed }) => ($collapsed ? '1000px' : '0px')};
+  max-height: ${({ $collapsed }) => ($collapsed ? '620px' : '0px')};
   opacity: ${({ $collapsed }) => ($collapsed ? 1 : 0)};
   transition: all 0.4s ease;
-  overflow: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.colors.brown2 || '#aaa'};
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
 `;
 
 function getWeekDatesCenteredOnToday(year, month, selectedDay) {

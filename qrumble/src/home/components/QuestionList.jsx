@@ -20,25 +20,31 @@ function QuestionList({ questions, month }) {
 
   return (
     <Wrapper>
-      {questions.map((item) => (
-        <QuestionCard key={item.id}>
-          <Header>
-            <Label>질문</Label>
-            <DateText>{item.date}</DateText>
-          </Header>
-          <QuestionText>{item.question}</QuestionText>
-          <Bottom>
-            <BottomItem>
-              <BottomImg src={likeImg} alt='like' />
-              공감
-            </BottomItem>
-            <BottomItem>
-              <BottomImg src={commentImg} alt='comment' />
-              댓글
-            </BottomItem>
-          </Bottom>
-        </QuestionCard>
-      ))}
+      {questions.map(
+        (item) => (
+          console.log('✅ date:', item.date),
+          console.log('✅ question:', item.question),
+          (
+            <QuestionCard key={`${item.date}-${item.id}`}>
+              <Header>
+                <Label>질문</Label>
+                <DateText>{item.date}</DateText>
+              </Header>
+              <QuestionText>{item.question}</QuestionText>
+              <Bottom>
+                <BottomItem>
+                  <BottomImg src={likeImg} alt='like' />
+                  공감
+                </BottomItem>
+                <BottomItem>
+                  <BottomImg src={commentImg} alt='comment' />
+                  댓글
+                </BottomItem>
+              </Bottom>
+            </QuestionCard>
+          )
+        )
+      )}
     </Wrapper>
   );
 }

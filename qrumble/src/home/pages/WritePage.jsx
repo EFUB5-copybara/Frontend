@@ -13,6 +13,7 @@ import { getDailyQuestion, getQuestionHints } from '../api/homepage';
 import { createAnswer } from '../api/homepage';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 import GrammarPopup from '../components/GrammarPopup';
+import { format } from 'date-fns';
 
 function WritePage() {
   const [hintActive, setHintActive] = useState(false);
@@ -77,7 +78,7 @@ function WritePage() {
     }
 
     try {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = format(new Date(), 'yyyy-MM-dd');
       await createAnswer(today, text.trim(), isPublic);
       navigate('/home/detail', { state: { date: today } });
     } catch (error) {
