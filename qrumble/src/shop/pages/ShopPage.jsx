@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import axiosInstance from '@/api/axiosInstance';
 import {
   getItemList, getFontsList, getPapersList,
   purchaseItem, purchaseFont, purchasePaper,
@@ -93,7 +94,6 @@ export default function ShopPage() {
     }
   };
 
-  // 아이템 구매 상태 직접 업데이트하는 함수
   const updateItemOwnedStatus = (tab, id, isOwned) => {
     console.log(`아이템 소유 상태 업데이트: ${tab}, ID ${id}, 소유=${isOwned}`);
     
@@ -118,41 +118,74 @@ export default function ShopPage() {
     }
   };
 
-  // 구매 처리 후 즉시 데이터 갱신 함수 추가
   const refreshCurrentTab = async () => {
     setLoading(true);
     try {
       const pointRes = await getMyPoint();
       setUserPoint(pointRes.point);
 
-      // 현재 탭에 맞게 데이터 새로고침
       if (activeTab === 'item') {
         const updatedItems = await getItemList();
-        setItems(Array.isArray(updatedItems) ? updatedItems.map(item => ({
-          id: item.id,
-          name: item.name,
-          desc: item.description,
-          price: item.price,
-          owned: item.isOwned === true
-        })) : []);
+        const formattedItems = Array.isArray(updatedItems) 
+          ? updatedItems.map(item => ({
+              id: item.id,
+              name: item.name,
+              desc: item.description,
+              price: item.price,
+              owned: item.isOwned === true
+            }))
+          : [];
+        
+        const mergedItems = formattedItems.map(newItem => {
+          const oldItem = items.find(i => i.id === newItem.id);
+          return {
+            ...newItem,
+            owned: newItem.owned || (oldItem?.owned === true)
+          };
+        });
+        
+        setItems(mergedItems);
       } else if (activeTab === 'font') {
         const updatedFonts = await getFontsList();
-        setFonts(Array.isArray(updatedFonts) ? updatedFonts.map(font => ({
-          id: font.id,
-          name: font.name,
-          desc: font.description,
-          price: font.price,
-          owned: font.isOwned === true
-        })) : []);
+        const formattedFonts = Array.isArray(updatedFonts) 
+          ? updatedFonts.map(font => ({
+              id: font.id,
+              name: font.name,
+              desc: font.description,
+              price: font.price,
+              owned: font.isOwned === true
+            }))
+          : [];
+        
+        const mergedFonts = formattedFonts.map(newFont => {
+          const oldFont = fonts.find(f => f.id === newFont.id);
+          return {
+            ...newFont,
+            owned: newFont.owned || (oldFont?.owned === true)
+          };
+        });
+        
+        setFonts(mergedFonts);
       } else if (activeTab === 'paper') {
         const updatedPapers = await getPapersList();
-        setPapers(Array.isArray(updatedPapers) ? updatedPapers.map(paper => ({
-          id: paper.id,
-          name: paper.name,
-          desc: paper.description,
-          price: paper.price,
-          owned: paper.isOwned === true
-        })) : []);
+        const formattedPapers = Array.isArray(updatedPapers) 
+          ? updatedPapers.map(paper => ({
+              id: paper.id,
+              name: paper.name,
+              desc: paper.description,
+              price: paper.price,
+              owned: paper.isOwned === true
+            }))
+          : [];
+        const mergedPapers = formattedPapers.map(newPaper => {
+          const oldPaper = papers.find(p => p.id === newPaper.id);
+          return {
+            ...newPaper,
+            owned: newPaper.owned || (oldPaper?.owned === true)
+          };
+        });
+        
+        setPapers(mergedPapers);
       }
     } catch (error) {
       console.error('데이터 새로고침 실패:', error);
@@ -161,22 +194,18 @@ export default function ShopPage() {
     }
   };
 
-  // 보유 상태 일관성 체크 및 수정 함수
   const ensureOwnershipConsistency = async () => {
     try {
-      // 모든 아이템 타입별로 소유 상태 정확하게 가져오기
       if (activeTab === 'paper' && papers.length > 0) {
         const updatedOwnership = await Promise.all(papers.map(async (paper) => {
           try {
             const detail = await getPapersDetail(paper.id);
-            // 이미 UI에서 owned가 true이거나 API에서 isOwned가 true인 경우 true로 설정
             return { id: paper.id, owned: paper.owned || detail.isOwned === true };
           } catch (err) {
             return { id: paper.id, owned: paper.owned };
           }
         }));
         
-        // 소유 상태 업데이트
         setPapers(papers.map(paper => {
           const updated = updatedOwnership.find(item => item.id === paper.id);
           return updated ? { ...paper, owned: updated.owned } : paper;
@@ -203,7 +232,6 @@ export default function ShopPage() {
     }
   };
 
-  // 탭 변경 시 소유 상태 일관성 확인
   useEffect(() => {
     ensureOwnershipConsistency();
   }, [activeTab]);
@@ -213,8 +241,7 @@ export default function ShopPage() {
     const item = currentItems[idx];
 
     if (!item) return;
-    
-    // 이미 소유 중인지 다시 확인
+  
     if (item.owned) {
       alert('이미 구매완료하였습니다.');
       return;
@@ -225,75 +252,77 @@ export default function ShopPage() {
 
       switch (activeTab) {
         case 'paper':
-          console.log(`종이 '${item.name}' 구매 시도 (ID: ${item.id}, 가격: ${item.price}P)`);
-          try {
-            // 구매 전에 상세 정보를 확인하여 이미 소유 중인지 확인
-            const paperDetail = await getPapersDetail(item.id);
-            if (paperDetail.isOwned) {
-              alert('이미 구매완료하였습니다.');
-              // 소유 상태 즉시 업데이트
-              updateItemOwnedStatus('paper', item.id, true);
-              await refreshCurrentTab(); // 전체 데이터 새로고침
-              return;
-            }
-            
-            // 실제 구매 시도
-            await purchasePaper(item.id);
-            
-            // 구매 성공 시 UI 즉시 업데이트 및 데이터 새로고침
-            updateItemOwnedStatus('paper', item.id, true);
-            alert('구매가 완료되었습니다!');
-            setModalIndex(null);
-            
-            // 데이터 새로고침
-            await refreshCurrentTab();
-          } catch (err) {
-            console.error('종이 구매 오류:', err);
-            // 이미 구매한 경우 처리
-            if (err.response?.status === 400 && 
-                (err.response?.data?.message?.includes('already') || 
-                 err.response?.data?.errorCode === 'ALREADY_PURCHASED')) {
-              alert('이미 구매완료하였습니다.');
-              updateItemOwnedStatus('paper', item.id, true);
-            } else {
-              alert(`종이 구매에 실패했습니다: ${err.response?.data?.message || err.message}`);
-            }
-          }
-          break;
-          
         case 'font':
-          console.log(`폰트 '${item.name}' 구매 시도 (ID: ${item.id}, 가격: ${item.price}P)`);
+          const apiFunction = activeTab === 'paper' ? purchasePaper : purchaseFont;
+          const detailFunction = activeTab === 'paper' ? getPapersDetail : getFontsDetail;
+          const itemType = activeTab === 'paper' ? '종이' : '폰트';
+          
+          console.log(`${itemType} '${item.name}' 구매 시도 (ID: ${item.id}, 가격: ${item.price}P)`);
+          
           try {
-            // 구매 전에 상세 정보를 확인하여 이미 소유 중인지 확인
-            const fontDetail = await getFontsDetail(item.id);
-            if (fontDetail.isOwned) {
+            const itemDetail = await detailFunction(item.id);
+            console.log(`${itemType} 상세 정보:`, itemDetail);
+            
+            if (itemDetail.isOwned) {
               alert('이미 구매완료하였습니다.');
-              // 소유 상태 즉시 업데이트
-              updateItemOwnedStatus('font', item.id, true);
-              await refreshCurrentTab(); // 전체 데이터 새로고침
+              updateItemOwnedStatus(activeTab, item.id, true);
+              await refreshCurrentTab();
               return;
             }
             
-            // 실제 구매 시도
-            await purchaseFont(item.id);
+            const result = await apiFunction(item.id);
+            console.log(`${itemType} 구매 결과:`, result);
             
-            // 구매 성공 시 UI 즉시 업데이트 및 데이터 새로고침
-            updateItemOwnedStatus('font', item.id, true);
-            alert('구매가 완료되었습니다!');
+            if (result.alreadyOwned || result.forceOwned) {
+              if (activeTab === 'paper') {
+                setPapers(prev => prev.map(p => 
+                  p.id === item.id ? { ...p, owned: true } : p
+                ));
+              } else { // font
+                setFonts(prev => prev.map(f => 
+                  f.id === item.id ? { ...f, owned: true } : f
+                ));
+              }
+              
+              if (result.alreadyOwned) {
+                alert('이미 구매완료하였습니다.');
+              } else {
+                alert('구매가 완료되었습니다!');
+              }
+            }
+            
+            const pointRes = await getMyPoint();
+            setUserPoint(pointRes.point);
+            
             setModalIndex(null);
             
-            // 데이터 새로고침
             await refreshCurrentTab();
           } catch (err) {
-            console.error('폰트 구매 오류:', err);
-            // 이미 구매한 경우 처리
-            if (err.response?.status === 400 && 
-                (err.response?.data?.message?.includes('already') || 
-                 err.response?.data?.errorCode === 'ALREADY_PURCHASED')) {
-              alert('이미 구매완료하였습니다.');
-              updateItemOwnedStatus('font', item.id, true);
+            console.error(`${itemType} 구매 오류:`, err);
+            
+            if (err.response) {
+              console.error('서버 응답:', err.response.status, err.response.data);
+              
+              if (err.response.status === 400 && 
+                  (err.response.data.errorCode === 'ALREADY_PURCHASED' || 
+                  err.response.data.message?.includes('이미 구매'))) {
+                alert('이미 구매완료하였습니다.');
+                
+                updateItemOwnedStatus(activeTab, item.id, true);
+                
+                setModalIndex(null);
+                
+                await refreshCurrentTab();
+                return;
+              }
+            }
+            
+            if (err.response?.status === 401) {
+              alert('로그인 후 이용해 주세요.');
+            } else if (err.response?.status === 404) {
+              alert('존재하지 않는 상품입니다.');
             } else {
-              alert(`폰트 구매에 실패했습니다: ${err.response?.data?.message || err.message}`);
+              alert(`${itemType} 구매에 실패했습니다: ${err.response?.data?.message || err.message}`);
             }
           }
           break;
@@ -304,7 +333,6 @@ export default function ShopPage() {
             const itemResult = await purchaseItem(item.id);
             console.log('구매 API 응답:', itemResult);
             
-            // 구매 성공 시 즉시 소유 상태 업데이트
             const updatedItemsList = [...items];
             updatedItemsList[idx] = {
               ...updatedItemsList[idx],
@@ -324,7 +352,6 @@ export default function ShopPage() {
             if (err.response?.status === 400 && err.response?.data?.message?.includes('already')) {
               alert('이미 구매완료하였습니다.');
               
-              // API 에러로 이미 구매완료된 경우에도 UI 상태 업데이트
               const updatedItemsList = [...items];
               updatedItemsList[idx] = {
                 ...updatedItemsList[idx],
@@ -348,17 +375,62 @@ export default function ShopPage() {
     } finally {
       setLoading(false);
       
-      // 구매 시도 후 데이터 새로고침
-      if (activeTab === 'paper') {
-        await refreshShopDataPaper();
-      } else if (activeTab === 'font') {
-        await refreshShopDataFont();
-      } else if (activeTab === 'item') {
-        await refreshShopData();
-      }
-
-      // 항상 다시 확인하여 소유 상태 일관성 유지
       await ensureOwnershipConsistency();
+    }
+  };
+
+  const forceCheckOwnership = async () => {
+    if (modalIndex === null) return;
+
+    const currentItems = getCurrentItems();
+    const item = currentItems[modalIndex];
+
+    if (!item) return;
+
+    try {
+      setLoading(true);
+      
+      if (activeTab === 'paper') {
+        try {
+          await purchasePaper(item.id);
+          updateItemOwnedStatus('paper', item.id, true);
+          alert('구매가 완료되었습니다!');
+          await refreshCurrentTab();
+          setModalIndex(null);
+        } catch (err) {
+          console.log('구매 시도 결과:', err);
+          if (err.response?.status === 400 && 
+              (err.response?.data?.message?.includes('already') || 
+               err.response?.data?.errorCode === 'ALREADY_PURCHASED')) {
+            updateItemOwnedStatus('paper', item.id, true);
+            await refreshCurrentTab();
+          } else {
+            alert(`오류가 발생했습니다: ${err.response?.data?.message || err.message}`);
+          }
+        }
+      } else if (activeTab === 'font') {
+        try {
+          await purchaseFont(item.id);
+          updateItemOwnedStatus('font', item.id, true);
+          alert('구매가 완료되었습니다!');
+          await refreshCurrentTab();
+          setModalIndex(null);
+        } catch (err) {
+          console.log('구매 시도 결과:', err);
+          if (err.response?.status === 400 && 
+              (err.response?.data?.message?.includes('already') || 
+               err.response?.data?.errorCode === 'ALREADY_PURCHASED')) {
+            updateItemOwnedStatus('font', item.id, true);
+            await refreshCurrentTab();
+          } else {
+            alert(`오류가 발생했습니다: ${err.response?.data?.message || err.message}`);
+          }
+        }
+      }
+    } catch (e) {
+      console.error('소유 상태 강제 확인 실패:', e);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -373,10 +445,8 @@ export default function ShopPage() {
         owned: item.isOwned === true
       })) : [];
       
-      console.log('새로고침된 아이템:', formattedItems); // 로깅 추가
       setItems(formattedItems);
       
-      // 포인트 갱신
       const pointRes = await getMyPoint();
       setUserPoint(pointRes.point);
     } catch (error) {
@@ -395,11 +465,9 @@ export default function ShopPage() {
         owned: font.isOwned === true
       })) : []);
       
-      // 포인트 갱신
       const pointRes = await getMyPoint();
       setUserPoint(pointRes.point);
       
-      // 모달이 열려 있으면 열려 있는 폰트 정보 업데이트
       if (modalIndex !== null) {
         const updatedFont = updatedFonts.find(font => font.id === fonts[modalIndex]?.id);
         if (updatedFont) {
@@ -427,11 +495,9 @@ export default function ShopPage() {
         owned: paper.isOwned === true
       })) : []);
       
-      // 포인트 갱신
       const pointRes = await getMyPoint();
       setUserPoint(pointRes.point);
       
-      // 모달이 열려 있으면 열려 있는 종이 정보 업데이트
       if (modalIndex !== null) {
         const updatedPaper = updatedPapers.find(paper => paper.id === papers[modalIndex]?.id);
         if (updatedPaper) {
@@ -474,6 +540,7 @@ export default function ShopPage() {
           onClose={() => setModalIndex(null)}
           userPoint={userPoint}
           loading={loading}
+          updateOwnership={(tab, id, owned) => updateItemOwnedStatus(tab, id, owned)}
         />
       )}
       {modalIndex !== null && activeTab === 'font' && (
@@ -485,6 +552,7 @@ export default function ShopPage() {
           onClose={() => setModalIndex(null)}
           userPoint={userPoint}
           loading={loading}
+          updateOwnership={(tab, id, owned) => updateItemOwnedStatus(tab, id, owned)}
         />
       )}
       {modalIndex !== null && activeTab === 'paper' && (
@@ -496,6 +564,7 @@ export default function ShopPage() {
           onClose={() => setModalIndex(null)}
           userPoint={userPoint}
           loading={loading}
+          updateOwnership={(tab, id, owned) => updateItemOwnedStatus(tab, id, owned)}
         />
       )}
     </PageContainer>

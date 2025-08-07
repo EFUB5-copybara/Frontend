@@ -36,10 +36,37 @@ export const purchaseItem = async (itemId) => {
 };
 
 // 폰트
+// 폰트 목록 조회 시 캐시 방지 및 타임스탬프 추가
 export const getFontsList = async () => {
   try {
-    const response = await axiosInstance.get('/shops/fonts');
-    return response.data;
+    // 확실한 캐시 방지를 위한 타임스탬프 및 헤더 추가
+    const timestamp = new Date().getTime();
+    const response = await axiosInstance.get(`/shops/fonts?_t=${timestamp}`, {
+      headers: { 
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
+    
+    // 데이터 변환 및 소유 상태 명확하게 처리
+    const data = response.data;
+    if (Array.isArray(data)) {
+      // 각 폰트의 소유 상태를 명확하게 boolean으로 변환
+      const processedData = data.map(item => {
+        if (item) {
+          return {
+            ...item,
+            isOwned: item.isOwned === true
+          };
+        }
+        return item;
+      });
+      console.log('폰트 목록 조회 결과:', processedData);
+      return processedData;
+    }
+    
+    return data;
   } catch (error) {
     console.error('폰트 목록 조회 실패:', error);
     throw error;
@@ -49,18 +76,26 @@ export const getFontsList = async () => {
 // 폰트 상세 정보 가져올 때 소유 상태도 확실히 가져오기
 export const getFontsDetail = async (fontId) => {
   try {
+    // 캐시를 완전히 무시하는 헤더 추가
     const response = await axiosInstance.get(`/shops/fonts/${fontId}/details`, {
-      headers: { 'Cache-Control': 'no-cache, no-store' } // 캐시 방지
+      headers: { 
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      },
+      // 매번 새로운 요청으로 인식하게 하는 임의의 쿼리 파라미터 추가
+      params: { 
+        _t: new Date().getTime() 
+      }
     });
     
-    // 소유 여부 명확히 처리
     const data = response.data;
-    // boolean으로 명확하게 변환
+    // boolean으로 명확하게 변환하고 로그 추가
     if (data) {
       data.isOwned = data.isOwned === true;
+      console.log(`폰트 ${fontId} 소유 상태 (API 응답):`, data.isOwned);
     }
     
-    console.log(`폰트 ${fontId} 상세 정보 (캐시 없음):`, data);
     return data;
   } catch (error) {
     console.error('폰트 상세 조회 실패:', error);
@@ -72,17 +107,27 @@ export const purchaseFont = async (fontId) => {
   try {
     console.log(`폰트 구매 API 요청: /shops/fonts/${fontId}/purchasing`);
     
-    const response = await axiosInstance.patch(`/shops/fonts/${fontId}/purchasing`);
+    const response = await axiosInstance.post(`/shops/fonts/${fontId}/purchasing`, null, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store',
+        'Pragma': 'no-cache'
+      }
+    });
     
     console.log('폰트 구매 API 응답:', response.data);
-    return response.data;
+    // 성공적으로 구매 완료된 경우 소유 상태를 true로 표시
+    return { ...response.data, forceOwned: true };
   } catch (error) {
     console.error('폰트 구매 실패:', error);
     
-    if (error.response) {
-      console.error('서버 응답:', error.response.status, error.response.data);
+    if (error.response && error.response.status === 400) {
+      if (error.response.data?.message?.includes('already') || 
+          error.response.data?.errorCode === 'ALREADY_PURCHASED' ||
+          error.response.data?.message?.includes('이미 구매')) {
+        console.log('이미 구매한 상품입니다. 소유 상태로 처리합니다.');
+        return { success: true, alreadyOwned: true, forceOwned: true };
+      }
     }
-    
     throw error;
   }
 };
@@ -90,8 +135,34 @@ export const purchaseFont = async (fontId) => {
 // 종이
 export const getPapersList = async () => {
   try {
-    const response = await axiosInstance.get('/shops/papers');
-    return response.data;
+    // 확실한 캐시 방지를 위한 타임스탬프 및 헤더 추가
+    const timestamp = new Date().getTime();
+    const response = await axiosInstance.get(`/shops/papers?_t=${timestamp}`, {
+      headers: { 
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
+    
+    // 데이터 변환 및 소유 상태 명확하게 처리
+    const data = response.data;
+    if (Array.isArray(data)) {
+      // 각 종이의 소유 상태를 명확하게 boolean으로 변환
+      const processedData = data.map(item => {
+        if (item) {
+          return {
+            ...item,
+            isOwned: item.isOwned === true
+          };
+        }
+        return item;
+      });
+      console.log('종이 목록 조회 결과:', processedData);
+      return processedData;
+    }
+    
+    return data;
   } catch (error) {
     console.error('종이 목록 조회 실패:', error);
     throw error;
@@ -101,15 +172,22 @@ export const getPapersList = async () => {
 export const getPapersDetail = async (paperId) => {
   try {
     const response = await axiosInstance.get(`/shops/papers/${paperId}/details`, {
-      headers: { 'Cache-Control': 'no-cache, no-store' } // 캐시 방지
+      headers: { 
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      },
+      params: { 
+        _t: new Date().getTime() 
+      }
     });
     
     const data = response.data;
     if (data) {
       data.isOwned = data.isOwned === true;
+      console.log(`종이 ${paperId} 소유 상태 (API 응답):`, data.isOwned);
     }
     
-    console.log(`종이 ${paperId} 상세 정보 (캐시 없음):`, data);
     return data;
   } catch (error) {
     console.error('종이 상세 조회 실패:', error);
@@ -121,17 +199,26 @@ export const purchasePaper = async (paperId) => {
   try {
     console.log(`종이 구매 API 요청: /shops/papers/${paperId}/purchasing`);
     
-    const response = await axiosInstance.patch(`/shops/papers/${paperId}/purchasing`);
+    const response = await axiosInstance.post(`/shops/papers/${paperId}/purchasing`, null, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store',
+        'Pragma': 'no-cache'
+      }
+    });
     
     console.log('종이 구매 API 응답:', response.data);
-    return response.data;
+    return { ...response.data, forceOwned: true };
   } catch (error) {
     console.error('종이 구매 실패:', error);
     
-    if (error.response) {
-      console.error('서버 응답:', error.response.status, error.response.data);
+    if (error.response && error.response.status === 400) {
+      if (error.response.data?.message?.includes('already') || 
+          error.response.data?.errorCode === 'ALREADY_PURCHASED' ||
+          error.response.data?.message?.includes('이미 구매')) {
+        console.log('이미 구매한 상품입니다. 소유 상태로 처리합니다.');
+        return { success: true, alreadyOwned: true, forceOwned: true };
+      }
     }
-    
     throw error;
   }
 };

@@ -9,6 +9,7 @@ export default function FontModal({
   onBuy,
   onClose,
   userPoint = 120,
+  updateOwnership
 }) {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -20,16 +21,38 @@ export default function FontModal({
         const font = fonts[currentIndex];
         if (font && font.id) {
           const res = await getFontsDetail(font.id);
-          setDetail(res);
+          
+          console.log(`폰트 ${font.id} 상세 조회 결과:`, {
+            name: font.name,
+            apiOwned: res.isOwned
+          });
+          
+          setDetail({
+            ...res,
+            isOwned: res.isOwned
+          });
+          
+          if (res.isOwned && !font.owned && updateOwnership) {
+            updateOwnership('font', font.id, true);
+          }
         }
       } catch (e) {
-        setDetail(null);
+        console.error('폰트 상세 조회 실패:', e);
+        const font = fonts[currentIndex];
+        if (font) {
+          setDetail({
+            ...font,
+            isOwned: font.owned
+          });
+        } else {
+          setDetail(null);
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchDetail();
-  }, [currentIndex, fonts]);
+  }, [currentIndex, fonts, updateOwnership]);
 
   if (loading || !detail) {
     return (
@@ -46,29 +69,31 @@ export default function FontModal({
   return (
     <Overlay onClick={onClose}>
       <ModalWrap onClick={(e) => e.stopPropagation()}>
-        <ModalContainer>
-          <PreviewBox>
-            <FontPreview fontName={detail.name}>{detail.name}</FontPreview>
-          </PreviewBox>
-          <ItemText>
-            <ItemName>{detail.name}</ItemName>
-            <ItemDesc>{detail.description}</ItemDesc>
-          </ItemText>
-          <Points>{detail.price}P</Points>
-          <BuyButton
-            disabled={detail.isOwned || insufficient}
-            owned={detail.isOwned}
-            insufficient={insufficient}
-            onClick={() => {
-              if (!detail.isOwned && !insufficient) onBuy(currentIndex);
-            }}
-          >
-            {detail.isOwned ? "보유함" : "구매하기"}
-          </BuyButton>
-          {insufficient && !detail.isOwned && (
-            <Message>포인트가 부족합니다</Message>
-          )}
-        </ModalContainer>
+        <SwipeContainer>
+          <ModalContainer>
+            <PreviewBox>
+              <FontPreview $fontName={detail.name}>{detail.name}</FontPreview>
+            </PreviewBox>
+            <ItemText>
+              <ItemName>{detail.name}</ItemName>
+              <ItemDesc>{detail.description}</ItemDesc>
+            </ItemText>
+            <Points>{detail.price}P</Points>
+            <BuyButton
+              disabled={detail.isOwned || insufficient}
+              $owned={detail.isOwned}
+              $insufficient={insufficient}
+              onClick={() => {
+                if (!detail.isOwned && !insufficient) onBuy(currentIndex);
+              }}
+            >
+              {detail.isOwned ? "보유함" : "구매하기"}
+            </BuyButton>
+            {insufficient && !detail.isOwned && (
+              <Message>포인트가 부족합니다</Message>
+            )}
+          </ModalContainer>
+        </SwipeContainer>
       </ModalWrap>
     </Overlay>
   );
@@ -132,8 +157,8 @@ const PreviewBox = styled.div`
 const FontPreview = styled.div`
   font-size: 24px;
   color: ${({ theme }) => theme.colors.primary};
-  font-weight: ${({ fontName }) => {
-    switch (fontName) {
+  font-weight: ${({ $fontName }) => {
+    switch ($fontName) {
       case 'Como':
         return '500';
       case 'MuseoModerno':
@@ -146,8 +171,8 @@ const FontPreview = styled.div`
         return '500';
     }
   }};
-  font-family: ${({ fontName }) => {
-    switch (fontName) {
+  font-family: ${({ $fontName }) => {
+    switch ($fontName) {
       case 'Como':
         return 'Arial, sans-serif';
       case 'MuseoModerno':
@@ -194,37 +219,34 @@ const BuyButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ disabled, owned, insufficient, theme }) =>
-    owned
-      ? theme.colors.brown3
-      : insufficient
-      ? theme.colors.white
-      : theme.colors.primary};
-  color: ${({ owned, insufficient, theme }) =>
-    owned
-      ? theme.colors.brown2
-      : insufficient
-      ? theme.colors.error
-      : theme.colors.white};
-  border: ${({ insufficient, theme }) =>
-    insufficient ? `1.5px solid ${theme.colors.error}` : "none"};
+  margin-top: 8px;
   border-radius: 10px;
   font-family: ${({ theme }) => theme.fonts.b16B};
-  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
-  margin-top: 8px;
+  
+  background-color: ${({ $owned, $insufficient, theme }) => 
+    $owned ? theme.colors.brown3 : 
+    $insufficient ? theme.colors.white : theme.colors.primary};
+  
+  color: ${({ $owned, $insufficient, theme }) => 
+    $owned ? theme.colors.brown2 : 
+    $insufficient ? theme.colors.error : theme.colors.white};
+  
+  border: ${({ $insufficient, theme }) => 
+    $insufficient ? `1.5px solid ${theme.colors.error}` : 'none'};
+  
+  cursor: ${({ $owned, $insufficient }) => 
+    $owned || $insufficient ? 'default' : 'pointer'};
   
   &:hover {
-    background-color: ${({ disabled, owned, insufficient, theme }) =>
-      disabled || owned
-        ? owned ? theme.colors.brown3 : theme.colors.white
-        : insufficient ? theme.colors.white : "rgba(92, 57, 20, 1)"};
+    background-color: ${({ $owned, $insufficient, theme }) => 
+      $owned ? theme.colors.brown3 : 
+      $insufficient ? theme.colors.white : 'rgba(92, 57, 20, 1)'};
   }
 
   &:active {
-    background-color: ${({ disabled, owned, insufficient, theme }) =>
-      disabled || owned
-        ? owned ? theme.colors.brown3 : theme.colors.white
-        : insufficient ? theme.colors.white : "rgba(78, 46, 13, 1)"};
+    background-color: ${({ $owned, $insufficient, theme }) => 
+      $owned ? theme.colors.brown3 : 
+      $insufficient ? theme.colors.white : 'rgba(78, 46, 13, 1)'};
   }
 `;
 
