@@ -187,3 +187,13 @@ export const createAnswer = async (date, content, isPublic) => {
     throw error;
   }
 };
+
+// 쿠키 개수 조회
+export const getCookiesNumber = async (year, month) => {
+  try {
+    const response = await axiosInstance.get(`/cookies`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

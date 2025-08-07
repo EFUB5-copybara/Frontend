@@ -10,7 +10,11 @@ import MonthPickerModal from '../components/MonthPickerModal';
 import QuestionList from '../components/QuestionList';
 import DailyPanel from '../components/DailyPanel';
 import WriteFixButton from '../components/WriteFixButton';
-import { getDailyQuestion, getMonthlyAnswer } from '../api/homepage';
+import {
+  getDailyQuestion,
+  getMonthlyAnswer,
+  getCookiesNumber,
+} from '../api/homepage';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 
 function HomePage() {

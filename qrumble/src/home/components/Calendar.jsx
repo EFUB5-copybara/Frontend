@@ -7,7 +7,7 @@ import {
   CookieIcon,
 } from './styles/CalendarStyles';
 import cookieImg from '../assets/svgs/cookie.svg';
-import { getMonthlyAnswerStatus } from '../api/homepage';
+import { getMonthlyAnswerStatus, getCookiesNumber } from '../api/homepage';
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -53,25 +53,25 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
     weeks[weekIndex].push(day);
   }
 
-  const jarLevel = useMemo(() => {
-    let level = 0;
-    let totalWeeks = 0;
-
-    for (const daysInWeek of Object.values(weeks)) {
-      totalWeeks++;
-      const cookieCount = daysInWeek.filter((d) =>
-        attendedDates.includes(d)
-      ).length;
-      if (cookieCount >= 5) level++;
-    }
-
-    if (level === totalWeeks) level++; // 보너스 쿠키
-
-    return level;
-  }, [year, month, attendedDates]);
-
   useEffect(() => {
-    setMonthlyCookieJarLevel(jarLevel);
+    const fetchAttendedDatesAndCookieLevel = async () => {
+      try {
+        const answered = await getMonthlyAnswerStatus(year, month);
+        const dates = answered
+          .map((d) => new Date(d).getDate())
+          .filter((day) => !isNaN(day));
+        setAttendedDates(dates);
+
+        const cookieData = await getCookiesNumber(year, month); // { level: 4 }
+        setMonthlyCookieJarLevel(cookieData.level ?? 0);
+      } catch (error) {
+        console.error('데이터 로드 실패:', error);
+        setAttendedDates([]);
+        setMonthlyCookieJarLevel(0);
+      }
+    };
+
+    fetchAttendedDatesAndCookieLevel();
   }, [year, month, setMonthlyCookieJarLevel]);
 
   // 현재 월 날짜들
