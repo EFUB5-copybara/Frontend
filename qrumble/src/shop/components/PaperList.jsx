@@ -10,30 +10,34 @@ const paperImgMap = {
 };
 
 export default function PaperList({ papers, onCardClick }) {
+  console.log('PaperList 렌더링, papers:', papers);
   return (
     <PaperGrid>
       {papers.map((paper, idx) => {
         const PaperSvg = paperImgMap[paper.id];
         return (
-          <Item key={paper.id} onClick={() => onCardClick(idx)}>
+          <Item
+            key={paper.id}
+            onClick={() => onCardClick(idx)}
+            $owned={paper.owned}
+          >
             <PaperImg $owned={paper.owned}>
               {paper.img && (
                 <img
                   src={paper.img}
                   alt={paper.name}
                   style={{
-                    width: '74.9px',
-                    height: '74.9px',
+                    width: '100%',
+                    height: '100%',
                     objectFit: 'cover',
                     borderRadius: '8px',
-                    background: '#fff',
                   }}
                 />
               )}
               {!paper.img && PaperSvg && (
                 <PaperSvg
-                  width="74.9"
-                  height="74.9"
+                  width="100%"
+                  height="100%"
                   style={{
                     borderRadius: '8px',
                     background: '#fff',
@@ -41,6 +45,7 @@ export default function PaperList({ papers, onCardClick }) {
                   }}
                 />
               )}
+              {paper.owned && <OwnedOverlay>보유중</OwnedOverlay>}
             </PaperImg>
             <ItemNameRow>
               <ItemName>{paper.name}</ItemName>
@@ -72,11 +77,12 @@ const Item = styled.button`
   background: transparent;
   border: none;
   padding: 0;
-  cursor: pointer;
+  cursor: ${({ $owned }) => ($owned ? 'default' : 'pointer')};
   width: 155px;
 `;
 
 const PaperImg = styled.div`
+  position: relative;
   width: 155px;
   height: 76px;
   border-radius: 12px;
@@ -87,6 +93,29 @@ const PaperImg = styled.div`
   align-items: center;
   overflow: hidden;
   opacity: ${({ $owned }) => ($owned ? 0.6 : 1)};
+
+  & > svg,
+  & > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px; /* 이미지 모서리 둥글게 */
+  }
+`;
+
+const OwnedOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: ${({ theme }) => theme.colors.white};
+  font-family: ${({ theme }) => theme.fonts.b16B};
+  border-radius: 12px;
 `;
 
 const ItemNameRow = styled.div`

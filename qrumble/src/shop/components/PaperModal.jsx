@@ -12,6 +12,7 @@ export default function PaperModal({
   onBuy,
   onClose,
   userPoint = 120,
+  updateOwnership
 }) {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -23,16 +24,38 @@ export default function PaperModal({
         const paper = papers[currentIndex];
         if (paper && paper.id) {
           const res = await getPapersDetail(paper.id);
-          setDetail(res);
+          
+          console.log(`종이 ${paper.id} 상세 조회 결과:`, {
+            name: paper.name,
+            apiOwned: res.isOwned
+          });
+          
+          setDetail({
+            ...res,
+            isOwned: res.isOwned
+          });
+          
+          if (res.isOwned && !paper.owned && updateOwnership) {
+            updateOwnership('paper', paper.id, true);
+          }
         }
       } catch (e) {
-        setDetail(null);
+        console.error('종이 상세 조회 실패:', e);
+        const paper = papers[currentIndex];
+        if (paper) {
+          setDetail({
+            ...paper,
+            isOwned: paper.owned
+          });
+        } else {
+          setDetail(null);
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchDetail();
-  }, [currentIndex, papers]);
+  }, [currentIndex, papers, updateOwnership]);
 
   if (loading || !detail) {
     return (
@@ -48,50 +71,50 @@ export default function PaperModal({
 
   return (
     <Overlay onClick={onClose}>
-      <ModalWrap onClick={(e) => e.stopPropagation()}>
-        <ModalContainer>
-          <PreviewBox>
-            {detail.img && (
-              <img
-                src={detail.img}
-                alt={detail.name}
-                style={{
-                  width: '158px',
-                  height: '130px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  background: '#fff'
-                }}
-              />
+      <ModalWrap onClick={e => e.stopPropagation()}>
+        <SwipeContainer>
+          <ModalContainer>
+            <PreviewBox>
+              {detail.img && (
+                <img
+                  src={detail.img}
+                  alt={detail.name}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                  }}
+                />
+              )}
+              {!detail.img && detail.id && (
+                <SvgWrapper>
+                  {detail.id === 1 && <BlueImg style={{ borderRadius: '8px' }} />}
+                  {detail.id === 2 && <GreenImg style={{ borderRadius: '8px' }} />}
+                  {detail.id === 3 && <PinkImg style={{ borderRadius: '8px' }} />}
+                </SvgWrapper>
+              )}
+            </PreviewBox>
+            <ItemText>
+              <ItemName>{detail.name}</ItemName>
+              <ItemDesc>{detail.description}</ItemDesc>
+            </ItemText>
+            <Points>{detail.price}P</Points>
+            <BuyButton
+              disabled={detail.isOwned || insufficient}
+              $owned={detail.isOwned}
+              $insufficient={insufficient}
+              onClick={() => {
+                if (!detail.isOwned && !insufficient) onBuy(currentIndex);
+              }}
+            >
+              {detail.isOwned ? "보유함" : "구매하기"}
+            </BuyButton>
+            {insufficient && !detail.isOwned && (
+              <Message>포인트가 부족합니다</Message>
             )}
-            {!detail.img && detail.id && (
-              // id에 따라 SVG 선택
-              <>
-                {detail.id === 1 && <BlueImg width="158" height="130" style={{ borderRadius: '8px', background: '#fff' }} />}
-                {detail.id === 2 && <GreenImg width="158" height="130" style={{ borderRadius: '8px', background: '#fff' }} />}
-                {detail.id === 3 && <PinkImg width="158" height="130" style={{ borderRadius: '8px', background: '#fff' }} />}
-              </>
-            )}
-          </PreviewBox>
-          <ItemText>
-            <ItemName>{detail.name}</ItemName>
-            <ItemDesc>{detail.description}</ItemDesc>
-          </ItemText>
-          <Points>{detail.price}P</Points>
-          <BuyButton
-            disabled={detail.isOwned || insufficient}
-            owned={detail.isOwned}
-            insufficient={insufficient}
-            onClick={() => {
-              if (!detail.isOwned && !insufficient) onBuy(currentIndex);
-            }}
-          >
-            {detail.isOwned ? "보유함" : "구매하기"}
-          </BuyButton>
-          {insufficient && !detail.isOwned && (
-            <Message>포인트가 부족합니다</Message>
-          )}
-        </ModalContainer>
+          </ModalContainer>
+        </SwipeContainer>
       </ModalWrap>
     </Overlay>
   );
@@ -217,37 +240,34 @@ const BuyButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${({ disabled, owned, insufficient, theme }) =>
-    owned
-      ? theme.colors.brown3
-      : insufficient
-      ? theme.colors.white
-      : theme.colors.primary};
-  color: ${({ owned, insufficient, theme }) =>
-    owned
-      ? theme.colors.brown2
-      : insufficient
-      ? theme.colors.error
-      : theme.colors.white};
-  border: ${({ insufficient, theme }) =>
-    insufficient ? `1.5px solid ${theme.colors.error}` : "none"};
+  margin-top: 8px;
   border-radius: 10px;
   font-family: ${({ theme }) => theme.fonts.b16B};
-  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
-  margin-top: 8px;
+  
+  background-color: ${({ $owned, $insufficient, theme }) => 
+    $owned ? theme.colors.brown3 : 
+    $insufficient ? theme.colors.white : theme.colors.primary};
+  
+  color: ${({ $owned, $insufficient, theme }) => 
+    $owned ? theme.colors.brown2 : 
+    $insufficient ? theme.colors.error : theme.colors.white};
+  
+  border: ${({ $insufficient, theme }) => 
+    $insufficient ? `1.5px solid ${theme.colors.error}` : 'none'};
+  
+  cursor: ${({ $owned, $insufficient }) => 
+    $owned || $insufficient ? 'default' : 'pointer'};
   
   &:hover {
-    background-color: ${({ disabled, owned, insufficient, theme }) =>
-      disabled || owned
-        ? owned ? theme.colors.brown3 : theme.colors.white
-        : insufficient ? theme.colors.white : "rgba(92, 57, 20, 1)"};
+    background-color: ${({ $owned, $insufficient, theme }) => 
+      $owned ? theme.colors.brown3 : 
+      $insufficient ? theme.colors.white : 'rgba(92, 57, 20, 1)'};
   }
 
   &:active {
-    background-color: ${({ disabled, owned, insufficient, theme }) =>
-      disabled || owned
-        ? owned ? theme.colors.brown3 : theme.colors.white
-        : insufficient ? theme.colors.white : "rgba(78, 46, 13, 1)"};
+    background-color: ${({ $owned, $insufficient, theme }) => 
+      $owned ? theme.colors.brown3 : 
+      $insufficient ? theme.colors.white : 'rgba(78, 46, 13, 1)'};
   }
 `;
 
@@ -272,4 +292,20 @@ const QuantityText = styled.div`
   margin-top: 8px;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.brown2};
+`;
+
+const SvgWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & > svg {
+    width: 100%;
+    height: 100%;
+  }
 `;
