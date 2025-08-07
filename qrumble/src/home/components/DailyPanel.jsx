@@ -20,6 +20,7 @@ import useTodayQuestionStore from '../stores/useTodayQuestionStore'; // 추가
 import { getMonthlyAnswerStatus } from '../api/homepage';
 import { format } from 'date-fns';
 import { fetchPopularPosts, fetchPostDetail } from '@/community/api/community';
+import { useKeyItem, useEraserItem, useShieldItem } from '../api/homepage';
 
 function DailyPanel({ date, onClose }) {
   const [targetDate, setTargetDate] = useState(null);
@@ -37,11 +38,17 @@ function DailyPanel({ date, onClose }) {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await getItemCounts();
+        const res = await getMyItems();
+
+        // type 기준으로 개수 매핑
+        const itemMap = Object.fromEntries(
+          res.map((item) => [item.type.toLowerCase(), item.quantity])
+        );
+
         setItems([
-          { name: 'key', img: keyImg, count: res.keyCount },
-          { name: 'shield', img: shieldImg, count: res.shieldCount },
-          { name: 'eraser', img: eraserImg, count: res.eraserCount },
+          { name: 'key', img: keyImg, count: itemMap.key || 0 },
+          { name: 'shield', img: shieldImg, count: itemMap.shield || 0 },
+          { name: 'eraser', img: eraserImg, count: itemMap.eraser || 0 },
         ]);
       } catch (err) {
         console.error('아이템 개수 조회 실패:', err);

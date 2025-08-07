@@ -5,6 +5,8 @@ import keyImg from '../assets/svgs/key.svg';
 import shieldImg from '../assets/svgs/shield.svg';
 import eraserImg from '../assets/svgs/eraser.svg';
 import { useKeyItem, useShieldItem, useEraserItem } from '../api/homepage.js';
+import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 function ItemButtons({ items, onUse, attendedDates, targetDate }) {
   const [modalInfo, setModalInfo] = useState({
@@ -33,6 +35,8 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
     eraser: '지우개',
   };
 
+  const navigate = useNavigate();
+
   const handleUseItem = (type) => {
     const canUse = checkIfUsable(type);
 
@@ -60,7 +64,20 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
 
     try {
       if (modalInfo.type === 'key') {
-        await useKeyItem();
+        const dateStr = format(targetDate, 'yyyy-MM-dd');
+        const result = await useKeyItem(dateStr);
+
+        if (result.used && result.answer) {
+          navigate('/home/detail', {
+            state: {
+              mode: 'viewer',
+              answer: result.answer,
+              date: dateStr,
+            },
+          });
+        } else {
+          alert('열쇠 아이템을 사용할 수 없습니다.');
+        }
       } else if (modalInfo.type === 'shield') {
         await useShieldItem();
       } else if (modalInfo.type === 'eraser') {
@@ -91,7 +108,7 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
     const itemCount = items[type];
     if (itemCount === 0) return false;
 
-    const today = new Date(2025, 2, 11); // 기준일: 3월 11일
+    const today = new Date();
 
     const isSameDay = (d1, d2) =>
       d1.getFullYear() === d2.getFullYear() &&
@@ -111,19 +128,31 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
         return isAttended;
 
       case 'shield':
-        const start = new Date(today);
-        start.setDate(start.getDate() - 13);
+        // 연속 출석이 끊긴 첫 지점을 기준으로 판단
+        if (attendedDates.length === 0) return false;
 
-        let missedCount = 0;
-        for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
-          const written = attendedDates.some((day) => {
-            const date = new Date(today.getFullYear(), today.getMonth(), day);
-            return isSameDay(date, d);
-          });
-          if (!written) missedCount++;
+        // 오름차순 정렬
+        const sorted = [...attendedDates].sort((a, b) => a - b);
+
+        // 끊긴 첫 지점 찾기
+        let breakPoint = null;
+        for (let i = 1; i < sorted.length; i++) {
+          if (sorted[i] !== sorted[i - 1] + 1) {
+            breakPoint = sorted[i];
+            break;
+          }
         }
 
-        return missedCount > 0;
+        // 끊긴 지점이 없으면(=완벽한 연속 출석이면) 사용 불가
+        if (!breakPoint) return false;
+
+        // 끊긴 지점 이전 날짜가 targetDate인지 확인
+        const breakDate = new Date(
+          targetDate.getFullYear(),
+          targetDate.getMonth(),
+          breakPoint - 1
+        );
+        return isSameDay(breakDate, targetDate);
 
       default:
         return false;

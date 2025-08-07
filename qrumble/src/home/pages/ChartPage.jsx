@@ -16,6 +16,11 @@ import { format } from 'date-fns';
 function ChartPage() {
   const [isShareOpen, setIsShareOpen] = useState(false);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const { mode, answer: viewerAnswer, date: viewerDate } = location.state || {};
+
   const handleShareClick = () => {
     setIsShareOpen(true);
   };
@@ -23,13 +28,24 @@ function ChartPage() {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [date, setDate] = useState('');
-  const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      const targetDate = location.state?.date;
+      // 열쇠 모드인 경우: answer와 date는 location.state에 있음
+      if (mode === 'viewer') {
+        if (!viewerAnswer || !viewerDate) {
+          alert('열람할 답변 정보가 없습니다.');
+          return;
+        }
 
+        setDate(viewerDate);
+        setQuestion(viewerAnswer.question);
+        setAnswer(viewerAnswer.content);
+        return;
+      }
+
+      // 일반 모드: 내 답변 조회
+      const targetDate = location.state?.date;
       if (!targetDate) {
         alert('날짜 정보가 없습니다.');
         return;
@@ -51,19 +67,10 @@ function ChartPage() {
       } catch (error) {
         console.error('답변 불러오기 실패:', error);
       }
-
-      try {
-        const postRes = await fetchPostDetail(postId);
-        setLikeCount(postRes.likeCount || 0);
-        setViewCount(postRes.viewCount || 0);
-        setCommentCount(postRes.commentCount || 0);
-      } catch (error) {
-        console.error('게시글 정보 불러오기 실패:', error);
-      }
     };
 
     fetchData();
-  }, [location, navigate]);
+  }, [location]);
 
   return (
     <Background>

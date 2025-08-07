@@ -136,8 +136,15 @@ const useItem = async (type) => {
 };
 
 // 열쇠 아이템 사용
-export const useKeyItem = async () => {
-  return await useItem('KEY');
+export const useKeyItem = async (date) => {
+  try {
+    const response = await axiosInstance.post('/items/use?type=KEY', {
+      date,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // 방패 아이템 사용
