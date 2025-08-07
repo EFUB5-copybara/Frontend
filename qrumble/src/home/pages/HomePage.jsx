@@ -43,7 +43,6 @@ function HomePage() {
               day: '2-digit',
             })
             .replace(/\. /g, '.'),
-
           question: item.question,
           answer: item.content,
         }));

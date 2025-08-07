@@ -17,10 +17,10 @@ import AnswerCard from './AnswerCard';
 import { getItemCounts } from '../api/homepage';
 import { useNavigate } from 'react-router-dom';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore'; // 추가
+import useDailyQuestionStore from '../stores/useDailyQuestionStore';
 import { getMonthlyAnswerStatus } from '../api/homepage';
 import { format } from 'date-fns';
 import { fetchPopularPosts, fetchPostDetail } from '@/community/api/community';
-import { useKeyItem, useEraserItem, useShieldItem } from '../api/homepage';
 
 function DailyPanel({ date, onClose }) {
   const [targetDate, setTargetDate] = useState(null);
@@ -34,6 +34,19 @@ function DailyPanel({ date, onClose }) {
     fetchTodayQuestion,
     isLoading,
   } = useTodayQuestionStore();
+
+  const question = useDailyQuestionStore((state) => state.question);
+  const error = useDailyQuestionStore((state) => state.error);
+  const isDailyLoading = useDailyQuestionStore((state) => state.isLoading);
+  const fetchQuestionByDate = useDailyQuestionStore(
+    (state) => state.fetchQuestionByDate
+  );
+
+  useEffect(() => {
+    if (!targetDate) return;
+    const dateStr = format(targetDate, 'yyyy-MM-dd');
+    fetchQuestionByDate(dateStr);
+  }, [targetDate]);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -189,11 +202,11 @@ function DailyPanel({ date, onClose }) {
                 </CardDateText>
               </Header>
               <QuestionText>
-                {todayQuestionError
-                  ? todayQuestionError
-                  : isLoading
+                {error
+                  ? error
+                  : isDailyLoading
                   ? '질문을 불러오는 중입니다...'
-                  : todayQuestion || '질문이 없습니다.'}
+                  : question || '질문이 없습니다.'}
               </QuestionText>
               <Bottom>
                 <BottomItem>

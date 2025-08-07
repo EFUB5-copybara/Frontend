@@ -2,8 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import likeImg from '../assets/svgs/like.svg';
 import commentImg from '../assets/svgs/question-comments.svg';
+import { useNavigate } from 'react-router-dom';
 
 function QuestionList({ questions, month }) {
+  const navigate = useNavigate();
+
   if (!questions || questions.length === 0) {
     return (
       <Wrapper>
@@ -31,7 +34,7 @@ function QuestionList({ questions, month }) {
             </BottomItem>
             <BottomItem>
               <BottomImg src={commentImg} alt='comment' />
-              101
+              댓글
             </BottomItem>
           </Bottom>
         </QuestionCard>
