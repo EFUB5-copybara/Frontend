@@ -208,7 +208,11 @@ function DailyPanel({ date, onClose }) {
 
             <BestAnswerText>최고 인기 답변</BestAnswerText>
             <AnswerList>
-              {!Array.isArray(popularPosts) || popularPosts.length === 0 ? (
+              {!attendedDates.includes(targetDate?.getDate()) ? (
+                <EmptyMessage>
+                  답변을 하지 않은 날은 다른 유저의 답변을 확인할 수 없습니다.
+                </EmptyMessage>
+              ) : !Array.isArray(popularPosts) || popularPosts.length === 0 ? (
                 <EmptyMessage>인기 게시글이 없습니다.</EmptyMessage>
               ) : (
                 popularPosts
