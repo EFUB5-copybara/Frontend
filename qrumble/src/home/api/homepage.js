@@ -66,7 +66,7 @@ export const getMonthlyQuestions = async (year, month) => {
 export const getAnswerStreak = async () => {
   try {
     const response = await axiosInstance.get('/answers/streak');
-    return response.data.streak;
+    return response.data;
   } catch (error) {
     throw error;
   }
