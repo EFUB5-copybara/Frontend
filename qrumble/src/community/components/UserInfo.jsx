@@ -1,14 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import UserProfileIc from '@/community/assets/svgs/user_profile.svg?react';
+import { PROFILE_IMAGES } from '../constants/profileImage';
 
-export default function UserInfo() {
+export default function UserInfo({ username, email, profileImageId }) {
+  const profile = PROFILE_IMAGES.find((p) => p.id === profileImageId);
+  const ProfileIcon = profile.Component;
   return (
     <UserInfoWrapper>
-      <ProfileImg />
+      <ProfileImg as={ProfileIcon} />
       <NameWrapper>
-        <UserName>사용자 이름</UserName>
-        <UserMail>user@email.com</UserMail>
+        <UserName>{username}</UserName>
+        <UserMail>{email}</UserMail>
       </NameWrapper>
     </UserInfoWrapper>
   );
@@ -41,7 +44,7 @@ const NameWrapper = styled.div`
 
 const UserName = styled.p`
   ${({ theme }) => theme.fonts.b18M}
-  margin: 0px;
+  margin: 0;
 `;
 
 const UserMail = styled.p`

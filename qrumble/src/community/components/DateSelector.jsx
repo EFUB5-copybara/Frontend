@@ -4,15 +4,20 @@ import CookieIc from '../assets/svgs/cookie.svg?react';
 export default function DateSelector({ dates, onSelect, selected }) {
   return (
     <Container>
-      {dates.map(({ day, type, fullDate }) => (
-        <DateItem key={fullDate}>
-          <DateButton
-            selected={selected === fullDate}
-            onClick={() => onSelect({ fullDate })}>
-            {type === 'cookie' ? <CookieIcon /> : day}
-          </DateButton>
-        </DateItem>
-      ))}
+      {dates.map(({ day, isCookie, fullDate }) => {
+        const isSelected = selected === fullDate;
+
+        return (
+          <DateItem key={fullDate}>
+            <DateButton
+              selected={isSelected}
+              onClick={() => onSelect({ fullDate })}
+              title={fullDate}>
+              {isSelected ? day : isCookie ? <CookieIcon /> : day}
+            </DateButton>
+          </DateItem>
+        );
+      })}
     </Container>
   );
 }
@@ -28,7 +33,7 @@ const DateItem = styled.div`
   justify-content: center;
 `;
 
-const DateButton = styled.button`
+const DateButton = styled.div`
   width: 39px;
   height: 39px;
   display: flex;
@@ -40,9 +45,10 @@ const DateButton = styled.button`
     selected ? 'white' : theme.colors.primary};
   border: none;
   border-radius: 0.25rem;
+  cursor: pointer;
 `;
 
 const CookieIcon = styled(CookieIc)`
-  width: 24px;
-  height: 24px;
+  width: 40px;
+  height: 40px;
 `;

@@ -26,7 +26,7 @@ import MainLayout from './layout/MainLayout';
 import PostDetailPage from './community/pages/PostDetailPage';
 import UserProfilePage from './community/pages/UserProfilePage';
 import HomePage from './home/pages/HomePage';
-import CommunityLayout from './layout/CommunityLayout';
+import CommunityLayout from './community/layout/CommunityLayout';
 import navigation from './navigations';
 import { configRoutes } from './utils/configRoutes';
 import { getNavigationItems } from './utils/getNavigationItems';
