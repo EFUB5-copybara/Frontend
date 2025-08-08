@@ -14,6 +14,7 @@ import likeImg from '../assets/svgs/like.svg';
 import commentImg from '../assets/svgs/question-comments.svg';
 import ItemButtons from './ItemButtons';
 import AnswerCard from './AnswerCard';
+import { getMyItems } from '@/shop/api/shopApi';
 import { getItemCounts } from '../api/homepage';
 import { useNavigate } from 'react-router-dom';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore'; // 추가
@@ -244,11 +245,14 @@ function DailyPanel({ date, onClose }) {
                   .slice(0, 3)
                   .map((post, idx) => (
                     <AnswerCard
-                      key={post.id}
+                      postId={post.id}
                       rank={idx + 1}
-                      title={post.username}
+                      title={post.title}
                       subtitle={post.content}
                       userId={`@${post.username}`}
+                      bookmarkCount={post.bookmarkCount}
+                      likeCount={post.likeCount}
+                      commentCount={post.commentCount}
                     />
                   ))
               )}
