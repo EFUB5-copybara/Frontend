@@ -4,9 +4,10 @@ import AlertModal from '../components/AlertModal.jsx';
 import keyImg from '../assets/svgs/key.svg';
 import shieldImg from '../assets/svgs/shield.svg';
 import eraserImg from '../assets/svgs/eraser.svg';
-import { useKeyItem, useShieldItem, useEraserItem } from '../api/homepage.js';
-import { format } from 'date-fns';
+import { KeyItem, ShieldItem, EraserItem } from '../api/homepage.js';
+import { format, getDate } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { getAnswerStreak } from '../api/homepage.js';
 
 function ItemButtons({
   items,
@@ -41,8 +42,6 @@ function ItemButtons({
     eraser: '지우개',
   };
 
-  const navigate = useNavigate();
-
   const handleUseItem = (type) => {
     const canUse = checkIfUsable(type);
 
@@ -63,51 +62,45 @@ function ItemButtons({
   };
 
   const confirmUse = async () => {
-    if (!modalInfo.canUse) {
-      closeModal();
-      return;
-    }
+    if (!modalInfo.canUse) return closeModal();
+
+    const dateStr = format(targetDate, 'yyyy-MM-dd');
 
     try {
-      if (modalInfo.type === 'key') {
-        const dateStr = format(targetDate, 'yyyy-MM-dd');
-        const result = await useKeyItem(dateStr);
+      switch (modalInfo.type) {
+        case 'key': {
+          const result = await KeyItem(dateStr);
+          if (result.used) {
+            if (onUse) {
+              onUse('key', { date: targetDate, isKeyUnlocked: true });
+            }
+          }
+          break;
+        }
+        case 'shield': {
+          const result = await ShieldItem(dateStr);
+          if (result.used && result.recoveredDate) {
+            const recovered = new Date(result.recoveredDate);
+            setAttendedDates((prev) => [
+              ...new Set([...prev, recovered.getDate()]),
+            ]);
+            onUse?.('shield', { date: recovered, isCookie: true });
+          }
+          break;
+        }
 
-        const postId = result.answer.id;
-
-        if (result.used && result.answer) {
-          navigate(`/community/${postId}`);
-        } else {
-          alert('열쇠 아이템을 사용할 수 없습니다.');
+        case 'eraser': {
+          const result = await EraserItem(dateStr);
+          // UI 업데이트 또는 페이지 이동 처리
+          break;
         }
       }
-      if (modalInfo.type === 'shield') {
-        const dateStr = format(targetDate, 'yyyy-MM-dd');
-        const result = await useShieldItem(dateStr);
-
-        if (result.used && result.recoveredDate) {
-          const recoveredDay = new Date(result.recoveredDate).getDate();
-
-          // 해당 날짜에 쿠키가 보이도록 attendedDates에 추가
-          onUse('shield'); // 아이템 수량 감소
-          setAttendedDates((prev) => [...new Set([...prev, recoveredDay])]);
-        } else {
-          alert('방패 아이템 사용에 실패했습니다.');
-        }
-      }
-      if (modalInfo.type === 'eraser') {
-        await useEraserItem();
-      }
-
-      onUse(modalInfo.type);
-    } catch (error) {
-      alert('아이템 사용 중 오류가 발생했습니다.');
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     } finally {
       closeModal();
     }
   };
-
   const closeModal = () => {
     setModalInfo({
       isOpen: false,
@@ -142,32 +135,41 @@ function ItemButtons({
       case 'eraser':
         return isAttended;
 
-      case 'shield':
-        // 연속 출석이 끊긴 첫 지점을 기준으로 판단
+      case 'shield': {
         if (attendedDates.length === 0) return false;
+
+        // 오늘 날짜 (일 단위)
+        const todayDay = new Date().getDate();
 
         // 오름차순 정렬
         const sorted = [...attendedDates].sort((a, b) => a - b);
 
-        // 끊긴 첫 지점 찾기
+        // 오늘부터 역순으로 체크
+        let expectedDay = todayDay;
         let breakPoint = null;
-        for (let i = 1; i < sorted.length; i++) {
-          if (sorted[i] !== sorted[i - 1] + 1) {
-            breakPoint = sorted[i];
+
+        for (let i = sorted.length - 1; i >= 0; i--) {
+          if (sorted[i] === expectedDay) {
+            expectedDay--;
+          } else {
+            // 연속이 끊긴 가장 최근 날짜를 찾음
+            breakPoint = expectedDay;
             break;
           }
         }
 
-        // 끊긴 지점이 없으면(=완벽한 연속 출석이면) 사용 불가
+        // 끊긴 날짜가 없다면 사용 불가
         if (!breakPoint) return false;
 
-        // 끊긴 지점 이전 날짜가 targetDate인지 확인
-        const breakDate = new Date(
+        // breakPoint를 Date 객체로 변환
+        const breakDateObj = new Date(
           targetDate.getFullYear(),
           targetDate.getMonth(),
-          breakPoint - 1
+          breakPoint
         );
-        return isSameDay(breakDate, targetDate);
+
+        return isSameDay(breakDateObj, targetDate);
+      }
 
       default:
         return false;

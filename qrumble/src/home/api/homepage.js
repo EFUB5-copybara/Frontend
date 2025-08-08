@@ -133,7 +133,7 @@ export const getItemCounts = async () => {
 };
 
 // 열쇠 아이템 사용
-export const useKeyItem = async (date) => {
+export const KeyItem = async (date) => {
   try {
     const response = await axiosInstance.post('/items/use?type=KEY', {
       date,
@@ -145,7 +145,7 @@ export const useKeyItem = async (date) => {
 };
 
 // 방패 아이템 사용
-export const useShieldItem = async (date) => {
+export const ShieldItem = async (date) => {
   try {
     const res = await axiosInstance.post('/items/use?type=SHIELD', {
       date,
@@ -157,7 +157,7 @@ export const useShieldItem = async (date) => {
 };
 
 // 지우개 아이템 사용
-export const useEraserItem = async (date) => {
+export const EraserItem = async (date) => {
   try {
     const res = await axiosInstance.post('/items/use?type=ERASER', {
       date,

@@ -112,10 +112,26 @@ function DailyPanel({ date, onClose }) {
     fetchTodayQuestion(dateStr);
   }, [targetDate]);
 
-  const handleUseItem = (type) => {
+  const [keyUnlockedDates, setKeyUnlockedDates] = useState([]);
+  const isAttendedDay = attendedDates.includes(targetDate?.getDate());
+  const dateKey = targetDate ? format(targetDate, 'yyyy-MM-dd') : null;
+
+  const isKeyUnlockedDay = dateKey ? keyUnlockedDates.includes(dateKey) : false;
+
+  const handleUseItem = (type, extra = {}) => {
     setItems((prev) =>
       prev.map((i) => (i.name === type ? { ...i, count: i.count - 1 } : i))
     );
+
+    if (type === 'key' && extra.isKeyUnlocked && extra.date) {
+      const keyDate = format(extra.date, 'yyyy-MM-dd');
+      setKeyUnlockedDates((prev) => [...new Set([...prev, keyDate])]);
+    }
+
+    if (type === 'shield' && extra.isCookie && extra.date) {
+      const dayNum = extra.date.getDate();
+      setAttendedDates((prev) => [...new Set([...prev, dayNum])]);
+    }
   };
 
   const navigate = useNavigate();
@@ -234,10 +250,6 @@ function DailyPanel({ date, onClose }) {
             <AnswerList>
               {popularError ? (
                 <EmptyMessage>{popularError}</EmptyMessage>
-              ) : !attendedDates.includes(targetDate?.getDate()) ? (
-                <EmptyMessage>
-                  답변을 하지 않은 날은 다른 유저의 답변을 확인할 수 없습니다.
-                </EmptyMessage>
               ) : popularPosts.length === 0 ? (
                 <EmptyMessage>인기 게시글이 없습니다.</EmptyMessage>
               ) : (
@@ -245,6 +257,7 @@ function DailyPanel({ date, onClose }) {
                   .slice(0, 3)
                   .map((post, idx) => (
                     <AnswerCard
+                      key={post.id}
                       postId={post.id}
                       rank={idx + 1}
                       title={post.title}
