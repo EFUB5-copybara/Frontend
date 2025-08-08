@@ -5,7 +5,12 @@ import starIcon from '../assets/svgs/star.svg';
 import fireIcon from '../assets/svgs/fire.svg';
 import fortunecookieIcon from '../assets/svgs/fortune-button.svg';
 import fortunecookieOpenedIcon from '../assets/svgs/broken-fortune-button.svg';
-import { getAnswerStreak, checkFortuneCookieUsed } from '../api/homepage';
+import {
+  getAnswerStreak,
+  checkFortuneCookieUsed,
+  getMonthlyAnswer,
+} from '../api/homepage';
+import { format, parseISO, subDays } from 'date-fns';
 
 function MissionBar() {
   const navigate = useNavigate();
@@ -23,7 +28,7 @@ function MissionBar() {
 
         setStreak(streakData);
 
-        const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+        const today = format(new Date(), 'yyyy-MM-dd'); // "YYYY-MM-DD"
         const isUsedToday = usedDateString === today;
 
         setFortuneUsed(isUsedToday); // 오늘 쓴 기록이 있을 때만 true
@@ -34,6 +39,47 @@ function MissionBar() {
 
     fetchData();
   }, []);
+
+  // 오늘(답했으면 포함) 또는 어제부터 뒤로 연속 계산
+  const calcDisplayStreak = async () => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = now.getMonth() + 1;
+
+    // 지난 달 구하기 (JS Date로 안전하게)
+    const prevMonthDate = new Date(y, m - 2, 1);
+    const py = prevMonthDate.getFullYear();
+    const pm = prevMonthDate.getMonth() + 1;
+
+    // 이번 달 + 지난 달 답변 목록
+    const [answersThis, answersPrev] = await Promise.all([
+      getMonthlyAnswer(y, m),
+      getMonthlyAnswer(py, pm),
+    ]);
+
+    // 답변한 날짜들을 로컬(KST) yyyy-MM-dd로 변환해서 Set에 저장
+    const answeredDates = new Set(
+      [...answersThis, ...answersPrev].map((item) =>
+        format(parseISO(item.createdAt), 'yyyy-MM-dd')
+      )
+    );
+
+    const todayStr = format(now, 'yyyy-MM-dd');
+    const yesterdayStr = format(subDays(now, 1), 'yyyy-MM-dd');
+
+    // 오늘 답변했으면 오늘부터 뒤로, 아니면 어제부터 뒤로 연속 계산
+    let cursor = answeredDates.has(todayStr) ? todayStr : yesterdayStr;
+
+    let count = 0;
+    while (answeredDates.has(cursor)) {
+      count += 1;
+      // cursor는 'yyyy-MM-dd' 문자열이라 parseISO로 Date 만든 뒤 하루씩 빼줍니다
+      const curDate = parseISO(cursor);
+      cursor = format(subDays(curDate, 1), 'yyyy-MM-dd');
+    }
+
+    return count;
+  };
 
   const handleFortuneClick = () => {
     if (isFortuneDisabled) return;

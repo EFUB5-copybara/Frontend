@@ -5,6 +5,7 @@ import checkImg from '../assets/check.svg';
 import ItemModal from '../components/ItemModal';
 import { patchFont, patchPaper } from '../api/mypage';
 import { getFontsList, getPapersList } from '@/shop/api/shopApi';
+import { paperImageExMap } from '../components/paperMap';
 
 function ThemePage() {
   const [selectedTab, setSelectedTab] = useState('font');
@@ -24,31 +25,22 @@ function ThemePage() {
         const fonts = await getFontsList();
         const papers = await getPapersList();
 
-        // 기본 아이템 정의
-        const defaultFont = {
-          id: -1,
-          name: '기본 폰트',
-          owned: true,
-          selected: true,
-        };
+        const defaultFont = { id: -1, name: '기본 폰트', owned: true };
+        const defaultPaper = { id: -1, name: '기본 종이', owned: true };
 
-        const defaultPaper = {
-          id: -1,
-          name: '기본 종이',
-          owned: true,
-          selected: true,
-        };
+        const ownedFonts = [defaultFont, ...fonts.filter((f) => f.owned)];
+        const ownedPapers = [defaultPaper, ...papers.filter((p) => p.owned)];
 
-        const ownedFonts = fonts.filter((f) => f.owned);
-        const ownedPapers = papers.filter((p) => p.owned);
+        setFontItems(ownedFonts);
+        setPaperItems(ownedPapers);
 
-        // 기본 아이템 + 서버 아이템 합치기
-        setFontItems([defaultFont, ...ownedFonts]);
-        setPaperItems([defaultPaper, ...ownedPapers]);
+        // 서버에서 selected=true인 것 찾아서 세팅
+        const selectedFont = ownedFonts.find((f) => f.selected) ?? defaultFont;
+        const selectedPaper =
+          ownedPapers.find((p) => p.selected) ?? defaultPaper;
 
-        // 기본 선택값 세팅
-        setSelectedFontId(-1);
-        setSelectedPaperId(-1);
+        setSelectedFontId(selectedFont.id);
+        setSelectedPaperId(selectedPaper.id);
       } catch (error) {
         console.error('테마 불러오기 실패:', error);
       }
@@ -89,7 +81,10 @@ function ThemePage() {
 
               return (
                 <Item key={item.id} onClick={() => setModalIndex(index)}>
-                  <ItemImg selected={isSelected}>
+                  <ItemImg
+                    $selected={isSelected}
+                    $paperId={selectedTab === 'paper' ? item.id : undefined}
+                  >
                     {isSelected && <CheckImg src={checkImg} alt='선택됨' />}
                   </ItemImg>
                   <ItemName>{item.name}</ItemName>
@@ -120,6 +115,11 @@ function ThemePage() {
               } else {
                 setSelectedPaperId(chosen.id);
                 await patchPaper(chosen.id);
+                if (chosen.id === -1) {
+                  localStorage.removeItem('paperId'); // 기본이면 저장값 제거
+                } else {
+                  localStorage.setItem('paperId', String(chosen.id));
+                }
                 console.log('종이 적용 성공');
               }
               setModalIndex(null);
@@ -192,8 +192,15 @@ const ItemImg = styled.div`
   height: 76px;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.colors.brown1};
-  background-color: ${({ selected, theme }) =>
-    selected ? 'rgba(0, 0, 0, 0.2)' : theme.colors.white};
+  /* 종이 탭에서만 미리보기 이미지 */
+  background-image: ${({ $paperId }) => {
+    const src = $paperId != null ? paperImageExMap[$paperId] : null;
+    return src ? `url(${src})` : 'none';
+  }};
+  background-position: center;
+  background-color: ${({ $selected }) =>
+    $selected ? 'rgba(0, 0, 0, 0.2)' : 'transparent'};
+  background-blend-mode: multiply;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -6,7 +6,6 @@ import {
   getDailyQuestion,
   getQuestionHints,
 } from '../api/homepage';
-import background1Img from '../assets/svgs/background1.svg';
 import AlertModal from '../components/AlertModal';
 import HintTagList from '../components/HintTagList';
 import WriteBottomBar from '../components/WriteBottomBar';
@@ -15,6 +14,8 @@ import WriteTopBar from '../components/WriteTopBar';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 import GrammarPopup from '../components/GrammarPopup';
 import { format } from 'date-fns';
+import { getPaperImage } from '@/mypage/components/paperMap';
+import { getPapersList } from '@/shop/api/shopApi';
 
 function WritePage() {
   const [hintActive, setHintActive] = useState(false);
@@ -114,9 +115,27 @@ function WritePage() {
     fetchTodayQuestion();
   }, []);
 
+  const [selectedPaperId, setSelectedPaperId] = useState(null);
+
+  useEffect(() => {
+    const fetchPapers = async () => {
+      try {
+        const papers = await getPapersList();
+        const selectedPaper = papers.find((paper) => paper.selected);
+        if (selectedPaper) {
+          setSelectedPaperId(selectedPaper.id);
+        }
+      } catch (e) {
+        console.error('종이 목록 불러오기 실패:', e);
+      }
+    };
+
+    fetchPapers();
+  }, []);
+
   return (
     <>
-      <Container>
+      <Container $paperId={selectedPaperId}>
         <Top>
           <WriteTopBar onCheck={handleSubmit} textLength={text.trim().length} />
           <WriteQuestion
@@ -189,7 +208,8 @@ const Container = styled.div`
   justify-content: space-between;
   height: 800px;
   background-color: ${({ theme }) => theme.colors.white};
-  background-image: url(${background1Img});
+  background-image: ${({ $paperId }) =>
+    $paperId ? `url(${getPaperImage($paperId)})` : 'none'};
   background-size: cover;
   background-position: center;
 `;

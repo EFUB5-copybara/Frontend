@@ -6,12 +6,11 @@ import arrowbackImg from '../assets/svgs/arrow_back.svg';
 // import eyeImg from '../assets/svgs/eye.svg';
 // import commentImg from '../assets/svgs/comments.svg';
 // import shareImg from '../assets/svgs/share.svg';
-import background1Img from '../assets/svgs/background1.svg';
-import background2Img from '../assets/svgs/background2.svg';
-import background3Img from '../assets/svgs/background3.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAnswer, getDailyQuestion } from '../api/homepage';
 import { format } from 'date-fns';
+import { getPaperImage } from '@/mypage/components/paperMap';
+import { getPapersList } from '@/shop/api/shopApi';
 
 function ChartPage() {
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -72,9 +71,27 @@ function ChartPage() {
     fetchData();
   }, [location]);
 
+  const [selectedPaperId, setSelectedPaperId] = useState(null);
+
+  useEffect(() => {
+    const fetchPapers = async () => {
+      try {
+        const papers = await getPapersList();
+        const selectedPaper = papers.find((paper) => paper.selected);
+        if (selectedPaper) {
+          setSelectedPaperId(selectedPaper.id);
+        }
+      } catch (e) {
+        console.error('종이 목록 불러오기 실패:', e);
+      }
+    };
+
+    fetchPapers();
+  }, []);
+
   return (
     <Background>
-      <Container>
+      <Container $paperId={selectedPaperId}>
         <Button onClick={() => navigate('/home')}>
           <ArrowIcon src={arrowbackImg} alt='arrow back' />
         </Button>
@@ -129,7 +146,8 @@ const Container = styled.div`
   border-radius: 20px;
   border: 1px solid black;
   background-color: ${({ theme }) => theme.colors.white};
-  background-image: url(${background1Img});
+  background-image: ${({ $paperId }) =>
+    $paperId ? `url(${getPaperImage($paperId)})` : 'none'};
   background-size: cover;
   background-position: center;
 `;

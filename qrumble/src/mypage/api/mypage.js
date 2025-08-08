@@ -61,12 +61,12 @@ export const getMyBookmarks = async () => {
 
 // 폰트 적용
 export const patchFont = async (fontId) => {
-  const response = await axios.patch(`/use/fonts/${fontId}`);
+  const response = await axios.post(`/use/fonts/${fontId}`);
   return response.data;
 };
 
 // 종이 적용
 export const patchPaper = async (paperId) => {
-  const response = await axios.patch(`/use/papers/${paperId}`);
+  const response = await axios.post(`/use/papers/${paperId}`);
   return response.data;
 };
