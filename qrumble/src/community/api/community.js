@@ -29,3 +29,23 @@ export const addBookmark = (postId) => {
 export const deleteBookmark = (bookmarkId) => {
   return axiosInstance.delete(`/community/bookmarks/${bookmarkId}`);
 };
+
+export const likePost = (postId) => {
+  return axiosInstance.post(`/community/${postId}/likes`);
+};
+
+export const unlikePost = (likeId) => {
+  return axiosInstance.delete(`/community/likes/${likeId}`);
+};
+
+export const addComment = (postId) => {
+  return axiosInstance.post(`/community/${postId}/comments`);
+};
+
+export const removeComment = (commentId) => {
+  return axiosInstance.delete(`/community/comments/${commentId}`);
+};
+
+export const getUserProfile = (userId) => {
+  return axiosInstance.get(`/community/members/${userId}`);
+};
