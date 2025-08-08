@@ -270,24 +270,17 @@ const ContentArea = styled.div`
 `;
 
 const QuestionArea = styled.div`
-  max-height: ${({ $collapsed }) => ($collapsed ? '620px' : '0px')};
+  max-height: ${({ $collapsed }) => ($collapsed ? '610px' : '0px')};
   opacity: ${({ $collapsed }) => ($collapsed ? 1 : 0)};
   transition: all 0.4s ease;
   overflow-y: auto;
-  scrollbar-width: thin;
-  -ms-overflow-style: none;
+
+  /* 스크롤바 스타일 */
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
 
   &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: ${({ theme }) => theme.colors.brown2 || '#aaa'};
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
+    display: none; /* Chrome, Safari */
   }
 `;
 

@@ -25,7 +25,12 @@ function QuestionList({ questions, month }) {
           console.log('✅ date:', item.date),
           console.log('✅ question:', item.question),
           (
-            <QuestionCard key={`${item.date}-${item.id}`}>
+            <QuestionCard
+              key={`${item.date}-${item.id}`}
+              onClick={() =>
+                navigate('/home/detail', { state: { date: item.date } })
+              }
+            >
               <Header>
                 <Label>질문</Label>
                 <DateText>{item.date}</DateText>
