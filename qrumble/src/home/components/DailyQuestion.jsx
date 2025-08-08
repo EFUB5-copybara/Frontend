@@ -35,7 +35,7 @@ export default DailyQuestion;
 
 const Wrapper = styled.div`
   width: 100%;
-  min-height: 96px;
+  height: 100%;
   border-radius: 20px;
   padding: 14px 15px 30px 16px;
   background: linear-gradient(102deg, #dbc4b1 0%, #fff8e8 100%);

@@ -6,6 +6,7 @@ import ProfileIc from '@/community/assets/svgs/profile.svg?react';
 import ActionModal from './ActionModal'; // 모달 컴포넌트 import
 
 export default function CommentList({ comments }) {
+  console.log('comments 리스트', comments);
   const [openModalIndex, setOpenModalIndex] = useState(null);
   const modalRef = useRef(null);
 
@@ -34,8 +35,8 @@ export default function CommentList({ comments }) {
             <Wrapper>
               <Profile />
               <CommentWrapper>
-                <CommentUser>{comment.user}</CommentUser>
-                <CommentText>{comment.text}</CommentText>
+                <CommentUser>{comment.commentator}</CommentUser>
+                <CommentText>{comment.content}</CommentText>
               </CommentWrapper>
             </Wrapper>
             <OptionWrapper>

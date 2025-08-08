@@ -1,10 +1,10 @@
-import React from 'react';
+import ProfileIc from '@/community/assets/svgs/profile.svg?react';
+import { PROFILE_IMAGES } from '@/community/constants/profileImage';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import userImg from '../assets/svgs/userimg.svg';
+import BookmarkIc from '../assets/svgs/brownbookmark.svg?react';
 import LikeIc from '../assets/svgs/brownlike.svg?react';
 import CommentIc from '../assets/svgs/brownmessage.svg?react';
-import BookmarkIc from '../assets/svgs/brownbookmark.svg?react';
-import { useNavigate } from 'react-router-dom';
 
 export default function AnswerCard({
   postId,
@@ -15,12 +15,18 @@ export default function AnswerCard({
   bookmarkCount,
   likeCount,
   commentCount,
+  profileImageId,
 }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(`/community/${postId}`);
   };
+
+  console.log('profileImageId', profileImageId);
+  const profile = PROFILE_IMAGES.find((p) => p.id === profileImageId);
+  console.log('profile', profile);
+  const ProfileIcon = profile ? profile.Component : ProfileIc;
 
   return (
     <Wrapper onClick={handleClick} $hasRank={!!rank}>
@@ -32,7 +38,7 @@ export default function AnswerCard({
         </AnswerContentWrapper>
         <Meta>
           <AnswerId>
-            <AnswerIdImg src={userImg} alt='user' />
+            <AnswerIdImg as={ProfileIcon} />
             {userId}
           </AnswerId>
           <BottomIconWrapper>
@@ -122,10 +128,9 @@ const AnswerId = styled.div`
   height: 17px;
 `;
 
-const AnswerIdImg = styled.img`
+const AnswerIdImg = styled(ProfileIc)`
   width: 17px;
   height: 17px;
-  border-radius: 50%;
 `;
 
 const BottomIconWrapper = styled.div`
