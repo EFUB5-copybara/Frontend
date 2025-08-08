@@ -150,22 +150,23 @@ function DailyPanel({ date, onClose }) {
             {date?.weekDates?.map(({ day, month, year }) => {
               const today = new Date();
 
-              const isToday =
-                new Date(year, month - 1, day).toDateString() ===
-                today.toDateString();
-
-              const isFuture = new Date(year, month - 1, day) > today;
+              const dateObj = new Date(year, month - 1, day);
+              const isToday = dateObj.toDateString() === today.toDateString();
+              const isFuture = dateObj > today;
               const isPast = !isFuture && !isToday;
 
               const isCookie =
                 (isPast || isToday) && attendedDates.includes(day);
               const isMissed = isPast && !attendedDates.includes(day);
 
+              const handleClick = () => {
+                if (!isFuture) {
+                  setTargetDate(dateObj);
+                }
+              };
+
               return (
-                <DayCell
-                  key={`${year}-${month}-${day}`}
-                  onClick={() => setTargetDate(new Date(year, month - 1, day))}
-                >
+                <DayCell key={`${year}-${month}-${day}`} onClick={handleClick}>
                   {isCookie ? (
                     <CookieIcon src={cookieImg} alt='cookie' />
                   ) : (

@@ -78,14 +78,14 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
             <DayCell key={`empty-${idx}`} />
           ))}
         {days.map((item, idx) => {
+          const dateObj = new Date(year, month - 1, item.date);
+
           const isToday =
             item.type === 'current' &&
-            new Date(year, month - 1, item.date).toDateString() ===
-              today.toDateString();
+            dateObj.toDateString() === today.toDateString();
 
-          const isPast =
-            item.type === 'current' &&
-            new Date(year, month - 1, item.date) < today;
+          const isPast = item.type === 'current' && dateObj < today;
+          const isFuture = item.type === 'current' && dateObj > today;
 
           const isCookie =
             item.type === 'current' && attendedDates.includes(item.date);
@@ -95,7 +95,7 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
             !attendedDates.includes(item.date);
 
           const handleClick = () => {
-            if (item.type === 'current') {
+            if (item.type === 'current' && !isFuture) {
               const weekDates = getWeekDates(year, month - 1, item.date);
               onSelectDate({
                 day: item.date,
