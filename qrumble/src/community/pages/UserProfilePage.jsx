@@ -6,6 +6,7 @@ import BackButton from '@/login/components/BackButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import AnswerList from '../components/AnswerList';
 import { getUserProfile } from '../api/community';
+import HistoryPostList from '../components/HistoryPostList';
 
 export default function UserProfilePage() {
   const navigate = useNavigate();
@@ -36,7 +37,8 @@ export default function UserProfilePage() {
           comments: data.stats?.comments ?? 0,
           diaries: data.stats?.diaries ?? 0,
         });
-        setRecentDiaries(data.recentPosts ?? []);
+        setRecentDiaries(data.recentDiaries ?? []);
+
         setError(null);
       } catch (err) {
         setError(
@@ -83,8 +85,12 @@ export default function UserProfilePage() {
         diaries={stats.diaries}
       />
       <HistorySection>
-        <Text>최근 작성한 일기</Text>
-        <AnswerList answers={recentDiaries} ranked={false} />
+        <Text>최근 작성한 답변</Text>
+        <HistoryPostList
+          recentDiaries={recentDiaries}
+          userProfile={userProfile}
+          ranked={false}
+        />
       </HistorySection>
     </Container>
   );
