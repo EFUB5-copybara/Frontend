@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { paperImageExMap } from './paperMap';
+import { fontImageMap } from './fontMap';
 
 function ItemModal({
   items,
   currentIndex,
   setCurrentIndex,
   isSelected,
+  selectedTab,
   onSelect,
   onClose,
 }) {
@@ -56,7 +58,7 @@ function ItemModal({
         >
           {items.map((item, idx) => (
             <ModalContainer key={idx}>
-              <PreviewBox $paperId={item.id} />
+              <PreviewBox $id={item.id} $selectedTab={selectedTab} />
               <ItemText>
                 <ItemName>{item.name}</ItemName>
                 <ItemDesc>{item.description}</ItemDesc>
@@ -125,9 +127,15 @@ const PreviewBox = styled.div`
   width: 288px;
   height: 146px;
   background-color: ${({ theme }) => theme.colors.ivory3};
-  background-image: ${({ $paperId }) => {
-    const src = paperImageExMap[$paperId];
-    return src ? `url(${src})` : 'none';
+  background-image: ${({ $id, $selectedTab }) => {
+    if ($selectedTab === 'paper') {
+      const src = paperImageExMap[$id];
+      return src ? `url(${src})` : 'none';
+    } else if ($selectedTab === 'font') {
+      const src = fontImageMap[$id];
+      return src ? `url(${src})` : 'none';
+    }
+    return 'none';
   }};
   background-position: center;
   border: 1px solid ${({ theme }) => theme.colors.primary};

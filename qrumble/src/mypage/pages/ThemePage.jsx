@@ -6,6 +6,7 @@ import ItemModal from '../components/ItemModal';
 import { patchFont, patchPaper } from '../api/mypage';
 import { getFontsList, getPapersList } from '@/shop/api/shopApi';
 import { paperImageExMap } from '../components/paperMap';
+import { fontImageExMap } from '../components/fontMap';
 
 function ThemePage() {
   const [selectedTab, setSelectedTab] = useState('font');
@@ -83,7 +84,9 @@ function ThemePage() {
                 <Item key={item.id} onClick={() => setModalIndex(index)}>
                   <ItemImg
                     $selected={isSelected}
-                    $paperId={selectedTab === 'paper' ? item.id : undefined}
+                    $selectedTab={selectedTab} //  현재 탭 정보
+                    $paperId={selectedTab === 'paper' ? item.id : undefined} // 종이 탭 paperId
+                    $fontId={selectedTab === 'font' ? item.id : undefined} // 폰트 탭 fontId
                   >
                     {isSelected && <CheckImg src={checkImg} alt='선택됨' />}
                   </ItemImg>
@@ -105,12 +108,18 @@ function ThemePage() {
               ? selectedFontId === it.id
               : selectedPaperId === it.id;
           }}
+          selectedTab={selectedTab}
           onSelect={async (idx) => {
             const chosen = currentItems[idx];
             try {
               if (selectedTab === 'font') {
                 setSelectedFontId(chosen.id);
                 await patchFont(chosen.id);
+                if (chosen.id === -1) {
+                  localStorage.removeItem('fontId'); // 기본이면 저장값 제거
+                } else {
+                  localStorage.setItem('fontId', String(chosen.id));
+                }
                 console.log('폰트 적용 성공');
               } else {
                 setSelectedPaperId(chosen.id);
@@ -192,10 +201,17 @@ const ItemImg = styled.div`
   height: 76px;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.colors.brown1};
-  /* 종이 탭에서만 미리보기 이미지 */
-  background-image: ${({ $paperId }) => {
-    const src = $paperId != null ? paperImageExMap[$paperId] : null;
-    return src ? `url(${src})` : 'none';
+  /* 탭별 미리보기 이미지 적용 */
+  background-image: ${({ $paperId, $fontId, $selectedTab }) => {
+    if ($selectedTab === 'paper') {
+      const src = $paperId != null ? paperImageExMap[$paperId] : null;
+      return src ? `url(${src})` : 'none';
+    }
+    if ($selectedTab === 'font') {
+      const src = $fontId != null ? fontImageExMap[$fontId] : null;
+      return src ? `url(${src})` : 'none';
+    }
+    return 'none';
   }};
   background-position: center;
   background-color: ${({ $selected }) =>

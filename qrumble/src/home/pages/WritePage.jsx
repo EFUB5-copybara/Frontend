@@ -15,7 +15,8 @@ import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 import GrammarPopup from '../components/GrammarPopup';
 import { format } from 'date-fns';
 import { getPaperImage } from '@/mypage/components/paperMap';
-import { getPapersList } from '@/shop/api/shopApi';
+import { getPapersList, getFontsList } from '@/shop/api/shopApi';
+import { fontStyleMap } from '@/mypage/components/fontMap';
 
 function WritePage() {
   const [hintActive, setHintActive] = useState(false);
@@ -133,6 +134,25 @@ function WritePage() {
     fetchPapers();
   }, []);
 
+  const [selectedFontId, setSelectedFontId] = useState(null);
+
+  useEffect(() => {
+    const fetchFonts = async () => {
+      try {
+        const saved = Number(localStorage.getItem('selectedFontId'));
+        if (!Number.isNaN(saved)) setSelectedFontId(saved);
+
+        const fonts = await getFontsList();
+        const selected = fonts.find((f) => f.selected);
+        if (selected) setSelectedFontId(selected.id);
+      } catch (e) {
+        console.error('폰트 목록 불러오기 실패:', e);
+      }
+    };
+
+    fetchFonts();
+  }, []);
+
   return (
     <>
       <Container $paperId={selectedPaperId}>
@@ -155,10 +175,14 @@ function WritePage() {
               onClick={(hint) => setText((prev) => prev + ' #' + hint)}
             />
           )}
-          <TextArea value={text} onChange={(e) => setText(e.target.value)} />
+          <TextArea
+            $fontId={selectedFontId}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
 
           {grammarResult && grammarResult.errors.length > 0 && (
-            <StyledTextOutput>
+            <StyledTextOutput $fontId={selectedFontId}>
               {renderWithHighlights(
                 text,
                 grammarResult.errors,
@@ -234,7 +258,9 @@ const TextArea = styled.textarea`
   padding: 0;
   border: none;
   resize: none;
-  ${({ theme }) => theme.fonts.ns16M};
+  ${({ $fontId = -1, theme }) =>
+    (fontStyleMap[$fontId] || fontStyleMap[-1])({ theme })}
+  font-size: 16px;
   color: ${({ theme }) => theme.colors.black};
   background-color: transparent;
   &:focus {
@@ -274,7 +300,9 @@ const StyledTextOutput = styled.div`
   width: 320px;
   min-height: 78px;
   padding: 8px;
-  ${({ theme }) => theme.fonts.ns16M};
+  ${({ $fontId = -1, theme }) =>
+    (fontStyleMap[$fontId] || fontStyleMap[-1])({ theme })}
+  font-size: 16px;
   background-color: ${({ theme }) => theme.colors.white};
   border: 1px solid #ddd;
   border-radius: 8px;
