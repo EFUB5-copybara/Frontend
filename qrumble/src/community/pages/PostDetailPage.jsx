@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import CommentInput from '../components/CommentInput';
 import CommentList from '../components/CommentList';
@@ -14,20 +14,19 @@ export default function PostDetailPage() {
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const getPost = async () => {
-      try {
-        const { data } = await fetchPostDetail(postId);
-        setPost(data);
-        console.log('post:', data);
-      } catch (err) {
-        setError(
-          err.response?.data?.message || '게시글을 불러오지 못했습니다.'
-        );
-      }
-    };
-    getPost();
+  const loadPost = useCallback(async () => {
+    try {
+      const { data } = await fetchPostDetail(postId);
+      setPost(data);
+      setError(null);
+    } catch (err) {
+      setError(err.response?.data?.message || '게시글을 불러오지 못했습니다.');
+    }
   }, [postId]);
+
+  useEffect(() => {
+    loadPost();
+  }, [loadPost]);
 
   if (error) return <div>{error}</div>;
   if (!post) return <div>로딩 중...</div>;
@@ -50,8 +49,8 @@ export default function PostDetailPage() {
           <CommentIcon /> {post.commentCount}
         </Stat>
       </Stats>
-      <CommentList comments={post.comments.comments} />
-      <CommentInput />
+      <CommentList comments={post.comments.comments ?? []} />
+      <CommentInput postId={postId} onAdded={loadPost} />
     </Container>
   );
 }
@@ -72,7 +71,7 @@ const TextWrapper = styled.div`
 `;
 
 const Title = styled.p`
-  ${({ theme }) => theme.fonts.nd18SB}
+  ${({ theme }) => theme.fonts.nd18B}
   margin: 0;
 `;
 
