@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import AlertModal from '../components/AlertModal.jsx';
 import keyImg from '../assets/svgs/key.svg';
 import shieldImg from '../assets/svgs/shield.svg';
 import eraserImg from '../assets/svgs/eraser.svg';
-import { useKeyItem, useShieldItem, useEraserItem } from '../api/homepage.js';
+import { KeyItem, ShieldItem, EraserItem } from '../api/homepage.js';
+import { format, getDate } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import { getAnswerStreak } from '../api/homepage.js';
 
-function ItemButtons({ items, onUse, attendedDates, targetDate }) {
+function ItemButtons({
+  items,
+  onUse,
+  attendedDates,
+  targetDate,
+  setAttendedDates,
+}) {
   const [modalInfo, setModalInfo] = useState({
     isOpen: false,
     type: '',
@@ -53,29 +62,45 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
   };
 
   const confirmUse = async () => {
-    if (!modalInfo.canUse) {
-      closeModal();
-      return;
-    }
+    if (!modalInfo.canUse) return closeModal();
+
+    const dateStr = format(targetDate, 'yyyy-MM-dd');
 
     try {
-      if (modalInfo.type === 'key') {
-        await useKeyItem();
-      } else if (modalInfo.type === 'shield') {
-        await useShieldItem();
-      } else if (modalInfo.type === 'eraser') {
-        await useEraserItem();
-      }
+      switch (modalInfo.type) {
+        case 'key': {
+          const result = await KeyItem(dateStr);
+          if (result.used) {
+            if (onUse) {
+              onUse('key', { date: targetDate, isKeyUnlocked: true });
+            }
+          }
+          break;
+        }
+        case 'shield': {
+          const result = await ShieldItem(dateStr);
+          if (result.used && result.recoveredDate) {
+            const recovered = new Date(result.recoveredDate);
+            setAttendedDates((prev) => [
+              ...new Set([...prev, recovered.getDate()]),
+            ]);
+            onUse?.('shield', { date: recovered, isCookie: true });
+          }
+          break;
+        }
 
-      onUse(modalInfo.type);
-    } catch (error) {
-      alert('아이템 사용 중 오류가 발생했습니다.');
-      console.error(error);
+        case 'eraser': {
+          const result = await EraserItem(dateStr);
+          // UI 업데이트 또는 페이지 이동 처리
+          break;
+        }
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
       closeModal();
     }
   };
-
   const closeModal = () => {
     setModalInfo({
       isOpen: false,
@@ -91,7 +116,7 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
     const itemCount = items[type];
     if (itemCount === 0) return false;
 
-    const today = new Date(2025, 2, 11); // 기준일: 3월 11일
+    const today = new Date();
 
     const isSameDay = (d1, d2) =>
       d1.getFullYear() === d2.getFullYear() &&
@@ -110,20 +135,41 @@ function ItemButtons({ items, onUse, attendedDates, targetDate }) {
       case 'eraser':
         return isAttended;
 
-      case 'shield':
-        const start = new Date(today);
-        start.setDate(start.getDate() - 13);
+      case 'shield': {
+        if (attendedDates.length === 0) return false;
 
-        let missedCount = 0;
-        for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
-          const written = attendedDates.some((day) => {
-            const date = new Date(today.getFullYear(), today.getMonth(), day);
-            return isSameDay(date, d);
-          });
-          if (!written) missedCount++;
+        // 오늘 날짜 (일 단위)
+        const todayDay = new Date().getDate();
+
+        // 오름차순 정렬
+        const sorted = [...attendedDates].sort((a, b) => a - b);
+
+        // 오늘부터 역순으로 체크
+        let expectedDay = todayDay;
+        let breakPoint = null;
+
+        for (let i = sorted.length - 1; i >= 0; i--) {
+          if (sorted[i] === expectedDay) {
+            expectedDay--;
+          } else {
+            // 연속이 끊긴 가장 최근 날짜를 찾음
+            breakPoint = expectedDay;
+            break;
+          }
         }
 
-        return missedCount > 0;
+        // 끊긴 날짜가 없다면 사용 불가
+        if (!breakPoint) return false;
+
+        // breakPoint를 Date 객체로 변환
+        const breakDateObj = new Date(
+          targetDate.getFullYear(),
+          targetDate.getMonth(),
+          breakPoint
+        );
+
+        return isSameDay(breakDateObj, targetDate);
+      }
 
       default:
         return false;

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const DayCell = styled.div`
   width: 39px;
@@ -21,7 +21,7 @@ export const DateBox = styled.div`
 
 export const DateText = styled.div`
   ${({ theme }) => theme.fonts.ns14SB};
-  color: ${({ $color, theme }) => theme.colors[$color || "primary"]};
+  color: ${({ $color, theme }) => theme.colors[$color || 'primary']};
 `;
 
 export const CookieIcon = styled.img`
@@ -29,4 +29,5 @@ export const CookieIcon = styled.img`
   height: 100%;
   border-radius: 4px;
   pointer-events: none;
+  z-index: 10;
 `;

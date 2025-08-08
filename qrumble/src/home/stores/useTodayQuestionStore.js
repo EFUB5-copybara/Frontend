@@ -1,34 +1,25 @@
 import { create } from 'zustand';
-import { getDailyQuestion } from '../api/homepage';
+import { getTodayQuestion } from '../api/homepage';
 
-const useTodayQuestionStore = create((set, get) => ({
+const useTodayQuestionStore = create((set) => ({
   todayQuestion: '',
-  todayQuestionDate: '',
   todayQuestionError: null,
   isLoading: false,
 
-  setTodayQuestion: (question) => set({ todayQuestion: question }),
-  setTodayQuestionError: (error) => set({ todayQuestionError: error }),
-
-  async fetchTodayQuestion(date) {
-    const state = get();
-    if (state.todayQuestionDate === date) return; // 이미 불러온 날짜면 skip
-
+  async fetchTodayQuestion() {
     set({ isLoading: true });
 
     try {
-      const res = await getDailyQuestion(date);
+      const res = await getTodayQuestion();
       set({
-        todayQuestion: res.content,
-        todayQuestionDate: date,
+        todayQuestion: res.content, // API 응답에 따라 조정
         todayQuestionError: null,
         isLoading: false,
       });
     } catch (e) {
       set({
         todayQuestion: '',
-        todayQuestionDate: date,
-        todayQuestionError: '질문을 불러올 수 없습니다.',
+        todayQuestionError: '오늘 질문을 불러올 수 없습니다.',
         isLoading: false,
       });
     }

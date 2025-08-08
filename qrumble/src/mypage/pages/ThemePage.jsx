@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import MyPageTopBar from '../components/MyPageTopBar';
 import checkImg from '../assets/check.svg';
@@ -16,6 +16,23 @@ function ThemePage() {
 
   const [modalIndex, setModalIndex] = useState(null);
   const currentItems = selectedTab === 'font' ? fontItems : paperItems;
+
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+        const fonts = await getFontsList();
+        const papers = await getPapersList();
+
+        // owned: true인 것만 필터링
+        setFontItems(fonts.filter((item) => item.owned));
+        setPaperItems(papers.filter((item) => item.owned));
+      } catch (error) {
+        console.error('테마 데이터 불러오기 실패:', error);
+      }
+    };
+
+    fetchThemes();
+  }, []);
 
   return (
     <Wrapper>
