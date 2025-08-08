@@ -1,42 +1,62 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import BackIc from '@/community/assets/svgs/arrow_back.svg?react';
-import ProfileIc from '@/community/assets/svgs/profile.svg?react';
-import BookMarkFillIc from '@/community/assets/svgs/bookmark_on.svg?react';
 import BookMarkLineIc from '@/community/assets/svgs/bookmark.svg?react';
+import BookMarkFillIc from '@/community/assets/svgs/bookmark_on.svg?react';
 import MoreIc from '@/community/assets/svgs/more_horizontal.svg?react';
+import ProfileIc from '@/community/assets/svgs/profile.svg?react';
 
 import ActionModal from '@/community/components/ActionModal';
-import axios from 'axios';
+import { addBookmark, deleteBookmark, fetchPostDetail } from '../api/community';
+import { PROFILE_IMAGES } from '../constants/profileImage';
 
 export default function CommunityLayout() {
   const { postId } = useParams();
+
   const [post, setPost] = useState(null);
-  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+  const [bookmarkId, setBookmarkId] = useState(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
 
   useEffect(() => {
-    const fetchPostDetail = async () => {
+    const loadPostDetail = async () => {
       try {
-        const result = await axios.get(`/community/posts/${postId}`);
+        const result = await fetchPostDetail(postId);
         setPost(result.data);
+        setIsBookmarked(result.data.isBookmarked);
+        setBookmarkId(result.data.bookmarkId || null);
       } catch (err) {
-        setError(
-          err.response?.data?.message || '게시글 정보를 불러오지 못했습니다.'
-        );
+        console.error('게시글 정보를 불러오지 못했습니다', err);
       }
     };
-    fetchPostDetail();
+    loadPostDetail();
   }, [postId]);
 
-  const handleProfileClick = (userId) => {
-    navigate(`/user-profile/${userId}`);
+  const handleBookmarkClick = async () => {
+    try {
+      if (isBookmarked) {
+        if (!bookmarkId) return;
+        await deleteBookmark(bookmarkId);
+        setIsBookmarked(false);
+        setBookmarkId(null);
+      } else {
+        const res = await addBookmark(postId);
+        setIsBookmarked(true);
+        setBookmarkId(res.data.bookmarkId);
+      }
+    } catch (err) {
+      console.error('북마크 처리 실패', err);
+      alert('북마크 처리에 실패했습니다.');
+    }
+  };
+
+  const handleProfileClick = (userid) => {
+    navigate(`/user-profile/${userid}`);
   };
 
   useEffect(() => {
@@ -49,17 +69,31 @@ export default function CommunityLayout() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  if (!post) {
+    return (
+      <LayoutWrapper>
+        <Header>
+          <BackButton onClick={() => navigate(-1)} />
+        </Header>
+        <div>Loading...</div>
+      </LayoutWrapper>
+    );
+  }
+
+  const profile = PROFILE_IMAGES.find((p) => p.id === post.profileImageId);
+  const ProfileIcon = profile.Component;
+
   return (
     <LayoutWrapper>
       <Header>
         <BackButton onClick={() => navigate(-1)} />
         <HeaderWrapper>
-          <ProfileWrapper onClick={handleProfileClick}>
-            <Profile />
-            <User>아이디</User>
+          <ProfileWrapper onClick={() => handleProfileClick(post.userId)}>
+            <Profile as={ProfileIcon} />
+            <User>{post.username}</User>
           </ProfileWrapper>
           <IconWrapper>
-            <IconButton onClick={() => setIsBookmarked((prev) => !prev)}>
+            <IconButton onClick={handleBookmarkClick}>
               {isBookmarked ? <BookMarkFill /> : <BookMarkLine />}
             </IconButton>
             <MoreButton onClick={() => setIsModalOpen((prev) => !prev)} />
@@ -75,8 +109,9 @@ export default function CommunityLayout() {
 }
 
 const LayoutWrapper = styled.div`
-  padding: 0 1.25rem;
+  padding: 1.875rem 1.25rem 0 1.25rem;
   position: relative;
+  height: 800px;
 `;
 
 const Header = styled.div`

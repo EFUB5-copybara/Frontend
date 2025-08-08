@@ -42,8 +42,11 @@ export default function CommunityPage() {
           year: now.getFullYear(),
           month: now.getMonth() + 1,
         });
-        console.log('답변 완료일 조회: ', result);
-        setCookieDays(result.data.answeredDates);
+        const formattedDays = result.data.answeredDates.map((d) =>
+          format(new Date(d), 'yyyy-MM-dd')
+        );
+        console.log(formattedDays);
+        setCookieDays(formattedDays);
       } catch (err) {
         console.error('쿠키 날짜 불러오기 실패', err);
       }
@@ -58,7 +61,6 @@ export default function CommunityPage() {
           selectedTab === 'popular'
             ? await fetchPopularPosts(selectedDate)
             : await fetchNewPosts(selectedDate);
-        console.log('결과:', result.data.posts);
 
         setAnswers(result.data.posts);
         setError(null);
@@ -74,13 +76,13 @@ export default function CommunityPage() {
 
   const decoratedDates = dates.map((date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
+    const isTodayFlag = isToday(date);
+    const isCookieFlag = cookieDays.includes(dateStr);
+
     return {
       day: date.getDate(),
-      type: isToday(date)
-        ? 'today'
-        : cookieDays.includes(dateStr)
-        ? 'cookie'
-        : 'text',
+      isToday: isTodayFlag,
+      isCookie: isCookieFlag,
       fullDate: dateStr,
     };
   });
@@ -97,8 +99,11 @@ export default function CommunityPage() {
         selected={selectedTab}
         onSelect={setSelectedTab}
       />
-      {error && <ErrorMessage>{error}</ErrorMessage>}
-      <AnswerList answers={answers} ranked={selectedTab === 'popular'} />
+      {error ? (
+        <ErrorMessage>{error}</ErrorMessage>
+      ) : (
+        <AnswerList answers={answers} ranked={selectedTab === 'popular'} />
+      )}
     </Container>
   );
 }
