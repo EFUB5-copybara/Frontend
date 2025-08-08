@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import KeyIcon from '../assets/key.svg?react';
-import ShieldIcon from '../assets/shield.svg?react';
-import EraserIcon from '../assets/eraser.svg?react';
-import { getItemDetail } from '../api/shopApi';
+import { getPapersDetail } from '../api/shopApi';
+import BlueImg from '../assets/background1.svg?react';
+import GreenImg from '../assets/background2.svg?react';
+import PinkImg from '../assets/background3.svg?react';
 
-export default function ShopModal({
-  items,
+export default function PaperModal({
+  papers,
   currentIndex,
   setCurrentIndex,
   onBuy,
@@ -21,27 +21,41 @@ export default function ShopModal({
     const fetchDetail = async () => {
       setLoading(true);
       try {
-        const item = items[currentIndex];
-        if (item && item.id) {
-          const res = await getItemDetail(item.id);
+        const paper = papers[currentIndex];
+        if (paper && paper.id) {
+          const res = await getPapersDetail(paper.id);
+          
+          console.log(`종이 ${paper.id} 상세 조회 결과:`, {
+            name: paper.name,
+            apiOwned: res.isOwned
+          });
           
           setDetail({
             ...res,
             isOwned: res.isOwned
           });
           
-          if (res.isOwned && !item.owned && updateOwnership) {
-            updateOwnership('item', item.id, true);
+          if (res.isOwned && !paper.owned && updateOwnership) {
+            updateOwnership('paper', paper.id, true);
           }
         }
       } catch (e) {
-        setDetail(null);
+        console.error('종이 상세 조회 실패:', e);
+        const paper = papers[currentIndex];
+        if (paper) {
+          setDetail({
+            ...paper,
+            isOwned: paper.owned
+          });
+        } else {
+          setDetail(null);
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchDetail();
-  }, [currentIndex, items, updateOwnership]);
+  }, [currentIndex, papers, updateOwnership]);
 
   if (loading || !detail) {
     return (
@@ -57,7 +71,7 @@ export default function ShopModal({
 
   return (
     <Overlay onClick={onClose}>
-      <ModalWrap onClick={(e) => e.stopPropagation()}>
+      <ModalWrap onClick={e => e.stopPropagation()}>
         <SwipeContainer>
           <ModalContainer>
             <PreviewBox>
@@ -66,19 +80,19 @@ export default function ShopModal({
                   src={detail.img}
                   alt={detail.name}
                   style={{
-                    width: '158px',
-                    height: '130px',
+                    width: '100%',
+                    height: '100%',
                     objectFit: 'cover',
                     borderRadius: '8px',
-                    background: '#fff'
                   }}
                 />
               )}
-              {!detail.img && detail.name === '열쇠' && <KeyIcon width="158" height="130" />}
-              {!detail.img && detail.name === '방패' && <ShieldIcon width="158" height="130" />}
-              {!detail.img && detail.name === '지우개' && <EraserIcon width="158" height="130" />}
-              {!detail.img && detail.name !== '열쇠' && detail.name !== '방패' && detail.name !== '지우개' && (
-                <FontPreview $fontName={detail.name}>{detail.name}</FontPreview>
+              {!detail.img && detail.id && (
+                <SvgWrapper>
+                  {detail.id === 1 && <BlueImg style={{ borderRadius: '8px' }} />}
+                  {detail.id === 2 && <GreenImg style={{ borderRadius: '8px' }} />}
+                  {detail.id === 3 && <PinkImg style={{ borderRadius: '8px' }} />}
+                </SvgWrapper>
               )}
             </PreviewBox>
             <ItemText>
@@ -164,8 +178,8 @@ const PreviewBox = styled.div`
 const FontPreview = styled.div`
   font-size: 24px;
   color: ${({ theme }) => theme.colors.primary};
-  font-weight: ${({ $fontName }) => {
-    switch ($fontName) {
+  font-weight: ${({ fontName }) => {
+    switch (fontName) {
       case 'Como':
         return '500';
       case 'MuseoModerno':
@@ -178,8 +192,8 @@ const FontPreview = styled.div`
         return '500';
     }
   }};
-  font-family: ${({ $fontName }) => {
-    switch ($fontName) {
+  font-family: ${({ fontName }) => {
+    switch (fontName) {
       case 'Como':
         return 'Arial, sans-serif';
       case 'MuseoModerno':
@@ -278,4 +292,20 @@ const QuantityText = styled.div`
   margin-top: 8px;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.brown2};
+`;
+
+const SvgWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & > svg {
+    width: 100%;
+    height: 100%;
+  }
 `;

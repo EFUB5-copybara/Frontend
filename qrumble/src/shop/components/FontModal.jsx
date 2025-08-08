@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import KeyIcon from '../assets/key.svg?react';
-import ShieldIcon from '../assets/shield.svg?react';
-import EraserIcon from '../assets/eraser.svg?react';
-import { getItemDetail } from '../api/shopApi';
+import { getFontsDetail } from '../api/shopApi';
 
-export default function ShopModal({
-  items,
+export default function FontModal({
+  fonts,
   currentIndex,
   setCurrentIndex,
   onBuy,
@@ -21,27 +18,41 @@ export default function ShopModal({
     const fetchDetail = async () => {
       setLoading(true);
       try {
-        const item = items[currentIndex];
-        if (item && item.id) {
-          const res = await getItemDetail(item.id);
+        const font = fonts[currentIndex];
+        if (font && font.id) {
+          const res = await getFontsDetail(font.id);
+          
+          console.log(`폰트 ${font.id} 상세 조회 결과:`, {
+            name: font.name,
+            apiOwned: res.isOwned
+          });
           
           setDetail({
             ...res,
             isOwned: res.isOwned
           });
           
-          if (res.isOwned && !item.owned && updateOwnership) {
-            updateOwnership('item', item.id, true);
+          if (res.isOwned && !font.owned && updateOwnership) {
+            updateOwnership('font', font.id, true);
           }
         }
       } catch (e) {
-        setDetail(null);
+        console.error('폰트 상세 조회 실패:', e);
+        const font = fonts[currentIndex];
+        if (font) {
+          setDetail({
+            ...font,
+            isOwned: font.owned
+          });
+        } else {
+          setDetail(null);
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchDetail();
-  }, [currentIndex, items, updateOwnership]);
+  }, [currentIndex, fonts, updateOwnership]);
 
   if (loading || !detail) {
     return (
@@ -61,25 +72,7 @@ export default function ShopModal({
         <SwipeContainer>
           <ModalContainer>
             <PreviewBox>
-              {detail.img && (
-                <img
-                  src={detail.img}
-                  alt={detail.name}
-                  style={{
-                    width: '158px',
-                    height: '130px',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                    background: '#fff'
-                  }}
-                />
-              )}
-              {!detail.img && detail.name === '열쇠' && <KeyIcon width="158" height="130" />}
-              {!detail.img && detail.name === '방패' && <ShieldIcon width="158" height="130" />}
-              {!detail.img && detail.name === '지우개' && <EraserIcon width="158" height="130" />}
-              {!detail.img && detail.name !== '열쇠' && detail.name !== '방패' && detail.name !== '지우개' && (
-                <FontPreview $fontName={detail.name}>{detail.name}</FontPreview>
-              )}
+              <FontPreview $fontName={detail.name}>{detail.name}</FontPreview>
             </PreviewBox>
             <ItemText>
               <ItemName>{detail.name}</ItemName>

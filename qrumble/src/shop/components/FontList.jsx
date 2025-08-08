@@ -4,14 +4,21 @@ export default function FontList({ fonts, onCardClick }) {
   return (
     <FontGrid>
       {fonts.map((font, idx) => (
-        <Item key={font.id} onClick={() => onCardClick(idx)}>
+        <Item 
+          key={font.id} 
+          onClick={() => onCardClick(idx)}
+          $owned={font.owned}
+        >
           <FontImg $owned={font.owned}>
             <FontText $fontName={font.name}>{font.name}</FontText>
+            {font.owned && <OwnedOverlay>보유중</OwnedOverlay>}
           </FontImg>
-          <ItemName>{font.name}</ItemName>
-          <ItemPrice $owned={font.owned}>
-            {font.owned ? '보유함' : `${font.price}P`}
-          </ItemPrice>
+          <ItemNameRow>
+            <ItemName>{font.name}</ItemName>
+            <ItemPrice $owned={font.owned}>
+              {font.owned ? '보유함' : `${font.price}P`}
+            </ItemPrice>
+          </ItemNameRow>
         </Item>
       ))}
     </FontGrid>
@@ -28,6 +35,21 @@ const FontGrid = styled.div`
   padding: 0 10px;
 `;
 
+const OwnedOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: ${({ theme }) => theme.colors.white};
+  font-family: ${({ theme }) => theme.fonts.b16B};
+  border-radius: 12px;
+`;
+
 const Item = styled.button`
   display: flex;
   flex-direction: column;
@@ -35,21 +57,22 @@ const Item = styled.button`
   background: transparent;
   border: none;
   padding: 0;
-  cursor: pointer;
+  cursor: ${({ $owned }) => ($owned ? 'default' : 'pointer')};
   width: 155px;
+  opacity: ${({ $owned }) => ($owned ? 0.9 : 1)};
 `;
 
 const FontImg = styled.div`
+  position: relative;
   width: 155px;
   height: 76px;
   border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.colors.brown1};
+  border: 1.5px solid ${({ theme }) => theme.colors.primary};
   background-color: ${({ $owned, theme }) =>
     $owned ? theme.colors.brown4 : theme.colors.brown1};
   display: flex;
   justify-content: center;
   align-items: center;
-  opacity: ${({ $owned }) => ($owned ? 0.6 : 1)};
 `;
 
 const FontText = styled.div`
@@ -85,17 +108,35 @@ const FontText = styled.div`
   }};
 `;
 
+const ItemNameRow = styled.div`
+  display: flex;
+  width: 155px;
+  padding: 0 8px;
+  justify-content: space-between;
+  align-items: center;
+  height: 26px;
+  margin-top: 8px;
+`;
+
 const ItemName = styled.div`
   ${({ theme }) => theme.fonts.c14M};
   color: ${({ theme }) => theme.colors.primary};
-  margin-top: 4px;
-  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: Pretendard, sans-serif;
+  line-height: 26px;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const ItemPrice = styled.div`
-  ${({ theme }) => theme.fonts.c14M};
   color: ${({ $owned, theme }) =>
-    $owned ? theme.colors.green : theme.colors.brown2};
-  margin-top: 2px;
-  text-align: center;
+    $owned ? theme.colors.green : theme.colors.primary};
+  font-size: 16px;
+  font-weight: 700;
+  font-family: Pretendard, sans-serif;
+  line-height: 26px;
+  text-align: right;
 `;
