@@ -10,6 +10,7 @@ import ProfileIc from '@/community/assets/svgs/profile.svg?react';
 
 import ActionModal from '@/community/components/ActionModal';
 import { addBookmark, deleteBookmark, fetchPostDetail } from '../api/community';
+import { PROFILE_IMAGES } from '../constants/profileImage';
 
 export default function CommunityLayout() {
   const { postId } = useParams();
@@ -54,8 +55,8 @@ export default function CommunityLayout() {
     }
   };
 
-  const handleProfileClick = (userId) => {
-    navigate(`/user-profile/${userId}`);
+  const handleProfileClick = (userid) => {
+    navigate(`/user-profile/${userid}`);
   };
 
   useEffect(() => {
@@ -67,6 +68,7 @@ export default function CommunityLayout() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
   if (!post) {
     return (
       <LayoutWrapper>
@@ -78,13 +80,16 @@ export default function CommunityLayout() {
     );
   }
 
+  const profile = PROFILE_IMAGES.find((p) => p.id === post.profileImageId);
+  const ProfileIcon = profile.Component;
+
   return (
     <LayoutWrapper>
       <Header>
         <BackButton onClick={() => navigate(-1)} />
         <HeaderWrapper>
-          <ProfileWrapper onClick={() => handleProfileClick(post.username)}>
-            <Profile />
+          <ProfileWrapper onClick={() => handleProfileClick(post.userId)}>
+            <Profile as={ProfileIcon} />
             <User>{post.username}</User>
           </ProfileWrapper>
           <IconWrapper>
@@ -106,6 +111,7 @@ export default function CommunityLayout() {
 const LayoutWrapper = styled.div`
   padding: 1.875rem 1.25rem 0 1.25rem;
   position: relative;
+  height: 800px;
 `;
 
 const Header = styled.div`
