@@ -21,3 +21,11 @@ export const fetchAnsweredDates = ({ year, month }) =>
   axiosInstance.get('/calendar/answers', {
     params: { year, month },
   });
+
+export const addBookmark = (postId) => {
+  return axiosInstance.post(`/community/${postId}/bookmarks`);
+};
+
+export const deleteBookmark = (bookmarkId) => {
+  return axiosInstance.delete(`/community/bookmarks/${bookmarkId}`);
+};

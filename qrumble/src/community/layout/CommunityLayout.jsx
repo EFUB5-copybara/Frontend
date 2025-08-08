@@ -9,15 +9,15 @@ import MoreIc from '@/community/assets/svgs/more_horizontal.svg?react';
 import ProfileIc from '@/community/assets/svgs/profile.svg?react';
 
 import ActionModal from '@/community/components/ActionModal';
-import { fetchPostDetail } from '../api/community';
+import { addBookmark, deleteBookmark, fetchPostDetail } from '../api/community';
 
 export default function CommunityLayout() {
   const { postId } = useParams();
 
   const [post, setPost] = useState(null);
-  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+  const [bookmarkId, setBookmarkId] = useState(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
@@ -27,14 +27,32 @@ export default function CommunityLayout() {
       try {
         const result = await fetchPostDetail(postId);
         setPost(result.data);
+        setIsBookmarked(result.data.isBookmarked);
+        setBookmarkId(result.data.bookmarkId || null);
       } catch (err) {
-        setError(
-          err.response?.data?.message || '게시글 정보를 불러오지 못했습니다.'
-        );
+        console.error('게시글 정보를 불러오지 못했습니다', err);
       }
     };
     loadPostDetail();
   }, [postId]);
+
+  const handleBookmarkClick = async () => {
+    try {
+      if (isBookmarked) {
+        if (!bookmarkId) return;
+        await deleteBookmark(bookmarkId);
+        setIsBookmarked(false);
+        setBookmarkId(null);
+      } else {
+        const res = await addBookmark(postId);
+        setIsBookmarked(true);
+        setBookmarkId(res.data.bookmarkId);
+      }
+    } catch (err) {
+      console.error('북마크 처리 실패', err);
+      alert('북마크 처리에 실패했습니다.');
+    }
+  };
 
   const handleProfileClick = (userId) => {
     navigate(`/user-profile/${userId}`);
@@ -70,7 +88,7 @@ export default function CommunityLayout() {
             <User>{post.username}</User>
           </ProfileWrapper>
           <IconWrapper>
-            <IconButton onClick={() => setIsBookmarked((prev) => !prev)}>
+            <IconButton onClick={handleBookmarkClick}>
               {isBookmarked ? <BookMarkFill /> : <BookMarkLine />}
             </IconButton>
             <MoreButton onClick={() => setIsModalOpen((prev) => !prev)} />
