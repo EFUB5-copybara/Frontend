@@ -4,7 +4,6 @@ import SendIc from '@/community/assets/svgs/send.svg?react';
 import { addComment } from '../api/community';
 
 export default function CommentInput({ postId, onAdded }) {
-  console.log('postId', postId);
   const [inputValue, setInputValue] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -18,7 +17,7 @@ export default function CommentInput({ postId, onAdded }) {
 
     try {
       setSubmitting(true);
-      console.log('보내는 postId', postId);
+
       await addComment(postId, content);
       setInputValue('');
       onAdded?.();
