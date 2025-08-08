@@ -38,8 +38,8 @@ export const unlikePost = (likeId) => {
   return axiosInstance.delete(`/community/likes/${likeId}`);
 };
 
-export const addComment = (postId) => {
-  return axiosInstance.post(`/community/${postId}/comments`);
+export const addComment = (postId, content) => {
+  return axiosInstance.post(`/community/${postId}/comments`, { content });
 };
 
 export const removeComment = (commentId) => {

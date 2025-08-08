@@ -1,19 +1,33 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import SendIc from '@/community/assets/svgs/send.svg?react';
+import { addComment } from '../api/community';
 
-export default function CommentInput() {
+export default function CommentInput({ postId, onAdded }) {
+  console.log('postId', postId);
   const [inputValue, setInputValue] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setInputValue(e.target.value);
   };
 
-  const handleSend = () => {
-    if (inputValue.trim() === '') return;
+  const handleSend = async () => {
+    const content = inputValue.trim();
+    if (!content || submitting) return;
 
-    console.log('보낸 내용:', inputValue);
-    setInputValue('');
+    try {
+      setSubmitting(true);
+      console.log('보내는 postId', postId);
+      await addComment(postId, content);
+      setInputValue('');
+      onAdded?.();
+    } catch (e) {
+      console.error('댓글 등록 실패:', e);
+      alert(e.response?.data?.message ?? '댓글 등록에 실패했습니다.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -22,9 +36,13 @@ export default function CommentInput() {
         value={inputValue}
         onChange={handleChange}
         placeholder='댓글 남기기'
+        disabled={submitting}
       />
       {inputValue.trim().length > 0 && (
-        <SendButton onClick={handleSend}>
+        <SendButton
+          onClick={handleSend}
+          disabled={submitting}
+          aria-label='댓글 등록'>
           <SendIcon />
         </SendButton>
       )}
@@ -53,10 +71,13 @@ const SendButton = styled.button`
   right: 10px;
   top: 55%;
   transform: translateY(-50%);
-
   border: none;
   padding: 0;
   cursor: pointer;
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
 `;
 
 const SendIcon = styled(SendIc)`
