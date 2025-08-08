@@ -144,6 +144,23 @@ function HomePage() {
     }, 70);
   };
 
+  const [hasAnsweredToday, setHasAnsweredToday] = useState(false);
+
+  useEffect(() => {
+    const checkAnswered = async () => {
+      try {
+        const today = new Date().toISOString().slice(0, 10);
+        const res = await getMonthlyAnswer(year, month);
+        const answered = res.some((item) => item.createdAt.startsWith(today));
+        setHasAnsweredToday(answered);
+      } catch (err) {
+        console.error('오늘 답변 여부 확인 실패:', err);
+      }
+    };
+
+    checkAnswered();
+  }, [year, month]);
+
   return (
     <Container>
       <MissionBar />
@@ -200,7 +217,7 @@ function HomePage() {
             }
             question={todayQuestion}
             onClick={() => navigate('/home/write')}
-            hasAnsweredToday={!!todayQuestion}
+            hasAnsweredToday={!!hasAnsweredToday}
           />
           <Cookiejar level={monthlyCookieJarLevel} />
         </ContentArea>
@@ -216,7 +233,7 @@ function HomePage() {
           onClose={() => setIsDailyPanelOpen(false)}
         />
       )}
-      {!todayQuestion && <WriteFixButton />}
+      {!hasAnsweredToday && <WriteFixButton />}
     </Container>
   );
 }

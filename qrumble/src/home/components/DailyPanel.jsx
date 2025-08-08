@@ -124,6 +124,7 @@ function DailyPanel({ date, onClose }) {
   };
 
   const [popularPosts, setPopularPosts] = useState([]);
+  const [popularError, setPopularError] = useState(null);
 
   useEffect(() => {
     const fetchPopular = async () => {
@@ -131,10 +132,17 @@ function DailyPanel({ date, onClose }) {
       const dateStr = format(targetDate, 'yyyy-MM-dd');
 
       try {
-        const res = await fetchPopularPosts(dateStr); // API 호출
-        setPopularPosts(res.posts); // posts 배열 저장
+        const result = await fetchPopularPosts(dateStr); // API 호출
+        console.log('📦 인기 게시글 조회:', result);
+
+        // CommunityPage와 동일하게 데이터 접근
+        setPopularPosts(result.data?.posts || []);
+        setPopularError(null);
       } catch (err) {
         console.error('인기 게시글 조회 실패:', err);
+        const message =
+          err.response?.data?.message || '인기 게시글을 불러오지 못했습니다.';
+        setPopularError(message);
         setPopularPosts([]);
       }
     };
@@ -223,11 +231,13 @@ function DailyPanel({ date, onClose }) {
 
             <BestAnswerText>최고 인기 답변</BestAnswerText>
             <AnswerList>
-              {!attendedDates.includes(targetDate?.getDate()) ? (
+              {popularError ? (
+                <EmptyMessage>{popularError}</EmptyMessage>
+              ) : !attendedDates.includes(targetDate?.getDate()) ? (
                 <EmptyMessage>
                   답변을 하지 않은 날은 다른 유저의 답변을 확인할 수 없습니다.
                 </EmptyMessage>
-              ) : !Array.isArray(popularPosts) || popularPosts.length === 0 ? (
+              ) : popularPosts.length === 0 ? (
                 <EmptyMessage>인기 게시글이 없습니다.</EmptyMessage>
               ) : (
                 popularPosts
@@ -361,6 +371,18 @@ const AnswerList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  /* 스크롤 설정 */
+  max-height: 260px; /* 높이 제한, 필요하면 조정 */
+  overflow-y: auto;
+
+  /* 스크롤바 스타일 */
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
 `;
 
 const EmptyMessage = styled.div`
