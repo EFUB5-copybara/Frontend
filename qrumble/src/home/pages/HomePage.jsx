@@ -10,8 +10,9 @@ import MonthPickerModal from '../components/MonthPickerModal';
 import QuestionList from '../components/QuestionList';
 import DailyPanel from '../components/DailyPanel';
 import WriteFixButton from '../components/WriteFixButton';
-import { getDailyQuestion, getMonthlyAnswer } from '../api/homepage';
+import { getMonthlyAnswer } from '../api/homepage';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore';
+import { format, parseISO } from 'date-fns';
 
 function HomePage() {
   const today = new Date();
@@ -28,16 +29,11 @@ function HomePage() {
     const fetchMonthlyAnswers = async () => {
       try {
         const data = await getMonthlyAnswer(year, month);
+        console.log('📦 API 응답:', data);
+
         const parsed = data.map((item) => ({
           id: item.id,
-          date: new Date(item.createdAt)
-            .toLocaleDateString('ko-KR', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-            })
-            .replace(/\. /g, '.')
-            .replace('.', ''), // 2025.08.06 형식
+          date: format(parseISO(item.createdAt), 'yyyy.MM.dd'),
           question: item.question,
           answer: item.content,
         }));
@@ -127,16 +123,11 @@ function HomePage() {
     setIsDailyPanelOpen(true);
   };
 
-  const { todayQuestion, todayQuestionError, fetchTodayQuestion } =
+  const { todayQuestion, todayQuestionError, isLoading, fetchTodayQuestion } =
     useTodayQuestionStore();
 
   useEffect(() => {
-    const today = new Date();
-    const formattedDate = `${today.getFullYear()}-${String(
-      today.getMonth() + 1
-    ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-
-    fetchTodayQuestion(formattedDate);
+    fetchTodayQuestion();
   }, []);
 
   const [isSliding, setIsSliding] = useState(false);
@@ -152,6 +143,23 @@ function HomePage() {
       setIsSliding(false);
     }, 70);
   };
+
+  const [hasAnsweredToday, setHasAnsweredToday] = useState(false);
+
+  useEffect(() => {
+    const checkAnswered = async () => {
+      try {
+        const today = new Date().toISOString().slice(0, 10);
+        const res = await getMonthlyAnswer(year, month);
+        const answered = res.some((item) => item.createdAt.startsWith(today));
+        setHasAnsweredToday(answered);
+      } catch (err) {
+        console.error('오늘 답변 여부 확인 실패:', err);
+      }
+    };
+
+    checkAnswered();
+  }, [year, month]);
 
   return (
     <Container>
@@ -205,14 +213,11 @@ function HomePage() {
           </CalendarSlider>
           <DailyQuestion
             status={
-              todayQuestionError
-                ? 'error'
-                : !todayQuestion
-                ? 'loading'
-                : 'success'
+              todayQuestionError ? 'error' : isLoading ? 'loading' : 'success'
             }
             question={todayQuestion}
             onClick={() => navigate('/home/write')}
+            hasAnsweredToday={!!hasAnsweredToday}
           />
           <Cookiejar level={monthlyCookieJarLevel} />
         </ContentArea>
@@ -228,7 +233,7 @@ function HomePage() {
           onClose={() => setIsDailyPanelOpen(false)}
         />
       )}
-      <WriteFixButton />
+      {!hasAnsweredToday && <WriteFixButton />}
     </Container>
   );
 }
@@ -265,10 +270,18 @@ const ContentArea = styled.div`
 `;
 
 const QuestionArea = styled.div`
-  max-height: ${({ $collapsed }) => ($collapsed ? '1000px' : '0px')};
+  max-height: ${({ $collapsed }) => ($collapsed ? '610px' : '0px')};
   opacity: ${({ $collapsed }) => ($collapsed ? 1 : 0)};
   transition: all 0.4s ease;
-  overflow: hidden;
+  overflow-y: auto;
+
+  /* 스크롤바 스타일 */
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
 `;
 
 function getWeekDatesCenteredOnToday(year, month, selectedDay) {

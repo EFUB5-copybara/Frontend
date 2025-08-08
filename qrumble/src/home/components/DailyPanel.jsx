@@ -14,10 +14,14 @@ import likeImg from '../assets/svgs/like.svg';
 import commentImg from '../assets/svgs/question-comments.svg';
 import ItemButtons from './ItemButtons';
 import AnswerCard from './AnswerCard';
+import { getMyItems } from '@/shop/api/shopApi';
 import { getItemCounts } from '../api/homepage';
 import { useNavigate } from 'react-router-dom';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore'; // 추가
+import useDailyQuestionStore from '../stores/useDailyQuestionStore';
 import { getMonthlyAnswerStatus } from '../api/homepage';
+import { format } from 'date-fns';
+import { fetchPopularPosts, fetchPostDetail } from '@/community/api/community';
 
 function DailyPanel({ date, onClose }) {
   const [targetDate, setTargetDate] = useState(null);
@@ -29,16 +33,36 @@ function DailyPanel({ date, onClose }) {
     todayQuestionDate,
     todayQuestionError,
     fetchTodayQuestion,
+    isLoading,
   } = useTodayQuestionStore();
+
+  const question = useDailyQuestionStore((state) => state.question);
+  const error = useDailyQuestionStore((state) => state.error);
+  const isDailyLoading = useDailyQuestionStore((state) => state.isLoading);
+  const fetchQuestionByDate = useDailyQuestionStore(
+    (state) => state.fetchQuestionByDate
+  );
+
+  useEffect(() => {
+    if (!targetDate) return;
+    const dateStr = format(targetDate, 'yyyy-MM-dd');
+    fetchQuestionByDate(dateStr);
+  }, [targetDate]);
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await getItemCounts();
+        const res = await getMyItems();
+
+        // type 기준으로 개수 매핑
+        const itemMap = Object.fromEntries(
+          res.map((item) => [item.type.toLowerCase(), item.quantity])
+        );
+
         setItems([
-          { name: 'key', img: keyImg, count: res.keyCount },
-          { name: 'shield', img: shieldImg, count: res.shieldCount },
-          { name: 'eraser', img: eraserImg, count: res.eraserCount },
+          { name: 'key', img: keyImg, count: itemMap.key || 0 },
+          { name: 'shield', img: shieldImg, count: itemMap.shield || 0 },
+          { name: 'eraser', img: eraserImg, count: itemMap.eraser || 0 },
         ]);
       } catch (err) {
         console.error('아이템 개수 조회 실패:', err);
@@ -82,10 +106,32 @@ function DailyPanel({ date, onClose }) {
     fetchAttendedDates();
   }, [targetDate]);
 
-  const handleUseItem = (type) => {
+  useEffect(() => {
+    if (!targetDate) return;
+    const dateStr = format(targetDate, 'yyyy-MM-dd');
+    fetchTodayQuestion(dateStr);
+  }, [targetDate]);
+
+  const [keyUnlockedDates, setKeyUnlockedDates] = useState([]);
+  const isAttendedDay = attendedDates.includes(targetDate?.getDate());
+  const dateKey = targetDate ? format(targetDate, 'yyyy-MM-dd') : null;
+
+  const isKeyUnlockedDay = dateKey ? keyUnlockedDates.includes(dateKey) : false;
+
+  const handleUseItem = (type, extra = {}) => {
     setItems((prev) =>
       prev.map((i) => (i.name === type ? { ...i, count: i.count - 1 } : i))
     );
+
+    if (type === 'key' && extra.isKeyUnlocked && extra.date) {
+      const keyDate = format(extra.date, 'yyyy-MM-dd');
+      setKeyUnlockedDates((prev) => [...new Set([...prev, keyDate])]);
+    }
+
+    if (type === 'shield' && extra.isCookie && extra.date) {
+      const dayNum = extra.date.getDate();
+      setAttendedDates((prev) => [...new Set([...prev, dayNum])]);
+    }
   };
 
   const navigate = useNavigate();
@@ -93,6 +139,33 @@ function DailyPanel({ date, onClose }) {
   const handleQuestionClick = () => {
     navigate('/home/detail', { state: { date: targetDate } });
   };
+
+  const [popularPosts, setPopularPosts] = useState([]);
+  const [popularError, setPopularError] = useState(null);
+
+  useEffect(() => {
+    const fetchPopular = async () => {
+      if (!targetDate) return;
+      const dateStr = format(targetDate, 'yyyy-MM-dd');
+
+      try {
+        const result = await fetchPopularPosts(dateStr); // API 호출
+        console.log('📦 인기 게시글 조회:', result);
+
+        // CommunityPage와 동일하게 데이터 접근
+        setPopularPosts(result.data?.posts || []);
+        setPopularError(null);
+      } catch (err) {
+        console.error('인기 게시글 조회 실패:', err);
+        const message =
+          err.response?.data?.message || '인기 게시글을 불러오지 못했습니다.';
+        setPopularError(message);
+        setPopularPosts([]);
+      }
+    };
+
+    fetchPopular();
+  }, [targetDate]);
 
   return (
     <>
@@ -102,21 +175,23 @@ function DailyPanel({ date, onClose }) {
             {date?.weekDates?.map(({ day, month, year }) => {
               const today = new Date();
 
-              const isToday =
-                new Date(year, month - 1, day).toDateString() ===
-                today.toDateString();
-
-              const isFuture = new Date(year, month - 1, day) > today;
+              const dateObj = new Date(year, month - 1, day);
+              const isToday = dateObj.toDateString() === today.toDateString();
+              const isFuture = dateObj > today;
               const isPast = !isFuture && !isToday;
 
-              const isCookie = isPast && attendedDates.includes(day);
+              const isCookie =
+                (isPast || isToday) && attendedDates.includes(day);
               const isMissed = isPast && !attendedDates.includes(day);
 
+              const handleClick = () => {
+                if (!isFuture) {
+                  setTargetDate(dateObj);
+                }
+              };
+
               return (
-                <DayCell
-                  key={`${year}-${month}-${day}`}
-                  onClick={() => setTargetDate(new Date(year, month - 1, day))}
-                >
+                <DayCell key={`${year}-${month}-${day}`} onClick={handleClick}>
                   {isCookie ? (
                     <CookieIcon src={cookieImg} alt='cookie' />
                   ) : (
@@ -142,38 +217,58 @@ function DailyPanel({ date, onClose }) {
             onUse={handleUseItem}
             attendedDates={attendedDates}
             targetDate={targetDate}
+            setAttendedDates={setAttendedDates}
           />
 
           <QnAWrapper>
             <QuestionCard onClick={handleQuestionClick}>
               <Header>
                 <Label>질문</Label>
-                <CardDateText>{todayQuestionDate}</CardDateText>
+                <CardDateText>
+                  {targetDate ? format(targetDate, 'yyyy.MM.dd') : ''}
+                </CardDateText>
               </Header>
               <QuestionText>
-                {todayQuestionError ? todayQuestionError : todayQuestion}
+                {error
+                  ? error
+                  : isDailyLoading
+                  ? '질문을 불러오는 중입니다...'
+                  : question || '질문이 없습니다.'}
               </QuestionText>
               <Bottom>
                 <BottomItem>
                   <BottomImg src={likeImg} alt='like' /> 공감
                 </BottomItem>
                 <BottomItem>
-                  <BottomImg src={commentImg} alt='comment' /> 101
+                  <BottomImg src={commentImg} alt='comment' />
+                  댓글
                 </BottomItem>
               </Bottom>
             </QuestionCard>
 
             <BestAnswerText>최고 인기 답변</BestAnswerText>
             <AnswerList>
-              {[1, 2, 3].map((rank) => (
-                <AnswerCard
-                  key={rank}
-                  rank={rank}
-                  title='name'
-                  subtitle='about a diary in english...'
-                  userId='아이디'
-                />
-              ))}
+              {popularError ? (
+                <EmptyMessage>{popularError}</EmptyMessage>
+              ) : popularPosts.length === 0 ? (
+                <EmptyMessage>인기 게시글이 없습니다.</EmptyMessage>
+              ) : (
+                popularPosts
+                  .slice(0, 3)
+                  .map((post, idx) => (
+                    <AnswerCard
+                      key={post.id}
+                      postId={post.id}
+                      rank={idx + 1}
+                      title={post.title}
+                      subtitle={post.content}
+                      userId={`@${post.username}`}
+                      bookmarkCount={post.bookmarkCount}
+                      likeCount={post.likeCount}
+                      commentCount={post.commentCount}
+                    />
+                  ))
+              )}
             </AnswerList>
           </QnAWrapper>
         </ModalContainer>
@@ -293,4 +388,23 @@ const AnswerList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  /* 스크롤 설정 */
+  max-height: 260px; /* 높이 제한, 필요하면 조정 */
+  overflow-y: auto;
+
+  /* 스크롤바 스타일 */
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+`;
+
+const EmptyMessage = styled.div`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.primary};
+  ${({ theme }) => theme.fonts.b16L};
+  padding: 20px 0;
 `;

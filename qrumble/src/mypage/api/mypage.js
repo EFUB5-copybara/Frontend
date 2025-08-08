@@ -18,16 +18,7 @@ export const getMyPage = async () => {
 // 멤버 수정
 export const updateMemberInfo = async ({ nickname, email }) => {
   try {
-    const response = await axios.patch(
-      '/mypage/my-info',
-      { nickname, email },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const response = await axios.patch('/mypage/my-info', { nickname, email });
     return response.data;
   } catch (error) {
     console.error('회원 정보 수정 실패:', error);

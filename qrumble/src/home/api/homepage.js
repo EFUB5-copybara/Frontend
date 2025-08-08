@@ -10,6 +10,16 @@ export const getDailyQuestion = async (date) => {
   }
 };
 
+// 오늘 질문 조회
+export const getTodayQuestion = async () => {
+  try {
+    const response = await axiosInstance.get(`/questions/today`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // 월별 답변 여부 조회
 export const getMonthlyAnswerStatus = async (year, month) => {
   try {
@@ -27,11 +37,8 @@ export const getMonthlyAnswer = async (year, month) => {
   try {
     const response = await axiosInstance.get('/answers/me', {
       params: { year, month },
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
     });
-    return response.data.answers;
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -69,7 +76,7 @@ export const getMonthlyQuestions = async (year, month) => {
 export const getAnswerStreak = async () => {
   try {
     const response = await axiosInstance.get('/answers/streak');
-    return response.data.streak;
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -125,29 +132,40 @@ export const getItemCounts = async () => {
   }
 };
 
-// 아이템 사용 함수
-const useItem = async (type) => {
+// 열쇠 아이템 사용
+export const KeyItem = async (date) => {
   try {
-    const response = await axiosInstance.post('/items/use', { type });
+    const response = await axiosInstance.post('/items/use?type=KEY', {
+      date,
+    });
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-// 열쇠 아이템 사용
-export const useKeyItem = async () => {
-  return await useItem('KEY');
-};
-
 // 방패 아이템 사용
-export const useShieldItem = async () => {
-  return await useItem('SHIELD');
+export const ShieldItem = async (date) => {
+  try {
+    const res = await axiosInstance.post('/items/use?type=SHIELD', {
+      date,
+    });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // 지우개 아이템 사용
-export const useEraserItem = async () => {
-  return await useItem('ERASER');
+export const EraserItem = async (date) => {
+  try {
+    const res = await axiosInstance.post('/items/use?type=ERASER', {
+      date,
+    });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // 답변 조회
@@ -170,6 +188,16 @@ export const createAnswer = async (date, content, isPublic) => {
     return response.data;
   } catch (error) {
     console.error('답변 생성 실패:', error);
+    throw error;
+  }
+};
+
+// 쿠키 개수 조회
+export const getCookiesNumber = async (year, month) => {
+  try {
+    const response = await axiosInstance.get(`/cookies`);
+    return response.data;
+  } catch (error) {
     throw error;
   }
 };

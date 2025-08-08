@@ -2,8 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import likeImg from '../assets/svgs/like.svg';
 import commentImg from '../assets/svgs/question-comments.svg';
+import { useNavigate } from 'react-router-dom';
 
 function QuestionList({ questions, month }) {
+  const navigate = useNavigate();
+
   if (!questions || questions.length === 0) {
     return (
       <Wrapper>
@@ -17,25 +20,36 @@ function QuestionList({ questions, month }) {
 
   return (
     <Wrapper>
-      {questions.map((item) => (
-        <QuestionCard key={item.id}>
-          <Header>
-            <Label>질문</Label>
-            <DateText>{item.date}</DateText>
-          </Header>
-          <QuestionText>{item.question}</QuestionText>
-          <Bottom>
-            <BottomItem>
-              <BottomImg src={likeImg} alt='like' />
-              공감
-            </BottomItem>
-            <BottomItem>
-              <BottomImg src={commentImg} alt='comment' />
-              101
-            </BottomItem>
-          </Bottom>
-        </QuestionCard>
-      ))}
+      {questions.map(
+        (item) => (
+          console.log('✅ date:', item.date),
+          console.log('✅ question:', item.question),
+          (
+            <QuestionCard
+              key={`${item.date}-${item.id}`}
+              onClick={() =>
+                navigate('/home/detail', { state: { date: item.date } })
+              }
+            >
+              <Header>
+                <Label>질문</Label>
+                <DateText>{item.date}</DateText>
+              </Header>
+              <QuestionText>{item.question}</QuestionText>
+              <Bottom>
+                <BottomItem>
+                  <BottomImg src={likeImg} alt='like' />
+                  공감
+                </BottomItem>
+                <BottomItem>
+                  <BottomImg src={commentImg} alt='comment' />
+                  댓글
+                </BottomItem>
+              </Bottom>
+            </QuestionCard>
+          )
+        )
+      )}
     </Wrapper>
   );
 }
