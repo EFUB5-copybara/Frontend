@@ -132,16 +132,6 @@ export const getItemCounts = async () => {
   }
 };
 
-// 아이템 사용 함수
-const useItem = async (type) => {
-  try {
-    const response = await axiosInstance.post('/items/use', { type });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
 // 열쇠 아이템 사용
 export const useKeyItem = async (date) => {
   try {
@@ -167,8 +157,15 @@ export const useShieldItem = async (date) => {
 };
 
 // 지우개 아이템 사용
-export const useEraserItem = async () => {
-  return await useItem('ERASER');
+export const useEraserItem = async (date) => {
+  try {
+    const res = await axiosInstance.post('/items/use?type=ERASER', {
+      date,
+    });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 // 답변 조회

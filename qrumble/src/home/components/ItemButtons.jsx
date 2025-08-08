@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import AlertModal from '../components/AlertModal.jsx';
 import keyImg from '../assets/svgs/key.svg';
 import shieldImg from '../assets/svgs/shield.svg';
 import eraserImg from '../assets/svgs/eraser.svg';
 import { useKeyItem, useShieldItem, useEraserItem } from '../api/homepage.js';
-import { format } from 'date-fns';
+import { format, isAfter, isBefore, parseISO, addDays } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
 function ItemButtons({
@@ -73,14 +73,10 @@ function ItemButtons({
         const dateStr = format(targetDate, 'yyyy-MM-dd');
         const result = await useKeyItem(dateStr);
 
+        const postId = result.answer.id;
+
         if (result.used && result.answer) {
-          navigate('/home/detail', {
-            state: {
-              mode: 'viewer',
-              answer: result.answer,
-              date: dateStr,
-            },
-          });
+          navigate(`/community/${postId}`);
         } else {
           alert('열쇠 아이템을 사용할 수 없습니다.');
         }
@@ -98,7 +94,8 @@ function ItemButtons({
         } else {
           alert('방패 아이템 사용에 실패했습니다.');
         }
-      } else if (modalInfo.type === 'eraser') {
+      }
+      if (modalInfo.type === 'eraser') {
         await useEraserItem();
       }
 
