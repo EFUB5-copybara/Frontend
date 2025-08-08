@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import BackIc from '@/community/assets/svgs/arrow_back.svg?react';
-import ProfileIc from '@/community/assets/svgs/profile.svg?react';
-import BookMarkFillIc from '@/community/assets/svgs/bookmark_on.svg?react';
 import BookMarkLineIc from '@/community/assets/svgs/bookmark.svg?react';
+import BookMarkFillIc from '@/community/assets/svgs/bookmark_on.svg?react';
 import MoreIc from '@/community/assets/svgs/more_horizontal.svg?react';
+import ProfileIc from '@/community/assets/svgs/profile.svg?react';
 
 import ActionModal from '@/community/components/ActionModal';
-import axios from 'axios';
+import { fetchPostDetail } from '../api/community';
 
 export default function CommunityLayout() {
   const { postId } = useParams();
+
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
 
@@ -22,9 +23,9 @@ export default function CommunityLayout() {
   const modalRef = useRef(null);
 
   useEffect(() => {
-    const fetchPostDetail = async () => {
+    const loadPostDetail = async () => {
       try {
-        const result = await axios.get(`/community/posts/${postId}`);
+        const result = await fetchPostDetail(postId);
         setPost(result.data);
       } catch (err) {
         setError(
@@ -32,7 +33,7 @@ export default function CommunityLayout() {
         );
       }
     };
-    fetchPostDetail();
+    loadPostDetail();
   }, [postId]);
 
   const handleProfileClick = (userId) => {
@@ -48,15 +49,25 @@ export default function CommunityLayout() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+  if (!post) {
+    return (
+      <LayoutWrapper>
+        <Header>
+          <BackButton onClick={() => navigate(-1)} />
+        </Header>
+        <div>Loading...</div>
+      </LayoutWrapper>
+    );
+  }
 
   return (
     <LayoutWrapper>
       <Header>
         <BackButton onClick={() => navigate(-1)} />
         <HeaderWrapper>
-          <ProfileWrapper onClick={handleProfileClick}>
+          <ProfileWrapper onClick={() => handleProfileClick(post.username)}>
             <Profile />
-            <User>아이디</User>
+            <User>{post.username}</User>
           </ProfileWrapper>
           <IconWrapper>
             <IconButton onClick={() => setIsBookmarked((prev) => !prev)}>
@@ -75,7 +86,7 @@ export default function CommunityLayout() {
 }
 
 const LayoutWrapper = styled.div`
-  padding: 0 1.25rem;
+  padding: 1.875rem 1.25rem 0 1.25rem;
   position: relative;
 `;
 
