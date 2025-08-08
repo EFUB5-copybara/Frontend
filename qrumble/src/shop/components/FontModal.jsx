@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import KeyIcon from '../assets/key.svg?react';
-import ShieldIcon from '../assets/shield.svg?react';
-import EraserIcon from '../assets/eraser.svg?react';
-import { getItemDetail } from '../api/shopApi';
+import { getFontsDetail } from '../api/shopApi';
 
-export default function ShopModal({
-  items,
+export default function FontModal({
+  fonts,
   currentIndex,
   setCurrentIndex,
   onBuy,
@@ -16,32 +13,62 @@ export default function ShopModal({
 }) {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [showPurchaseSuccess, setShowPurchaseSuccess] = useState(false);
   useEffect(() => {
     const fetchDetail = async () => {
       setLoading(true);
       try {
-        const item = items[currentIndex];
-        if (item && item.id) {
-          const res = await getItemDetail(item.id);
+        const font = fonts[currentIndex];
+        if (font && font.id) {
+          const res = await getFontsDetail(font.id);
+          
+          console.log(`폰트 ${font.id} 상세 조회 결과:`, {
+            name: font.name,
+            apiOwned: res.owned
+          });
           
           setDetail({
             ...res,
-            owned: res.owned
+            owned: res.owned || font.owned
           });
           
-          if (res.owned && !item.owned && updateOwnership) {
-            updateOwnership('item', item.id, true);
+          if (res.owned && !font.owned && updateOwnership) {
+            updateOwnership('font', font.id, true);
           }
         }
       } catch (e) {
-        setDetail(null);
+        console.error('폰트 상세 조회 실패:', e);
+        const font = fonts[currentIndex];
+        if (font) {
+          setDetail({
+            ...font,
+            owned: font.owned
+          });
+        } else {
+          setDetail(null);
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchDetail();
-  }, [currentIndex, items, updateOwnership]);
+  }, [currentIndex, fonts, updateOwnership]);
+
+
+  const handleBuy = (index) => {
+    onBuy(index);
+    setShowPurchaseSuccess(true);
+    setTimeout(() => {
+      setShowPurchaseSuccess(false);
+    }, 3000);
+    
+    if (detail) {
+      setDetail({
+        ...detail,
+        owned: true
+      });
+    }
+  };
 
   if (loading || !detail) {
     return (
@@ -57,29 +84,11 @@ export default function ShopModal({
 
   return (
     <Overlay onClick={onClose}>
-      <ModalWrap onClick={(e) => e.stopPropagation()}>
-        <SwipeContainer>
+      <ModalWrap onClick={e => e.stopPropagation()}>
+        <SwipeContainer $currentIndex={currentIndex} $deltaX={0} $isSwiping={false}>
           <ModalContainer>
             <PreviewBox>
-              {detail.img && (
-                <img
-                  src={detail.img}
-                  alt={detail.name}
-                  style={{
-                    width: '158px',
-                    height: '130px',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                    background: '#fff'
-                  }}
-                />
-              )}
-              {!detail.img && detail.name === '열쇠' && <KeyIcon width="158" height="130" />}
-              {!detail.img && detail.name === '방패' && <ShieldIcon width="158" height="130" />}
-              {!detail.img && detail.name === '지우개' && <EraserIcon width="158" height="130" />}
-              {!detail.img && detail.name !== '열쇠' && detail.name !== '방패' && detail.name !== '지우개' && (
-                <FontPreview $fontName={detail.name}>{detail.name}</FontPreview>
-              )}
+              <FontPreview $fontName={detail.name}>{detail.name}</FontPreview>
             </PreviewBox>
             <ItemText>
               <ItemName>{detail.name}</ItemName>
@@ -91,13 +100,20 @@ export default function ShopModal({
               $owned={detail.owned}
               $insufficient={insufficient}
               onClick={() => {
-                if (!detail.owned && !insufficient) onBuy(currentIndex);
+                if (!detail.owned && !insufficient) handleBuy(currentIndex);
               }}
             >
               {detail.owned ? "보유함" : "구매하기"}
             </BuyButton>
             {insufficient && !detail.owned && (
               <Message>포인트가 부족합니다</Message>
+            )}
+            
+            {/* 구매 성공 팝업 */}
+            {showPurchaseSuccess && (
+              <SuccessPopup>
+                구매가 완료되었습니다!
+              </SuccessPopup>
             )}
           </ModalContainer>
         </SwipeContainer>
@@ -278,4 +294,19 @@ const QuantityText = styled.div`
   margin-top: 8px;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.brown2};
+`;
+
+// 구매 성공 팝업 스타일 추가
+const SuccessPopup = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: ${({ theme }) => theme.fonts.b16B};
+  color: ${({ theme }) => theme.colors.green};
+  z-index: 110;
 `;

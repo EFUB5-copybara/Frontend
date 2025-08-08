@@ -5,10 +5,47 @@ import editImg from '../assets/pencil_line.svg';
 import ProfileModal from '../components/ProfileModal';
 import { getMyInfo } from '../api/mypage';
 import { useNavigate } from 'react-router-dom';
+import { updateMemberInfo } from '../api/mypage';
+import profile1Img from '../assets/profile1.svg';
 
 function MyInfoPage() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [myInfo, setMyInfo] = useState(null);
+
+  const [isEditingNickname, setIsEditingNickname] = useState(false);
+  const [editedNickname, setEditedNickname] = useState('');
+
+  const handleEditClick = () => {
+    setEditedNickname(myInfo?.nickname || '');
+    setIsEditingNickname(true);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleNicknameSubmit();
+    }
+  };
+
+  const handleNicknameSubmit = async () => {
+    const trimmed = editedNickname.trim();
+    if (trimmed === '') return;
+
+    try {
+      const result = await updateMemberInfo(trimmed);
+
+      if (result?.updatedFields?.nickname) {
+        setMyInfo((prev) => ({
+          ...prev,
+          nickname: result.updatedFields.nickname,
+        }));
+      }
+
+      setIsEditingNickname(false);
+    } catch (error) {
+      console.error('닉네임 수정 실패:', error);
+      alert('닉네임 수정에 실패했습니다.');
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,7 +63,7 @@ function MyInfoPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-
+    localStorage.removeItem('refreshToken');
     navigate('/login');
   };
 
@@ -38,10 +75,21 @@ function MyInfoPage() {
           <Profile onClick={() => setIsProfileOpen(true)} />
           <UserInfoWrapper>
             <NameWrapper>
-              <EditButton>
+              <EditButton onClick={handleEditClick}>
                 <EditImg src={editImg} alt='edit' />
               </EditButton>
-              <UserName>{myInfo?.nickname || '닉네임 없음'}</UserName>
+              {isEditingNickname ? (
+                <NicknameInput
+                  value={editedNickname}
+                  placeholder={myInfo?.nickname || '닉네임'}
+                  autoFocus
+                  onChange={(e) => setEditedNickname(e.target.value)}
+                  onBlur={handleNicknameSubmit}
+                  onKeyDown={handleKeyDown}
+                />
+              ) : (
+                <UserName>{myInfo?.nickname || '닉네임 없음'}</UserName>
+              )}
             </NameWrapper>
             <UserMail>{myInfo?.email || '이메일 없음'}</UserMail>
           </UserInfoWrapper>
@@ -204,4 +252,13 @@ const LogoutContent = styled.p`
   ${({ theme }) => theme.fonts.c14M};
   margin: 0;
   cursor: pointer;
+`;
+
+const NicknameInput = styled.input`
+  ${({ theme }) => theme.fonts.t20SB};
+  color: ${({ theme }) => theme.colors.black};
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100px;
 `;

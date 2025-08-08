@@ -7,7 +7,7 @@ import {
   CookieIcon,
 } from './styles/CalendarStyles';
 import cookieImg from '../assets/svgs/cookie.svg';
-import { getMonthlyAnswerStatus } from '../api/homepage';
+import { getMonthlyAnswerStatus, getCookiesNumber } from '../api/homepage';
 
 const WEEK_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -21,29 +21,18 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
   const displayCells = totalCellsNeeded <= 35 ? 35 : 42;
   const nextMonthPreviewCount = displayCells - totalCellsNeeded;
 
-  const days = [];
+  const days = useMemo(() => {
+    const d = [];
+    for (let i = 1; i <= currentLastDate; i++) {
+      d.push({ date: i, type: 'current' });
+    }
+    for (let i = 1; i <= nextMonthPreviewCount; i++) {
+      d.push({ date: i, type: 'next' });
+    }
+    return d;
+  }, [currentLastDate, nextMonthPreviewCount]);
 
   const [attendedDates, setAttendedDates] = useState([]);
-
-  useEffect(() => {
-    const fetchAttendedDates = async () => {
-      try {
-        const answered = await getMonthlyAnswerStatus(year, month); // ['2025-08-05', ...]
-        const dates = answered
-          .map((d) => {
-            const day = new Date(d).getDate();
-            return day;
-          })
-          .filter((day) => !isNaN(day));
-        setAttendedDates(dates);
-      } catch (error) {
-        console.error('월별 답변 여부 불러오기 실패:', error);
-        setAttendedDates([]); // 실패 시 빈 배열
-      }
-    };
-
-    fetchAttendedDates();
-  }, [year, month]);
 
   const weeks = {};
   for (let day = 1; day <= currentLastDate; day++) {
@@ -53,42 +42,27 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
     weeks[weekIndex].push(day);
   }
 
-  const jarLevel = useMemo(() => {
-    let level = 0;
-    let totalWeeks = 0;
-
-    for (const daysInWeek of Object.values(weeks)) {
-      totalWeeks++;
-      const cookieCount = daysInWeek.filter((d) =>
-        attendedDates.includes(d)
-      ).length;
-      if (cookieCount >= 5) level++;
-    }
-
-    if (level === totalWeeks) level++; // 보너스 쿠키
-
-    return level;
-  }, [year, month, attendedDates]);
-
   useEffect(() => {
-    setMonthlyCookieJarLevel(jarLevel);
+    const fetchAttendedDatesAndCookieLevel = async () => {
+      try {
+        const answered = await getMonthlyAnswerStatus(year, month);
+
+        const dates = answered.map((d) => new Date(d).getDate());
+        setAttendedDates(dates);
+
+        console.log('✅ answered:', answered);
+        console.log('📆 today:', new Date().toISOString().slice(0, 10));
+        console.log('✅ attendedDates:', dates);
+
+        const cookieData = await getCookiesNumber(year, month); // { level: 4 }
+        setMonthlyCookieJarLevel(cookieData.level ?? 0);
+      } catch (error) {
+        console.error('데이터 로드 실패:', error);
+      }
+    };
+
+    fetchAttendedDatesAndCookieLevel();
   }, [year, month, setMonthlyCookieJarLevel]);
-
-  // 현재 월 날짜들
-  for (let i = 1; i <= currentLastDate; i++) {
-    days.push({
-      date: i,
-      type: 'current',
-    });
-  }
-
-  // 다음 달 날짜들
-  for (let i = 1; i <= nextMonthPreviewCount; i++) {
-    days.push({
-      date: i,
-      type: 'next',
-    });
-  }
 
   return (
     <Wrapper>
@@ -104,28 +78,24 @@ function Calendar({ year, month, onSelectDate, setMonthlyCookieJarLevel }) {
             <DayCell key={`empty-${idx}`} />
           ))}
         {days.map((item, idx) => {
+          const dateObj = new Date(year, month - 1, item.date);
+
           const isToday =
             item.type === 'current' &&
-            today.getFullYear() === year &&
-            today.getMonth() === month - 1 &&
-            today.getDate() === item.date;
+            dateObj.toDateString() === today.toDateString();
 
-          const isPast =
-            item.type === 'current' &&
-            new Date(year, month - 1, item.date) < today;
+          const isPast = item.type === 'current' && dateObj < today;
+          const isFuture = item.type === 'current' && dateObj > today;
 
           const isCookie =
-            item.type === 'current' &&
-            attendedDates.includes(item.date) &&
-            isPast;
-
+            item.type === 'current' && attendedDates.includes(item.date);
           const isMissed =
             item.type === 'current' &&
             isPast &&
             !attendedDates.includes(item.date);
 
           const handleClick = () => {
-            if (item.type === 'current') {
+            if (item.type === 'current' && !isFuture) {
               const weekDates = getWeekDates(year, month - 1, item.date);
               onSelectDate({
                 day: item.date,

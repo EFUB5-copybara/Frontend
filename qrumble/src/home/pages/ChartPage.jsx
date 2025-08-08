@@ -2,85 +2,104 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ShareModal from '../components/ShareModal';
 import arrowbackImg from '../assets/svgs/arrow_back.svg';
-import thumbsupImg from '../assets/svgs/thumbsup.svg';
-import eyeImg from '../assets/svgs/eye.svg';
-import commentImg from '../assets/svgs/comments.svg';
-import shareImg from '../assets/svgs/share.svg';
+// import thumbsupImg from '../assets/svgs/thumbsup.svg';
+// import eyeImg from '../assets/svgs/eye.svg';
+// import commentImg from '../assets/svgs/comments.svg';
+// import shareImg from '../assets/svgs/share.svg';
 import background1Img from '../assets/svgs/background1.svg';
 import background2Img from '../assets/svgs/background2.svg';
 import background3Img from '../assets/svgs/background3.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getAnswer, getDailyQuestion } from '../api/homepage';
+import { format } from 'date-fns';
 
 function ChartPage() {
   const [isShareOpen, setIsShareOpen] = useState(false);
 
-  const handleShareClick = () => {
-    setIsShareOpen(true);
-  };
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const { mode, answer: viewerAnswer, date: viewerDate } = location.state || {};
+
+  //   const handleShareClick = () => {
+  //     setIsShareOpen(true);
+  //   };
 
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [date, setDate] = useState('');
-  const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      const targetDate = location.state?.date;
+      // 열쇠 모드인 경우: answer와 date는 location.state에 있음
+      if (mode === 'viewer') {
+        if (!viewerAnswer || !viewerDate) {
+          alert('열람할 답변 정보가 없습니다.');
+          return;
+        }
 
-      if (!targetDate) {
-        alert('날짜 정보가 없습니다.');
-        navigate('/home');
+        setDate(viewerDate);
+        setQuestion(viewerAnswer.question);
+        setAnswer(viewerAnswer.content);
         return;
       }
 
-      try {
-        const [answerRes, questionRes] = await Promise.all([
-          getAnswer(targetDate),
-          getDailyQuestion(targetDate),
-        ]);
+      // 일반 모드: 내 답변 조회
+      const targetDate = location.state?.date;
+      if (!targetDate) {
+        alert('날짜 정보가 없습니다.');
+        return;
+      }
 
-        setDate(targetDate);
-        setAnswer(answerRes.content);
+      const dateString = format(new Date(targetDate), 'yyyy-MM-dd');
+      setDate(dateString);
+
+      try {
+        const questionRes = await getDailyQuestion(dateString);
         setQuestion(questionRes.content);
       } catch (error) {
-        console.error('질문/답변 불러오기 실패:', error);
-        alert('답변을 불러오는 데 실패했습니다.');
-        navigate('/home');
+        console.error('질문 불러오기 실패:', error);
+      }
+
+      try {
+        const answerRes = await getAnswer(dateString);
+        setAnswer(answerRes.content);
+      } catch (error) {
+        console.error('답변 불러오기 실패:', error);
       }
     };
 
     fetchData();
-  }, [location, navigate]);
+  }, [location]);
 
   return (
     <Background>
       <Container>
-        <Button>
+        <Button onClick={() => navigate('/home')}>
           <ArrowIcon src={arrowbackImg} alt='arrow back' />
         </Button>
-        <Date>{date}</Date>
+
+        <Datetext>{date}</Datetext>
         <Wrapper>
           <Question>{question}</Question>
           <Answer>{answer}</Answer>
-          <ChartBottomBar>
+          {/* <ChartBottomBar>
             <BottomBtn>
               <BottomBtnImg src={thumbsupImg} alt='like' />
-              101
+              {likeCount}
             </BottomBtn>
             <BottomBtn>
               <BottomBtnImg src={eyeImg} alt='eye' />
-              101
+              {viewCount}
             </BottomBtn>
             <BottomBtn>
               <BottomBtnImg src={commentImg} alt='comment' />
-              101
+              {commentCount}
             </BottomBtn>
             <BottomBtn onClick={handleShareClick}>
               <BottomBtnImg src={shareImg} alt='share' />
             </BottomBtn>
-          </ChartBottomBar>
+          </ChartBottomBar> */}
         </Wrapper>
       </Container>
       {isShareOpen && <ShareModal onClose={() => setIsShareOpen(false)} />}
@@ -128,6 +147,7 @@ const Button = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+  z-index: 10;
 `;
 
 const ArrowIcon = styled.img`
@@ -135,7 +155,7 @@ const ArrowIcon = styled.img`
   height: auto;
 `;
 
-const Date = styled.div`
+const Datetext = styled.div`
   position: absolute;
   top: 15px;
   display: flex;
@@ -143,6 +163,7 @@ const Date = styled.div`
   align-items: center;
   ${({ theme }) => theme.fonts.ns14SB};
   color: ${({ theme }) => theme.colors.green};
+  pointer-events: none;
 `;
 
 const Wrapper = styled.div`

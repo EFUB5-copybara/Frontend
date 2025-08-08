@@ -16,12 +16,17 @@ function MissionBar() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [streakData, opened] = await Promise.all([
+        const [streakData, usedDateString] = await Promise.all([
           getAnswerStreak(),
-          checkFortuneCookieUsed(),
+          checkFortuneCookieUsed(), // ex) "2025-08-07"
         ]);
+
         setStreak(streakData);
-        setFortuneUsed(opened);
+
+        const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+        const isUsedToday = usedDateString === today;
+
+        setFortuneUsed(isUsedToday); // 오늘 쓴 기록이 있을 때만 true
       } catch (error) {
         console.error('데이터 로드 실패:', error);
       }
@@ -40,7 +45,7 @@ function MissionBar() {
   };
 
   const handleMissionClick = () => {
-    setIsClicked(true);
+    setClicked(true);
     setTimeout(() => {
       navigate('/home/mission');
     }, 100);
