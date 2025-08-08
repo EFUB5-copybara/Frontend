@@ -72,7 +72,7 @@ const TextWrapper = styled.div`
 `;
 
 const Title = styled.p`
-  ${({ theme }) => theme.fonts.nd18SB}
+  ${({ theme }) => theme.fonts.nd18B}
   margin: 0;
 `;
 

@@ -34,7 +34,7 @@ export default function CommentInput() {
 
 const InputWrapper = styled.div`
   position: absolute;
-  bottom: 73px;
+  bottom: 100px;
   width: 100%;
   z-index: 10;
 `;
@@ -49,8 +49,9 @@ const Input = styled.input`
 
 const SendButton = styled.button`
   position: absolute;
+  background-color: transparent;
   right: 10px;
-  top: 50%;
+  top: 55%;
   transform: translateY(-50%);
 
   border: none;
