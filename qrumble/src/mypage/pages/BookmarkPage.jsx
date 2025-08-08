@@ -1,34 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import MyPageTopBar from '../components/MyPageTopBar';
 import Article from '../components/Article';
 import { getMyBookmarks } from '../api/mypage';
+import { profileImageMap } from '@/assets/profileImages';
 
 function BookmarkPage() {
   const [bookmarks, setBookmarks] = useState([]);
   const [order, setOrder] = useState('latest');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchBookmarks = async () => {
       try {
+        setLoading(true);
         const data = await getMyBookmarks();
-        setBookmarks(data);
+
+        const list = Array.isArray(data?.bookmarkedAnswers)
+          ? data.bookmarkedAnswers
+          : [];
+
+        const mapped = list.map((item) => ({
+          id: item.id,
+          title: item.question,
+          subtitle: item.content,
+          userId: item.writerUsername,
+          createdAt: item.createdAt,
+          likeCount: item.likesCount, // 🔁 likes → likeCount
+          commentCount: item.commentsCount,
+          profileImg:
+            profileImageMap[item.writerProfileImageId] || profileImageMap[1],
+        }));
+
+        setBookmarks(mapped);
       } catch (error) {
-        throw error;
+        console.error('북마크 로딩 실패', error);
+        setBookmarks([]);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchBookmarks();
   }, []);
 
-  const sortedBookmarks = [...bookmarks].sort((a, b) => {
+  const sortedBookmarks = useMemo(() => {
+    const copy = [...bookmarks];
     if (order === 'latest') {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    } else if (order === 'popular') {
-      return b.likes - a.likes;
+      return copy.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
-    return 0;
-  });
+    if (order === 'popular') {
+      return copy.sort((a, b) => (b.likeCount ?? 0) - (a.likeCount ?? 0));
+    }
+    return copy;
+  }, [bookmarks, order]);
 
   return (
     <Wrapper>
@@ -39,11 +64,17 @@ function BookmarkPage() {
           인기순
         </PopularityButton>
       </OrderWrapper>
-      <ArticleWrapper>
-        {sortedBookmarks.map((item) => (
-          <Article key={item.id} data={item} />
-        ))}
-      </ArticleWrapper>
+      {loading ? (
+        <Empty>불러오는 중…</Empty>
+      ) : sortedBookmarks.length === 0 ? (
+        <Empty>북마크가 없습니다.</Empty>
+      ) : (
+        <ArticleWrapper>
+          {sortedBookmarks.map((item) => (
+            <Article key={item.id} data={item} />
+          ))}
+        </ArticleWrapper>
+      )}
     </Wrapper>
   );
 }
@@ -87,4 +118,10 @@ const ArticleWrapper = styled.div`
   flex-direction: column;
   gap: 14px;
   margin: 0 20px 0 20px;
+`;
+
+const Empty = styled.div`
+  margin: 20px;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.brown2};
 `;

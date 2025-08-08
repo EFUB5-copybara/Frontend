@@ -6,7 +6,9 @@ import ProfileModal from '../components/ProfileModal';
 import { getMyInfo } from '../api/mypage';
 import { useNavigate } from 'react-router-dom';
 import { updateMemberInfo } from '../api/mypage';
-import profile1Img from '../assets/profile1.svg';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+import { profileImageMap } from '@/assets/profileImages';
 
 function MyInfoPage() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -31,19 +33,53 @@ function MyInfoPage() {
     if (trimmed === '') return;
 
     try {
-      const result = await updateMemberInfo(trimmed);
+      const result = await updateMemberInfo({ nickname: trimmed }); // <= 변경
 
-      if (result?.updatedFields?.nickname) {
-        setMyInfo((prev) => ({
-          ...prev,
-          nickname: result.updatedFields.nickname,
-        }));
-      }
+      const nextNickname =
+        result?.updatedFields?.nickname ?? result?.nickname ?? trimmed;
+
+      setMyInfo((prev) => ({
+        ...prev,
+        nickname: nextNickname,
+      }));
+
+      window.dispatchEvent(
+        new CustomEvent('profile:updated', {
+          detail: { nickname: nextNickname },
+        })
+      );
 
       setIsEditingNickname(false);
     } catch (error) {
       console.error('닉네임 수정 실패:', error);
       alert('닉네임 수정에 실패했습니다.');
+    }
+  };
+
+  const handleProfileSelect = async (profileImageId) => {
+    try {
+      const result = await updateMemberInfo({ profileImageId });
+
+      const nextProfileId =
+        result?.updatedFields?.profileImageId ??
+        result?.profileImageId ??
+        profileImageId; // fallback
+
+      setMyInfo((prev) => ({
+        ...prev,
+        profileImageId: nextProfileId,
+      }));
+
+      window.dispatchEvent(
+        new CustomEvent('profile:updated', {
+          detail: { profileImageId: nextProfileId },
+        })
+      );
+
+      setIsProfileOpen(false);
+    } catch (e) {
+      console.error('프로필 이미지 변경 실패:', e);
+      alert('프로필 이미지를 변경하지 못했습니다.');
     }
   };
 
@@ -72,7 +108,12 @@ function MyInfoPage() {
       <MyPageTopBar title='내 정보' />
       <Container>
         <UserInfo>
-          <Profile onClick={() => setIsProfileOpen(true)} />
+          <Profile
+            as='img'
+            src={profileImageMap[myInfo?.profileImageId] || profileImageMap[1]}
+            alt='프로필'
+            onClick={() => setIsProfileOpen(true)}
+          />
           <UserInfoWrapper>
             <NameWrapper>
               <EditButton onClick={handleEditClick}>
@@ -103,9 +144,10 @@ function MyInfoPage() {
           <InfoDetail>
             <DetailTitle>가입일</DetailTitle>
             <DetailContent>
-              {' '}
               {myInfo?.createdAt
-                ? new Date(myInfo.createdAt).toLocaleDateString('ko-KR')
+                ? format(new Date(myInfo.createdAt), 'yyyy년 MM월 dd일', {
+                    locale: ko,
+                  })
                 : '가입일 없음'}
             </DetailContent>
           </InfoDetail>
@@ -121,7 +163,7 @@ function MyInfoPage() {
       {isProfileOpen && (
         <ProfileModal
           onClose={() => setIsProfileOpen(false)}
-          onSelectProfile={(index) => setSelectedProfileIndex(index)}
+          onSelectProfile={handleProfileSelect} // <= 여기만 바꾸면 끝
         />
       )}
     </Wrapper>
@@ -160,8 +202,8 @@ const Profile = styled.button`
   width: 89px;
   height: 89px;
   border-radius: 100px;
-  border: 1px solid ${({ theme }) => theme.colors.brown2};
-  background-color: ${({ theme }) => theme.colors.brown3};
+  border: none;
+  background-color: transparent;
 `;
 
 const UserInfoWrapper = styled.div`

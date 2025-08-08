@@ -9,16 +9,16 @@ import profile6Img from '../assets/profile6.svg';
 
 function ProfileModal({ onClose, onSelectProfile }) {
   const profileImages = [
-    profile1Img,
-    profile2Img,
-    profile3Img,
-    profile4Img,
-    profile5Img,
-    profile6Img,
+    { id: 1, src: profile1Img },
+    { id: 2, src: profile2Img },
+    { id: 3, src: profile3Img },
+    { id: 4, src: profile4Img },
+    { id: 5, src: profile5Img },
+    { id: 6, src: profile6Img },
   ];
 
   const handleProfileClick = (index) => {
-    onSelectProfile(index);
+    onSelectProfile(index.id);
     onClose();
   };
 
@@ -28,11 +28,11 @@ function ProfileModal({ onClose, onSelectProfile }) {
       <ModalContainer>
         <Text>프로필 사진 변경</Text>
         <ProfileWrapper>
-          {Array.from({ length: 6 }).map((_, idx) => (
+          {profileImages.map((image) => (
             <ProfileImg
-              key={idx}
-              $img={profileImages[idx % profileImages.length]}
-              onClick={() => handleProfileClick(idx)}
+              key={image.id}
+              $img={image.src}
+              onClick={() => handleProfileClick(image)}
             />
           ))}
         </ProfileWrapper>
