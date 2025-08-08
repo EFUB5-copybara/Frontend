@@ -167,6 +167,7 @@ function WritePage() {
                 ? 'loading'
                 : 'success'
             }
+            fontId={Number(localStorage.getItem('fontId')) || -1}
           />
 
           {hintActive && (

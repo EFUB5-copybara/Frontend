@@ -117,7 +117,7 @@ const theme = {
       font-weight: 500;
       font-style: normal;
     `,
-    museoModerno: css`
+    museomoderno: css`
       font-family: 'museomoderno', sans-serif;
       font-weight: 500;
       font-style: normal;

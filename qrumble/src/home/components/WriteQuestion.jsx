@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { fontStyleMap } from '@/mypage/components/fontMap';
 
-function WriteQuestion({ question, status }) {
+function WriteQuestion({ question, status, fontId: fontIdProp }) {
   let displayText;
 
   if (status === 'loading') {
@@ -12,9 +13,23 @@ function WriteQuestion({ question, status }) {
     displayText = `${question}`;
   }
 
+  const [fontId, setFontId] = useState(-1);
+
+  useEffect(() => {
+    // 우선순위: prop > localStorage > -1
+    const saved = Number(localStorage.getItem('fontId'));
+    const resolved =
+      typeof fontIdProp === 'number'
+        ? fontIdProp
+        : Number.isFinite(saved)
+        ? saved
+        : -1;
+    setFontId(resolved);
+  }, [fontIdProp]);
+
   return (
     <Container>
-      <Question>{displayText}</Question>
+      <Question $fontId={fontId}>{displayText}</Question>
     </Container>
   );
 }
@@ -31,6 +46,9 @@ const Container = styled.div`
 `;
 
 const Question = styled.div`
-  ${({ theme }) => theme.fonts.nd18SB};
+  // ${({ theme }) => theme.fonts.nd18SB};
+  ${({ $fontId = -1, theme }) =>
+    (fontStyleMap[$fontId] || fontStyleMap[-1])({ theme })}
+  font-size: 18px;
   color: ${({ theme }) => theme.colors.black};
 `;

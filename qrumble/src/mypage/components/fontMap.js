@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import { css } from 'styled-components';
 
 export const fontImageMap = {
-  '-1': null, // 기본 폰트
+  [-1]: null, // 기본 폰트
   1: font1Img,
   2: font2Img,
   3: font3Img,
@@ -19,7 +19,7 @@ export const fontImageMap = {
 };
 
 export const fontImageExMap = {
-  '-1': null, // 기본 폰트
+  [-1]: null, // 기본 폰트
   1: font1exImg,
   2: font2exImg,
   3: font3exImg,
@@ -32,7 +32,7 @@ export const fontStyleMap = {
       Arial, sans-serif;
   `,
   1: ({ theme }) => theme.fonts.como,
-  2: ({ theme }) => theme.fonts.museoModerno,
+  2: ({ theme }) => theme.fonts.museomoderno,
   3: ({ theme }) => theme.fonts['the-seasons'],
   4: ({ theme }) => theme.fonts.tangier,
 };
