@@ -27,15 +27,15 @@ export default function PaperModal({
           
           console.log(`종이 ${paper.id} 상세 조회 결과:`, {
             name: paper.name,
-            apiOwned: res.isOwned
+            apiOwned: res.owned
           });
           
           setDetail({
             ...res,
-            isOwned: res.isOwned
+            owned: res.owned
           });
           
-          if (res.isOwned && !paper.owned && updateOwnership) {
+          if (res.owned && !paper.owned && updateOwnership) {
             updateOwnership('paper', paper.id, true);
           }
         }
@@ -45,7 +45,7 @@ export default function PaperModal({
         if (paper) {
           setDetail({
             ...paper,
-            isOwned: paper.owned
+            owned: paper.owned
           });
         } else {
           setDetail(null);
@@ -101,16 +101,16 @@ export default function PaperModal({
             </ItemText>
             <Points>{detail.price}P</Points>
             <BuyButton
-              disabled={detail.isOwned || insufficient}
-              $owned={detail.isOwned}
+              disabled={detail.owned || insufficient}
+              $owned={detail.owned}
               $insufficient={insufficient}
               onClick={() => {
-                if (!detail.isOwned && !insufficient) onBuy(currentIndex);
+                if (!detail.owned && !insufficient) onBuy(currentIndex);
               }}
             >
-              {detail.isOwned ? "보유함" : "구매하기"}
+              {detail.owned ? "보유함" : "구매하기"}
             </BuyButton>
-            {insufficient && !detail.isOwned && (
+            {insufficient && !detail.owned && (
               <Message>포인트가 부족합니다</Message>
             )}
           </ModalContainer>

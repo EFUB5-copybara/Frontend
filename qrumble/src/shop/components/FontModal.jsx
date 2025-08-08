@@ -24,15 +24,15 @@ export default function FontModal({
           
           console.log(`폰트 ${font.id} 상세 조회 결과:`, {
             name: font.name,
-            apiOwned: res.isOwned
+            apiOwned: res.owned
           });
           
           setDetail({
             ...res,
-            isOwned: res.isOwned
+            owned: res.owned
           });
           
-          if (res.isOwned && !font.owned && updateOwnership) {
+          if (res.owned && !font.owned && updateOwnership) {
             updateOwnership('font', font.id, true);
           }
         }
@@ -42,7 +42,7 @@ export default function FontModal({
         if (font) {
           setDetail({
             ...font,
-            isOwned: font.owned
+            owned: font.owned
           });
         } else {
           setDetail(null);
@@ -80,16 +80,16 @@ export default function FontModal({
             </ItemText>
             <Points>{detail.price}P</Points>
             <BuyButton
-              disabled={detail.isOwned || insufficient}
-              $owned={detail.isOwned}
+              disabled={detail.owned || insufficient}
+              $owned={detail.owned}
               $insufficient={insufficient}
               onClick={() => {
-                if (!detail.isOwned && !insufficient) onBuy(currentIndex);
+                if (!detail.owned && !insufficient) onBuy(currentIndex);
               }}
             >
-              {detail.isOwned ? "보유함" : "구매하기"}
+              {detail.owned ? "보유함" : "구매하기"}
             </BuyButton>
-            {insufficient && !detail.isOwned && (
+            {insufficient && !detail.owned && (
               <Message>포인트가 부족합니다</Message>
             )}
           </ModalContainer>

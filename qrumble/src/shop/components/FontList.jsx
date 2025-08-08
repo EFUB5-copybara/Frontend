@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 
 export default function FontList({ fonts, onCardClick }) {
+  console.log('FontList 렌더링, fonts:', fonts);
+  
   return (
     <FontGrid>
       {fonts.map((font, idx) => (
         <Item 
-          key={font.id} 
-          onClick={() => onCardClick(idx)}
+          key={`${font.id}-${font.owned ? 'owned' : 'notowned'}`}
           $owned={font.owned}
         >
           <FontImg $owned={font.owned}>

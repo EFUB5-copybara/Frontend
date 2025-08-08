@@ -57,13 +57,19 @@ export default function ShopPage() {
     } else if (activeTab === 'font') {
       getFontsList()
         .then(res => {
-          const formattedFonts = Array.isArray(res) ? res.map(font => ({
-            id: font.id,
-            name: font.name,
-            desc: font.description,
-            price: font.price,
-            owned: font.isOwned === true
-          })) : [];
+          const formattedFonts = Array.isArray(res) ? res.map(font => {
+            // 로컬 저장소에서 소유 상태 확인
+            const ownedFonts = JSON.parse(localStorage.getItem('ownedFonts') || '{}');
+            const locallyOwned = !!ownedFonts[font.id];
+            
+            return {
+              id: font.id,
+              name: font.name,
+              desc: font.description,
+              price: font.price,
+              owned: font.isOwned === true || locallyOwned
+            };
+          }) : [];
           setFonts(formattedFonts);
         })
         .catch(error => console.error('폰트 로딩 실패:', error))
@@ -71,13 +77,19 @@ export default function ShopPage() {
     } else if (activeTab === 'paper') {
       getPapersList()
         .then(res => {
-          const formattedPapers = Array.isArray(res) ? res.map(paper => ({
-            id: paper.id,
-            name: paper.name,
-            desc: paper.description,
-            price: paper.price,
-            owned: paper.isOwned === true
-          })) : [];
+          const formattedPapers = Array.isArray(res) ? res.map(paper => {
+            // 로컬 저장소에서 소유 상태 확인
+            const ownedPapers = JSON.parse(localStorage.getItem('ownedPapers') || '{}');
+            const locallyOwned = !!ownedPapers[paper.id];
+            
+            return {
+              id: paper.id,
+              name: paper.name,
+              desc: paper.description,
+              price: paper.price,
+              owned: paper.isOwned === true || locallyOwned
+            };
+          }) : [];
           setPapers(formattedPapers);
         })
         .catch(error => console.error('종이 로딩 실패:', error))
@@ -241,7 +253,8 @@ export default function ShopPage() {
     const item = currentItems[idx];
 
     if (!item) return;
-  
+
+    // 이미 소유 중인지 다시 확인
     if (item.owned) {
       alert('이미 구매완료하였습니다.');
       return;
@@ -272,6 +285,17 @@ export default function ShopPage() {
             
             const result = await apiFunction(item.id);
             console.log(`${itemType} 구매 결과:`, result);
+            
+            // 로컬 저장소에 소유 상태 저장
+            if (activeTab === 'font') {
+              const ownedFonts = JSON.parse(localStorage.getItem('ownedFonts') || '{}');
+              ownedFonts[item.id] = true;
+              localStorage.setItem('ownedFonts', JSON.stringify(ownedFonts));
+            } else {
+              const ownedPapers = JSON.parse(localStorage.getItem('ownedPapers') || '{}');
+              ownedPapers[item.id] = true;
+              localStorage.setItem('ownedPapers', JSON.stringify(ownedPapers));
+            }
             
             if (result.alreadyOwned || result.forceOwned) {
               if (activeTab === 'paper') {

@@ -17,7 +17,7 @@ export default function PaperList({ papers, onCardClick }) {
         const PaperSvg = paperImgMap[paper.id];
         return (
           <Item
-            key={paper.id}
+            key={`${paper.id}-${paper.owned ? 'owned' : 'notowned'}`}
             onClick={() => onCardClick(idx)}
             $owned={paper.owned}
           >
