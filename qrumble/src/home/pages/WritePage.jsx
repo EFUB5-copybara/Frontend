@@ -43,7 +43,6 @@ function WritePage() {
 
   const handleReplacementSelect = (replacement) => {
     const { offset, length } = popupInfo;
-    const originalFragment = text.slice(offset, offset + length);
     const newText =
       text.slice(0, offset) + replacement + text.slice(offset + length);
     setText(newText);

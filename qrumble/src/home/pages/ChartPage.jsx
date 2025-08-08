@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ShareModal from '../components/ShareModal';
 import arrowbackImg from '../assets/svgs/arrow_back.svg';
-import thumbsupImg from '../assets/svgs/thumbsup.svg';
-import eyeImg from '../assets/svgs/eye.svg';
-import commentImg from '../assets/svgs/comments.svg';
-import shareImg from '../assets/svgs/share.svg';
+// import thumbsupImg from '../assets/svgs/thumbsup.svg';
+// import eyeImg from '../assets/svgs/eye.svg';
+// import commentImg from '../assets/svgs/comments.svg';
+// import shareImg from '../assets/svgs/share.svg';
 import background1Img from '../assets/svgs/background1.svg';
 import background2Img from '../assets/svgs/background2.svg';
 import background3Img from '../assets/svgs/background3.svg';
@@ -21,9 +21,9 @@ function ChartPage() {
 
   const { mode, answer: viewerAnswer, date: viewerDate } = location.state || {};
 
-  const handleShareClick = () => {
-    setIsShareOpen(true);
-  };
+  //   const handleShareClick = () => {
+  //     setIsShareOpen(true);
+  //   };
 
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');

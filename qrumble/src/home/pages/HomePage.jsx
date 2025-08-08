@@ -10,12 +10,7 @@ import MonthPickerModal from '../components/MonthPickerModal';
 import QuestionList from '../components/QuestionList';
 import DailyPanel from '../components/DailyPanel';
 import WriteFixButton from '../components/WriteFixButton';
-import {
-  getDailyQuestion,
-  getMonthlyAnswer,
-  getCookiesNumber,
-  getTodayQuestion,
-} from '../api/homepage';
+import { getMonthlyAnswer } from '../api/homepage';
 import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 import { format, parseISO } from 'date-fns';
 

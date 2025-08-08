@@ -157,7 +157,8 @@ function DailyPanel({ date, onClose }) {
               const isFuture = new Date(year, month - 1, day) > today;
               const isPast = !isFuture && !isToday;
 
-              const isCookie = isPast && attendedDates.includes(day);
+              const isCookie =
+                (isPast || isToday) && attendedDates.includes(day);
               const isMissed = isPast && !attendedDates.includes(day);
 
               return (
