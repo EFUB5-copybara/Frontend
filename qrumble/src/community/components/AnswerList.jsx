@@ -1,52 +1,6 @@
-// src/community/components/AnswerList.jsx
 import AnswerCard from '@/home/components/AnswerCard';
 import React from 'react';
 import styled from 'styled-components';
-
-/* const dummyAnswers = [
-  {
-    id: 1,
-    title: 'name',
-    subtitle: 'about a diary in english...',
-    userId: '아이디',
-  },
-  {
-    id: 2,
-    title: 'name',
-    subtitle: 'about a diary in english...',
-    userId: '아이디',
-  },
-  {
-    id: 3,
-    title: 'name',
-    subtitle: 'about a diary in english...',
-    userId: '아이디',
-  },
-  {
-    id: 4,
-    title: 'name',
-    subtitle: 'about a diary in english...',
-    userId: '아이디',
-  },
-  {
-    id: 5,
-    title: 'name',
-    subtitle: 'about a diary in english...',
-    userId: '아이디',
-  },
-  {
-    id: 6,
-    title: 'name',
-    subtitle: 'about a diary in english...',
-    userId: '아이디',
-  },
-  {
-    id: 7,
-    title: 'name',
-    subtitle: 'about a diary in english...',
-    userId: '아이디',
-  },
-]; */
 
 export default function AnswerList({ answers, ranked = false }) {
   return (
