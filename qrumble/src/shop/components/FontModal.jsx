@@ -68,8 +68,8 @@ export default function FontModal({
 
   return (
     <Overlay onClick={onClose}>
-      <ModalWrap onClick={(e) => e.stopPropagation()}>
-        <SwipeContainer>
+      <ModalWrap onClick={e => e.stopPropagation()}>
+        <SwipeContainer $currentIndex={currentIndex} $deltaX={0} $isSwiping={false}>
           <ModalContainer>
             <PreviewBox>
               <FontPreview $fontName={detail.name}>{detail.name}</FontPreview>

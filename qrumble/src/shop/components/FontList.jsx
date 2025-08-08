@@ -8,6 +8,7 @@ export default function FontList({ fonts, onCardClick }) {
       {fonts.map((font, idx) => (
         <Item 
           key={`${font.id}-${font.owned ? 'owned' : 'notowned'}`}
+          onClick={() => onCardClick(idx)}
           $owned={font.owned}
         >
           <FontImg $owned={font.owned}>
@@ -15,7 +16,7 @@ export default function FontList({ fonts, onCardClick }) {
             {font.owned && <OwnedOverlay>보유중</OwnedOverlay>}
           </FontImg>
           <ItemNameRow>
-            <ItemName>{font.name}</ItemName>
+            <ItemName $owned={font.owned}>{font.name}</ItemName>
             <ItemPrice $owned={font.owned}>
               {font.owned ? '보유함' : `${font.price}P`}
             </ItemPrice>
@@ -121,7 +122,8 @@ const ItemNameRow = styled.div`
 
 const ItemName = styled.div`
   ${({ theme }) => theme.fonts.c14M};
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ $owned, theme }) => 
+    $owned ? theme.colors.green : theme.colors.primary};
   font-size: 16px;
   font-weight: 700;
   font-family: Pretendard, sans-serif;
