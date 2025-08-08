@@ -36,10 +36,8 @@ export const purchaseItem = async (itemId) => {
 };
 
 // 폰트
-// 폰트 목록 조회 시 캐시 방지 및 타임스탬프 추가
 export const getFontsList = async () => {
   try {
-    // 확실한 캐시 방지를 위한 타임스탬프 및 헤더 추가
     const timestamp = new Date().getTime();
     const response = await axiosInstance.get(`/shops/fonts?_t=${timestamp}`, {
       headers: { 
@@ -49,15 +47,13 @@ export const getFontsList = async () => {
       }
     });
     
-    // 데이터 변환 및 소유 상태 명확하게 처리
     const data = response.data;
     if (Array.isArray(data)) {
-      // 각 폰트의 소유 상태를 명확하게 boolean으로 변환
       const processedData = data.map(item => {
         if (item) {
           return {
             ...item,
-            isOwned: item.isOwned === true
+            owned: item.owned === true
           };
         }
         return item;
@@ -92,8 +88,8 @@ export const getFontsDetail = async (fontId) => {
     const data = response.data;
     // boolean으로 명확하게 변환하고 로그 추가
     if (data) {
-      data.isOwned = data.isOwned === true;
-      console.log(`폰트 ${fontId} 소유 상태 (API 응답):`, data.isOwned);
+      data.owned = data.owned === true;
+      console.log(`폰트 ${fontId} 소유 상태 (API 응답):`, data.owned);
     }
     
     return data;
@@ -115,7 +111,6 @@ export const purchaseFont = async (fontId) => {
     });
     
     console.log('폰트 구매 API 응답:', response.data);
-    // 성공적으로 구매 완료된 경우 소유 상태를 true로 표시
     return { ...response.data, forceOwned: true };
   } catch (error) {
     console.error('폰트 구매 실패:', error);
@@ -135,7 +130,6 @@ export const purchaseFont = async (fontId) => {
 // 종이
 export const getPapersList = async () => {
   try {
-    // 확실한 캐시 방지를 위한 타임스탬프 및 헤더 추가
     const timestamp = new Date().getTime();
     const response = await axiosInstance.get(`/shops/papers?_t=${timestamp}`, {
       headers: { 
@@ -145,15 +139,13 @@ export const getPapersList = async () => {
       }
     });
     
-    // 데이터 변환 및 소유 상태 명확하게 처리
     const data = response.data;
     if (Array.isArray(data)) {
-      // 각 종이의 소유 상태를 명확하게 boolean으로 변환
       const processedData = data.map(item => {
         if (item) {
           return {
             ...item,
-            isOwned: item.isOwned === true
+            owned: item.owned === true
           };
         }
         return item;
@@ -184,8 +176,8 @@ export const getPapersDetail = async (paperId) => {
     
     const data = response.data;
     if (data) {
-      data.isOwned = data.isOwned === true;
-      console.log(`종이 ${paperId} 소유 상태 (API 응답):`, data.isOwned);
+      data.owned = data.owned === true;
+      console.log(`종이 ${paperId} 소유 상태 (API 응답):`, data.owned);
     }
     
     return data;
