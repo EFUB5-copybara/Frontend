@@ -13,7 +13,7 @@ export default function FontModal({
 }) {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [showPurchaseSuccess, setShowPurchaseSuccess] = useState(false);
   useEffect(() => {
     const fetchDetail = async () => {
       setLoading(true);
@@ -29,7 +29,7 @@ export default function FontModal({
           
           setDetail({
             ...res,
-            owned: res.owned
+            owned: res.owned || font.owned
           });
           
           if (res.owned && !font.owned && updateOwnership) {
@@ -53,6 +53,22 @@ export default function FontModal({
     };
     fetchDetail();
   }, [currentIndex, fonts, updateOwnership]);
+
+
+  const handleBuy = (index) => {
+    onBuy(index);
+    setShowPurchaseSuccess(true);
+    setTimeout(() => {
+      setShowPurchaseSuccess(false);
+    }, 3000);
+    
+    if (detail) {
+      setDetail({
+        ...detail,
+        owned: true
+      });
+    }
+  };
 
   if (loading || !detail) {
     return (
@@ -84,13 +100,20 @@ export default function FontModal({
               $owned={detail.owned}
               $insufficient={insufficient}
               onClick={() => {
-                if (!detail.owned && !insufficient) onBuy(currentIndex);
+                if (!detail.owned && !insufficient) handleBuy(currentIndex);
               }}
             >
               {detail.owned ? "보유함" : "구매하기"}
             </BuyButton>
             {insufficient && !detail.owned && (
               <Message>포인트가 부족합니다</Message>
+            )}
+            
+            {/* 구매 성공 팝업 */}
+            {showPurchaseSuccess && (
+              <SuccessPopup>
+                구매가 완료되었습니다!
+              </SuccessPopup>
             )}
           </ModalContainer>
         </SwipeContainer>
@@ -271,4 +294,19 @@ const QuantityText = styled.div`
   margin-top: 8px;
   font-size: 14px;
   color: ${({ theme }) => theme.colors.brown2};
+`;
+
+// 구매 성공 팝업 스타일 추가
+const SuccessPopup = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: ${({ theme }) => theme.fonts.b16B};
+  color: ${({ theme }) => theme.colors.green};
+  z-index: 110;
 `;

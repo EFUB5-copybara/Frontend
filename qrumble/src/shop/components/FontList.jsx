@@ -75,6 +75,7 @@ const FontImg = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  opacity: ${({ $owned }) => ($owned ? 0.6 : 1)}; // 보유 상태일 때 반투명하게
 `;
 
 const FontText = styled.div`

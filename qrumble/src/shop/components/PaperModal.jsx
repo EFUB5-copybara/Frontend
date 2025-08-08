@@ -16,6 +16,7 @@ export default function PaperModal({
 }) {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showPurchaseSuccess, setShowPurchaseSuccess] = useState(false); // 구매 성공 팝업 상태 추가
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -69,10 +70,26 @@ export default function PaperModal({
 
   const insufficient = userPoint < detail.price;
 
+  const handleBuy = (index) => {
+    onBuy(index);
+    setShowPurchaseSuccess(true);
+    
+    setTimeout(() => {
+      setShowPurchaseSuccess(false);
+    }, 3000);
+    
+    if (detail) {
+      setDetail({
+        ...detail,
+        owned: true
+      });
+    }
+  };
+
   return (
     <Overlay onClick={onClose}>
       <ModalWrap onClick={e => e.stopPropagation()}>
-        <SwipeContainer>
+        <SwipeContainer $currentIndex={currentIndex} $deltaX={0} $isSwiping={false}>
           <ModalContainer>
             <PreviewBox>
               {detail.img && (
@@ -105,13 +122,19 @@ export default function PaperModal({
               $owned={detail.owned}
               $insufficient={insufficient}
               onClick={() => {
-                if (!detail.owned && !insufficient) onBuy(currentIndex);
+                if (!detail.owned && !insufficient) handleBuy(currentIndex);
               }}
             >
               {detail.owned ? "보유함" : "구매하기"}
             </BuyButton>
             {insufficient && !detail.owned && (
               <Message>포인트가 부족합니다</Message>
+            )}
+            
+            {showPurchaseSuccess && (
+              <SuccessPopup>
+                구매가 완료되었습니다!
+              </SuccessPopup>
             )}
           </ModalContainer>
         </SwipeContainer>
@@ -308,4 +331,18 @@ const SvgWrapper = styled.div`
     width: 100%;
     height: 100%;
   }
+`;
+
+const SuccessPopup = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: ${({ theme }) => theme.fonts.b16B};
+  color: ${({ theme }) => theme.colors.green};
+  z-index: 110;
 `;
