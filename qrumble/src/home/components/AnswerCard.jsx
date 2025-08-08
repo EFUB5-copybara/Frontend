@@ -26,9 +26,10 @@ export default function AnswerCard({
     <Wrapper onClick={handleClick} $hasRank={!!rank}>
       {rank && <Rank>{rank}</Rank>}
       <Content>
-        <AnswerTitle>
-          {title} <span>{subtitle}</span>
-        </AnswerTitle>
+        <AnswerContentWrapper>
+          <Title>{title}</Title>
+          <Subtitle>{subtitle}</Subtitle>
+        </AnswerContentWrapper>
         <Meta>
           <AnswerId>
             <AnswerIdImg src={userImg} alt='user' />
@@ -56,7 +57,7 @@ const Wrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: ${({ $hasRank }) =>
-    $hasRank ? '10px 10px 0 20px' : '10px 10px 0 10px'};
+    $hasRank ? '10px 28px 0 20px' : '10px 10px 0 10px'};
   height: 104px;
   border: 1px solid ${({ theme }) => theme.colors.brown1};
   border-radius: 10px;
@@ -73,24 +74,35 @@ const Rank = styled.div`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100%;
-  flex-grow: 1;
 `;
 
-const AnswerTitle = styled.div`
+const AnswerContentWrapper = styled.div`
   display: flex;
-  flex-grow: 1;
   flex-direction: column;
   border-radius: 10px;
-  height: 52px;
+  width: 100%;
+  height: 3.25rem;
   ${({ theme }) => theme.fonts.b16B};
   background-color: ${({ theme }) => theme.colors.ivory2};
   color: ${({ theme }) => theme.colors.primary};
   padding: 3px 9px 9px 8px;
+`;
+const Title = styled.p`
+  ${({ theme }) => theme.fonts.b16B};
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
-  span {
-    ${({ theme }) => theme.fonts.c12L};
-  }
+const Subtitle = styled.p`
+  ${({ theme }) => theme.fonts.c12L};
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Meta = styled.div`
