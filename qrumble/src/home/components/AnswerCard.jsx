@@ -23,8 +23,10 @@ export default function AnswerCard({
     navigate(`/community/${postId}`);
   };
 
+  console.log('profileImageId', profileImageId);
   const profile = PROFILE_IMAGES.find((p) => p.id === profileImageId);
-  const ProfileIcon = profile.Component;
+  console.log('profile', profile);
+  const ProfileIcon = profile ? profile.Component : ProfileIc;
 
   return (
     <Wrapper onClick={handleClick} $hasRank={!!rank}>

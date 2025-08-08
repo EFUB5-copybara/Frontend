@@ -16,6 +16,7 @@ export default function AnswerList({ answers, ranked = false }) {
           bookmarkCount={answer.bookmarkCount}
           commentCount={answer.commentCount}
           likeCount={answer.likeCount}
+          profileImageId={answer.profileImageId}
         />
       ))}
     </ListWrapper>
