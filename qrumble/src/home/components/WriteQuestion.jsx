@@ -46,9 +46,10 @@ const Container = styled.div`
 `;
 
 const Question = styled.div`
-  // ${({ theme }) => theme.fonts.nd18SB};
   ${({ $fontId = -1, theme }) =>
-    (fontStyleMap[$fontId] || fontStyleMap[-1])({ theme })}
+    $fontId === -1
+      ? theme.fonts.nd18SB
+      : (fontStyleMap[$fontId] || fontStyleMap[-1])({ theme })}
   font-size: 18px;
   color: ${({ theme }) => theme.colors.black};
 `;

@@ -114,21 +114,26 @@ function ThemePage() {
             try {
               if (selectedTab === 'font') {
                 setSelectedFontId(chosen.id);
-                await patchFont(chosen.id);
-                if (chosen.id === -1) {
-                  localStorage.removeItem('fontId'); // 기본이면 저장값 제거
-                } else {
+
+                if (chosen.id !== -1) {
+                  await patchFont(chosen.id);
                   localStorage.setItem('fontId', String(chosen.id));
+                } else {
+                  // 기본 폰트 선택: 서버 호출 없이 로컬만 정리
+                  localStorage.removeItem('fontId');
                 }
+
                 console.log('폰트 적용 성공');
               } else {
                 setSelectedPaperId(chosen.id);
-                await patchPaper(chosen.id);
-                if (chosen.id === -1) {
-                  localStorage.removeItem('paperId'); // 기본이면 저장값 제거
-                } else {
+
+                if (chosen.id !== -1) {
+                  await patchPaper(chosen.id);
                   localStorage.setItem('paperId', String(chosen.id));
+                } else {
+                  localStorage.removeItem('paperId');
                 }
+
                 console.log('종이 적용 성공');
               }
               setModalIndex(null);

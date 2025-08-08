@@ -260,7 +260,9 @@ const TextArea = styled.textarea`
   border: none;
   resize: none;
   ${({ $fontId = -1, theme }) =>
-    (fontStyleMap[$fontId] || fontStyleMap[-1])({ theme })}
+    $fontId === -1
+      ? theme.fonts.ns16M
+      : (fontStyleMap[$fontId] || fontStyleMap[-1])({ theme })}
   font-size: 16px;
   color: ${({ theme }) => theme.colors.black};
   background-color: transparent;
