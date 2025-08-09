@@ -22,10 +22,10 @@ ChartJS.register(
 
 function BarGraph({ data }) {
   const labels = ['일', '월', '화', '수', '목', '금', '토'];
-  
-  // 수요일(index 3)만 다른 색상으로 설정
-  const barColors = data.map((_, index) => 
-    index === 3 ? '#FF5B5B' : '#A97B50'
+
+  // 목요일(index 2)만 다른 색상으로 설정
+  const barColors = data.map((_, index) =>
+    index === 2 ? '#FF5B5B' : '#A97B50'
   );
   
   const chartData = {

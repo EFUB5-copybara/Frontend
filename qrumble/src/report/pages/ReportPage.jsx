@@ -17,12 +17,24 @@ function ReportPage() {
     streak: 16,
     comments: 32,
     posts: [40, 82, 60, 100, 50], // 주차별
-    days: [2, 3, 1, 4, 2, 5, 4], // 요일별
+    days: [2, 3, 1, 4, 1, 5, 3], // 요일별 (일, 월, 화, 수, 목, 금, 토)
+    // 목요일(인덱스 4)을 제일 낮게 설정
   };
+
+  // 바 그래프 색상 데이터 (목요일만 빨간색으로)
+  const barColors = [
+    '#614A36', // 일
+    '#E5D1BE', // 월
+    '#FFF5D9', // 화
+    '#C4A986', // 수
+    '#BE5757', // 목
+    '#614A36', // 금
+    '#E5D1BE'  // 토
+  ];
 
   return (
     <PageWrapper>
-      <Title>00님의 3월 리포트</Title>
+      <Title>카피바라님의 8월 리포트</Title>
       <CardContainer>
         <MedalCard medalType={stats.medal} />
         <CookieCard cookies={stats.cookies} maxCookies={stats.maxCookies} />
@@ -31,7 +43,7 @@ function ReportPage() {
           <LineGraph data={stats.posts} />
         </GraphCard>
         <GraphCard title='요일별 작성률'>
-          <BarGraph data={stats.days} />
+          <BarGraph data={stats.days} colors={barColors} />
         </GraphCard>
       </CardContainer>
     </PageWrapper>
