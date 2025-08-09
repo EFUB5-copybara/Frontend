@@ -14,6 +14,7 @@ export default function FontModal({
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPurchaseSuccess, setShowPurchaseSuccess] = useState(false);
+  
   useEffect(() => {
     const fetchDetail = async () => {
       setLoading(true);
@@ -56,7 +57,15 @@ export default function FontModal({
 
 
   const handleBuy = (index) => {
+    console.log('폰트 구매 시작:', index);
+    
+    if (detail && updateOwnership) {
+      updateOwnership('font', detail.id, true);
+      console.log('폰트 보유 상태 업데이트:', detail.id);
+    }
+    
     onBuy(index);
+    
     setShowPurchaseSuccess(true);
     setTimeout(() => {
       setShowPurchaseSuccess(false);
@@ -109,7 +118,6 @@ export default function FontModal({
               <Message>포인트가 부족합니다</Message>
             )}
             
-            {/* 구매 성공 팝업 */}
             {showPurchaseSuccess && (
               <SuccessPopup>
                 구매가 완료되었습니다!
@@ -296,7 +304,6 @@ const QuantityText = styled.div`
   color: ${({ theme }) => theme.colors.brown2};
 `;
 
-// 구매 성공 팝업 스타일 추가
 const SuccessPopup = styled.div`
   position: absolute;
   top: 50%;
