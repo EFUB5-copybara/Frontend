@@ -1,11 +1,13 @@
 import styled from 'styled-components';
 
 export default function FontList({ fonts, onCardClick }) {
+  console.log('FontList 렌더링, fonts:', fonts);
+  
   return (
     <FontGrid>
       {fonts.map((font, idx) => (
         <Item 
-          key={font.id} 
+          key={`${font.id}-${font.owned ? 'owned' : 'notowned'}`}
           onClick={() => onCardClick(idx)}
           $owned={font.owned}
         >
@@ -14,7 +16,7 @@ export default function FontList({ fonts, onCardClick }) {
             {font.owned && <OwnedOverlay>보유중</OwnedOverlay>}
           </FontImg>
           <ItemNameRow>
-            <ItemName>{font.name}</ItemName>
+            <ItemName $owned={font.owned}>{font.name}</ItemName>
             <ItemPrice $owned={font.owned}>
               {font.owned ? '보유함' : `${font.price}P`}
             </ItemPrice>
@@ -73,6 +75,7 @@ const FontImg = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  opacity: ${({ $owned }) => ($owned ? 0.6 : 1)}; // 보유 상태일 때 반투명하게
 `;
 
 const FontText = styled.div`
@@ -120,7 +123,8 @@ const ItemNameRow = styled.div`
 
 const ItemName = styled.div`
   ${({ theme }) => theme.fonts.c14M};
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ $owned, theme }) => 
+    $owned ? theme.colors.green : theme.colors.primary};
   font-size: 16px;
   font-weight: 700;
   font-family: Pretendard, sans-serif;

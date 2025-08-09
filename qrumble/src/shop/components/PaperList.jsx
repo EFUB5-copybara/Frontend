@@ -17,7 +17,7 @@ export default function PaperList({ papers, onCardClick }) {
         const PaperSvg = paperImgMap[paper.id];
         return (
           <Item
-            key={paper.id}
+            key={`${paper.id}-${paper.owned ? 'owned' : 'notowned'}`}
             onClick={() => onCardClick(idx)}
             $owned={paper.owned}
           >
@@ -48,7 +48,7 @@ export default function PaperList({ papers, onCardClick }) {
               {paper.owned && <OwnedOverlay>보유중</OwnedOverlay>}
             </PaperImg>
             <ItemNameRow>
-              <ItemName>{paper.name}</ItemName>
+              <ItemName $owned={paper.owned}>{paper.name}</ItemName>
               <ItemPrice $owned={paper.owned}>
                 {paper.owned ? '보유함' : `${paper.price}P`}
               </ItemPrice>
@@ -130,7 +130,8 @@ const ItemNameRow = styled.div`
 
 const ItemName = styled.div`
   ${({ theme }) => theme.fonts.c14M};
-  color: ${({ theme }) => theme.colors.primary};
+  color: ${({ $owned, theme }) =>
+    $owned ? theme.colors.green : theme.colors.primary};
   font-size: 16px;
   font-weight: 700;
   font-family: Pretendard, sans-serif;
