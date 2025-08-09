@@ -122,7 +122,6 @@ function ThemePage() {
                   // 기본 폰트 선택: 서버 호출 없이 로컬만 정리
                   localStorage.removeItem('fontId');
                 }
-
                 console.log('폰트 적용 성공');
               } else {
                 setSelectedPaperId(chosen.id);
@@ -133,7 +132,6 @@ function ThemePage() {
                 } else {
                   localStorage.removeItem('paperId');
                 }
-
                 console.log('종이 적용 성공');
               }
               setModalIndex(null);

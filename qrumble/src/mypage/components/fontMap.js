@@ -6,8 +6,6 @@ import font1exImg from '../assets/fontComoex.svg';
 import font2exImg from '../assets/fontMMex.svg';
 import font3exImg from '../assets/fontTheSeasonsex.svg';
 import font4exImg from '../assets/fontTangierex.svg';
-import React from 'react';
-import styled from 'styled-components';
 import { css } from 'styled-components';
 
 export const fontImageMap = {
