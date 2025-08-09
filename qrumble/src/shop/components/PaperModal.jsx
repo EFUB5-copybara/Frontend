@@ -92,23 +92,23 @@ export default function PaperModal({
         <SwipeContainer $currentIndex={currentIndex} $deltaX={0} $isSwiping={false}>
           <ModalContainer>
             <PreviewBox>
-              {detail.img && (
+              {detail.img ? (
                 <img
                   src={detail.img}
                   alt={detail.name}
                   style={{
                     width: '100%',
                     height: '100%',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
+                    objectFit: 'fill',
+                    borderRadius: '0',
+                    display: 'block'
                   }}
                 />
-              )}
-              {!detail.img && detail.id && (
+              ) : detail.id && (
                 <SvgWrapper>
-                  {detail.id === 1 && <BlueImg style={{ borderRadius: '8px' }} />}
-                  {detail.id === 2 && <GreenImg style={{ borderRadius: '8px' }} />}
-                  {detail.id === 3 && <PinkImg style={{ borderRadius: '8px' }} />}
+                  {detail.id === 1 && <BlueImg />}
+                  {detail.id === 2 && <GreenImg />}
+                  {detail.id === 3 && <PinkImg />}
                 </SvgWrapper>
               )}
             </PreviewBox>
@@ -195,7 +195,7 @@ const PreviewBox = styled.div`
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 7.8px 10px 7.8px 10px;
+  padding: 0; // 패딩 제거
 `;
 
 const FontPreview = styled.div`
@@ -320,16 +320,17 @@ const QuantityText = styled.div`
 const SvgWrapper = styled.div`
   width: 100%;
   height: 100%;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
   background: #fff;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: stretch;
 
   & > svg {
     width: 100%;
     height: 100%;
+    display: block;
   }
 `;
 
