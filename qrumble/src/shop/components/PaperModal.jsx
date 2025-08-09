@@ -16,7 +16,7 @@ export default function PaperModal({
 }) {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showPurchaseSuccess, setShowPurchaseSuccess] = useState(false); // 구매 성공 팝업 상태 추가
+  const [showPurchaseSuccess, setShowPurchaseSuccess] = useState(false);
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -83,6 +83,10 @@ export default function PaperModal({
         ...detail,
         owned: true
       });
+      
+      if (updateOwnership) {
+        updateOwnership('paper', detail.id, true);
+      }
     }
   };
 

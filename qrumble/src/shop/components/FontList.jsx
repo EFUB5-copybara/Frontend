@@ -3,12 +3,17 @@ import styled from 'styled-components';
 export default function FontList({ fonts, onCardClick }) {
   console.log('FontList 렌더링, fonts:', fonts);
   
+  const handleClick = (idx) => {
+    console.log('FontList 아이템 클릭:', idx);
+    onCardClick(idx);
+  };
+  
   return (
     <FontGrid>
       {fonts.map((font, idx) => (
         <Item 
           key={`${font.id}-${font.owned ? 'owned' : 'notowned'}`}
-          onClick={() => onCardClick(idx)}
+          onClick={() => handleClick(idx)}
           $owned={font.owned}
         >
           <FontImg $owned={font.owned}>
@@ -75,7 +80,7 @@ const FontImg = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  opacity: ${({ $owned }) => ($owned ? 0.6 : 1)}; // 보유 상태일 때 반투명하게
+  opacity: ${({ $owned }) => ($owned ? 0.6 : 1)};
 `;
 
 const FontText = styled.div`

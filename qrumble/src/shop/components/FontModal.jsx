@@ -56,7 +56,14 @@ export default function FontModal({
 
 
   const handleBuy = (index) => {
+    console.log('FontModal에서 구매 진행:', index);
+    
+    if (detail && updateOwnership) {
+      updateOwnership('font', detail.id, true);
+    }
+    
     onBuy(index);
+    
     setShowPurchaseSuccess(true);
     setTimeout(() => {
       setShowPurchaseSuccess(false);
