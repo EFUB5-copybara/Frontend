@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import alarmonImg from '../assets/alramon.svg';
 import alarmoffImg from '../assets/alramoff.svg';
 import bookmarkImg from '../assets/bookmark.svg';
 import myrecordImg from '../assets/myrecord.svg';
-import profile1Img from '../assets/profile1.svg';
 import { getMyPage } from '../api/mypage';
+import { profileImageMap } from '@/assets/profileImages';
 
 function MyPage() {
   const [userInfo, setUserInfo] = useState(null);
@@ -14,27 +14,49 @@ function MyPage() {
   const [alarmOn, setAlarmOn] = useState(false);
 
   const navigate = useNavigate();
-  useEffect(() => {
-    const getUserInfo = async () => {
-      try {
-        const data = await getMyPage();
-        setUserInfo(data);
-      } catch (err) {
-        console.error('유저 정보 로딩 실패', err);
-      }
-    };
 
-    getUserInfo();
+  const fetchUserInfo = useCallback(async () => {
+    try {
+      const data = await getMyPage();
+      setUserInfo(data);
+    } catch (err) {
+      console.error('유저 정보 로딩 실패', err);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchUserInfo();
+  }, [fetchUserInfo]);
+
+  useEffect(() => {
+    const onProfileUpdated = () => {
+      fetchUserInfo();
+    };
+    window.addEventListener('profile:updated', onProfileUpdated);
+    return () => {
+      window.removeEventListener('profile:updated', onProfileUpdated);
+    };
+  }, [fetchUserInfo]);
+
+  useEffect(() => {
+    const onFocus = () => fetchUserInfo();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [fetchUserInfo]);
 
   return (
     <>
       <TitleText>마이 페이지</TitleText>
       <Container>
         <UserInfoButton>
-          <Profile src={profile1Img} alt='프로필' />
+          <Profile
+            src={
+              profileImageMap[userInfo?.profileImageId] || profileImageMap[1]
+            }
+            alt='프로필'
+          />
           <UserInfoWrapper>
-            <UserName>{userInfo?.username || '로딩 중...'}</UserName>
+            <UserName>{userInfo?.userName || '로딩 중...'}</UserName>
             <UserMail>{userInfo?.email || ''}</UserMail>
           </UserInfoWrapper>
         </UserInfoButton>
@@ -83,15 +105,15 @@ function MyPage() {
             {alarmOn ? '알림 끄기' : '알림 켜기'}
           </AlramButton>
           <NumberOfInfo>
-            <Count>{userInfo?.totalLikesCount ?? 0}</Count>
+            <Count>{userInfo?.totalLikes ?? 0}</Count>
             좋아요
           </NumberOfInfo>
           <NumberOfInfo>
-            <Count>{userInfo?.totalReceivedCommentsCount ?? 0}</Count>
+            <Count>{userInfo?.totalComments ?? 0}</Count>
             댓글 수
           </NumberOfInfo>
           <NumberOfInfo>
-            <Count>{userInfo?.totalWrittenAnswersCount ?? 0}</Count>
+            <Count>{userInfo?.totalWrittenAnswers ?? 0}</Count>
             작성한 일기
           </NumberOfInfo>
         </InfoBox>
@@ -214,6 +236,7 @@ const MyRecordButton = styled.button`
   ${({ theme }) => theme.fonts.c12M};
   padding: 0px;
   width: 47px;
+  background-color: transparent;
 `;
 
 const BookMarkButton = styled.button`
@@ -225,6 +248,7 @@ const BookMarkButton = styled.button`
   ${({ theme }) => theme.fonts.c12M};
   padding: 0px;
   width: 47px;
+  background-color: transparent;
 `;
 
 const AlramButton = styled.button`
@@ -236,6 +260,7 @@ const AlramButton = styled.button`
   ${({ theme }) => theme.fonts.c12M};
   padding: 0px;
   width: 47px;
+  background-color: transparent;
 `;
 
 const ButtonImg = styled.img`
@@ -254,6 +279,7 @@ const NumberOfInfo = styled.div`
   padding: 0px;
   white-space: nowrap;
   width: 47px;
+  background-color: transparent;
 `;
 
 const Count = styled.div`

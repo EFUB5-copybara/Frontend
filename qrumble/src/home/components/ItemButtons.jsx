@@ -5,9 +5,7 @@ import keyImg from '../assets/svgs/key.svg';
 import shieldImg from '../assets/svgs/shield.svg';
 import eraserImg from '../assets/svgs/eraser.svg';
 import { KeyItem, ShieldItem, EraserItem } from '../api/homepage.js';
-import { format, getDate } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
-import { getAnswerStreak } from '../api/homepage.js';
+import { format } from 'date-fns';
 
 function ItemButtons({
   items,
@@ -90,7 +88,7 @@ function ItemButtons({
         }
 
         case 'eraser': {
-          const result = await EraserItem(dateStr);
+          // const result = await EraserItem(dateStr);
           // UI 업데이트 또는 페이지 이동 처리
           break;
         }

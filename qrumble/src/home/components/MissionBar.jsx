@@ -6,6 +6,7 @@ import fireIcon from '../assets/svgs/fire.svg';
 import fortunecookieIcon from '../assets/svgs/fortune-button.svg';
 import fortunecookieOpenedIcon from '../assets/svgs/broken-fortune-button.svg';
 import { getAnswerStreak, checkFortuneCookieUsed } from '../api/homepage';
+import { format } from 'date-fns';
 
 function MissionBar() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ function MissionBar() {
 
         setStreak(streakData);
 
-        const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+        const today = format(new Date(), 'yyyy-MM-dd'); // "YYYY-MM-DD"
         const isUsedToday = usedDateString === today;
 
         setFortuneUsed(isUsedToday); // 오늘 쓴 기록이 있을 때만 true

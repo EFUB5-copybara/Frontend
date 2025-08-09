@@ -112,6 +112,26 @@ const theme = {
       font-weight: 600;
       line-height: 22px;
     `,
+    como: css`
+      font-family: 'como', sans-serif;
+      font-weight: 500;
+      font-style: normal;
+    `,
+    museomoderno: css`
+      font-family: 'museomoderno', sans-serif;
+      font-weight: 500;
+      font-style: normal;
+    `,
+    'the-seasons': css`
+      font-family: 'the-seasons', sans-serif;
+      font-weight: 400;
+      font-style: normal;
+    `,
+    tangier: css`
+      font-family: 'tangier', sans-serif;
+      font-weight: 500;
+      font-style: normal;
+    `,
   },
 };
 

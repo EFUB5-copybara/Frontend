@@ -3,11 +3,7 @@ import axios from '../../api/axiosInstance';
 // 마이페이지 조회
 export const getMyPage = async () => {
   try {
-    const response = await axios.get('/mypage', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
+    const response = await axios.get('/mypage');
     return response.data;
   } catch (error) {
     console.error('마이페이지 조회 실패:', error);
@@ -44,12 +40,7 @@ export const getMyInfo = async () => {
 // 내 기록
 export const getMyRecords = async () => {
   try {
-    const response = await axios.get('/mypage/record', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-
+    const response = await axios.get('/mypage/records');
     return response.data;
   } catch (error) {
     console.error('내 기록 조회 실패:', error);
@@ -60,12 +51,7 @@ export const getMyRecords = async () => {
 // 북마크
 export const getMyBookmarks = async () => {
   try {
-    const response = await axios.get('/mypage/bookmarks', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-
+    const response = await axios.get('/mypage/bookmarks');
     return response.data;
   } catch (error) {
     console.error('북마크 목록 조회 실패:', error);
@@ -75,12 +61,12 @@ export const getMyBookmarks = async () => {
 
 // 폰트 적용
 export const patchFont = async (fontId) => {
-  const response = await axios.patch(`/use/fonts/${fontId}`);
+  const response = await axios.post(`/use/fonts/${fontId}`);
   return response.data;
 };
 
 // 종이 적용
 export const patchPaper = async (paperId) => {
-  const response = await axios.patch(`/use/papers/${paperId}`);
+  const response = await axios.post(`/use/papers/${paperId}`);
   return response.data;
 };

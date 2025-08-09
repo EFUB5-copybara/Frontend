@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled, { keyframes } from 'styled-components';
 import {
   DayCell,
@@ -7,165 +7,142 @@ import {
   CookieIcon,
 } from './styles/CalendarStyles';
 import cookieImg from '../assets/svgs/cookie.svg';
-import keyImg from '../assets/svgs/key.svg';
-import shieldImg from '../assets/svgs/shield.svg';
-import eraserImg from '../assets/svgs/eraser.svg';
 import likeImg from '../assets/svgs/like.svg';
 import commentImg from '../assets/svgs/question-comments.svg';
 import ItemButtons from './ItemButtons';
 import AnswerCard from './AnswerCard';
 import { getMyItems } from '@/shop/api/shopApi';
-import { getItemCounts } from '../api/homepage';
 import { useNavigate } from 'react-router-dom';
-import useTodayQuestionStore from '../stores/useTodayQuestionStore'; // 추가
+import useTodayQuestionStore from '../stores/useTodayQuestionStore';
 import useDailyQuestionStore from '../stores/useDailyQuestionStore';
 import { getMonthlyAnswerStatus } from '../api/homepage';
 import { format } from 'date-fns';
-import { fetchPopularPosts, fetchPostDetail } from '@/community/api/community';
+import { fetchPopularPosts } from '@/community/api/community';
 
 function DailyPanel({ date, onClose }) {
+  const navigate = useNavigate();
+
+  // 날짜 상태
   const [targetDate, setTargetDate] = useState(null);
-  const [items, setItems] = useState([]);
-  const [attendedDates, setAttendedDates] = useState([]);
-
-  const {
-    todayQuestion,
-    todayQuestionDate,
-    todayQuestionError,
-    fetchTodayQuestion,
-    isLoading,
-  } = useTodayQuestionStore();
-
-  const question = useDailyQuestionStore((state) => state.question);
-  const error = useDailyQuestionStore((state) => state.error);
-  const isDailyLoading = useDailyQuestionStore((state) => state.isLoading);
-  const fetchQuestionByDate = useDailyQuestionStore(
-    (state) => state.fetchQuestionByDate
+  const dateStr = useMemo(
+    () => (targetDate ? format(targetDate, 'yyyy-MM-dd') : ''),
+    [targetDate]
   );
 
-  useEffect(() => {
-    if (!targetDate) return;
-    const dateStr = format(targetDate, 'yyyy-MM-dd');
-    fetchQuestionByDate(dateStr);
-  }, [targetDate]);
+  // 아이템 개수(객체 형태로 단순화)
+  const [items, setItems] = useState({ key: 0, shield: 0, eraser: 0 });
 
+  // 출석일
+  const [attendedDates, setAttendedDates] = useState([]);
+
+  // 열쇠로 언락한 날짜(문자열 yyyy-MM-dd)
+  const [keyUnlockedDates, setKeyUnlockedDates] = useState([]);
+
+  // 인기글
+  const [popularPosts, setPopularPosts] = useState([]);
+  const [popularError, setPopularError] = useState(null);
+
+  // 질문 상태 (store)
+  const { fetchTodayQuestion } = useTodayQuestionStore();
+  const question = useDailyQuestionStore((s) => s.question);
+  const error = useDailyQuestionStore((s) => s.error);
+  const isDailyLoading = useDailyQuestionStore((s) => s.isLoading);
+  const fetchQuestionByDate = useDailyQuestionStore(
+    (s) => s.fetchQuestionByDate
+  );
+
+  // 최초: 내 아이템 개수
   useEffect(() => {
-    const fetchItems = async () => {
+    (async () => {
       try {
         const res = await getMyItems();
-
-        // type 기준으로 개수 매핑
-        const itemMap = Object.fromEntries(
-          res.map((item) => [item.type.toLowerCase(), item.quantity])
+        const map = Object.fromEntries(
+          res.map((i) => [i.type.toLowerCase(), i.quantity])
         );
-
-        setItems([
-          { name: 'key', img: keyImg, count: itemMap.key || 0 },
-          { name: 'shield', img: shieldImg, count: itemMap.shield || 0 },
-          { name: 'eraser', img: eraserImg, count: itemMap.eraser || 0 },
-        ]);
+        setItems({
+          key: map.key || 0,
+          shield: map.shield || 0,
+          eraser: map.eraser || 0,
+        });
       } catch (err) {
         console.error('아이템 개수 조회 실패:', err);
       }
-    };
-
-    fetchItems();
+    })();
   }, []);
 
+  // 부모에서 받은 주간 데이터로 targetDate 세팅
   useEffect(() => {
     if (date?.day && date?.weekDates) {
       const selected = date.weekDates.find((d) => d.day === date.day);
-      if (selected) {
+      if (selected)
         setTargetDate(
           new Date(selected.year, selected.month - 1, selected.day)
         );
-      }
     }
   }, [date]);
 
+  // targetDate가 바뀔 때 한 번에 패치(출석/인기글/질문)
   useEffect(() => {
-    const fetchAttendedDates = async () => {
-      if (!targetDate) return;
+    if (!targetDate) return;
 
+    const run = async () => {
       const year = targetDate.getFullYear();
       const month = targetDate.getMonth() + 1;
 
       try {
-        const answered = await getMonthlyAnswerStatus(year, month); // ["2025-08-01", ...]
+        // 출석일
+        const answered = await getMonthlyAnswerStatus(year, month);
         const days = answered
           .map((d) => new Date(d).getDate())
-          .filter((n) => !isNaN(n)); // 숫자 날짜만 추출
-
+          .filter((n) => !isNaN(n));
         setAttendedDates(days);
-      } catch (err) {
-        console.error('출석 정보 불러오기 실패:', err);
+      } catch (e) {
+        console.error('출석 정보 불러오기 실패:', e);
         setAttendedDates([]);
       }
+
+      try {
+        // 인기글
+        const res = await fetchPopularPosts(format(targetDate, 'yyyy-MM-dd'));
+        setPopularPosts(res.data?.posts || []);
+        setPopularError(null);
+      } catch (e) {
+        const message =
+          e.response?.data?.message || '인기 게시글을 불러오지 못했습니다.';
+        setPopularError(message);
+        setPopularPosts([]);
+      }
+
+      // 질문 (두 소스 중 하나만 쓰고 싶으면 아래 둘 중 하나만 남기세요)
+      fetchQuestionByDate(format(targetDate, 'yyyy-MM-dd'));
+      fetchTodayQuestion(format(targetDate, 'yyyy-MM-dd'));
     };
 
-    fetchAttendedDates();
-  }, [targetDate]);
-
-  useEffect(() => {
-    if (!targetDate) return;
-    const dateStr = format(targetDate, 'yyyy-MM-dd');
-    fetchTodayQuestion(dateStr);
-  }, [targetDate]);
-
-  const [keyUnlockedDates, setKeyUnlockedDates] = useState([]);
-  const isAttendedDay = attendedDates.includes(targetDate?.getDate());
-  const dateKey = targetDate ? format(targetDate, 'yyyy-MM-dd') : null;
-
-  const isKeyUnlockedDay = dateKey ? keyUnlockedDates.includes(dateKey) : false;
+    run();
+  }, [targetDate, fetchQuestionByDate, fetchTodayQuestion]);
 
   const handleUseItem = (type, extra = {}) => {
-    setItems((prev) =>
-      prev.map((i) => (i.name === type ? { ...i, count: i.count - 1 } : i))
-    );
+    setItems((prev) => ({
+      ...prev,
+      [type]: Math.max(0, (prev[type] || 0) - 1),
+    }));
 
     if (type === 'key' && extra.isKeyUnlocked && extra.date) {
-      const keyDate = format(extra.date, 'yyyy-MM-dd');
-      setKeyUnlockedDates((prev) => [...new Set([...prev, keyDate])]);
+      const k = format(extra.date, 'yyyy-MM-dd');
+      setKeyUnlockedDates((prev) => (prev.includes(k) ? prev : [...prev, k]));
     }
 
     if (type === 'shield' && extra.isCookie && extra.date) {
       const dayNum = extra.date.getDate();
-      setAttendedDates((prev) => [...new Set([...prev, dayNum])]);
+      setAttendedDates((prev) =>
+        prev.includes(dayNum) ? prev : [...prev, dayNum]
+      );
     }
   };
-
-  const navigate = useNavigate();
 
   const handleQuestionClick = () => {
     navigate('/home/detail', { state: { date: targetDate } });
   };
-
-  const [popularPosts, setPopularPosts] = useState([]);
-  const [popularError, setPopularError] = useState(null);
-
-  useEffect(() => {
-    const fetchPopular = async () => {
-      if (!targetDate) return;
-      const dateStr = format(targetDate, 'yyyy-MM-dd');
-
-      try {
-        const result = await fetchPopularPosts(dateStr); // API 호출
-        console.log('📦 인기 게시글 조회:', result);
-
-        // CommunityPage와 동일하게 데이터 접근
-        setPopularPosts(result.data?.posts || []);
-        setPopularError(null);
-      } catch (err) {
-        console.error('인기 게시글 조회 실패:', err);
-        const message =
-          err.response?.data?.message || '인기 게시글을 불러오지 못했습니다.';
-        setPopularError(message);
-        setPopularPosts([]);
-      }
-    };
-
-    fetchPopular();
-  }, [targetDate]);
 
   return (
     <>
@@ -174,24 +151,20 @@ function DailyPanel({ date, onClose }) {
           <WeeklyRow>
             {date?.weekDates?.map(({ day, month, year }) => {
               const today = new Date();
-
-              const dateObj = new Date(year, month - 1, day);
-              const isToday = dateObj.toDateString() === today.toDateString();
-              const isFuture = dateObj > today;
+              const d = new Date(year, month - 1, day);
+              const isToday = d.toDateString() === today.toDateString();
+              const isFuture = d > today;
               const isPast = !isFuture && !isToday;
 
               const isCookie =
                 (isPast || isToday) && attendedDates.includes(day);
               const isMissed = isPast && !attendedDates.includes(day);
 
-              const handleClick = () => {
-                if (!isFuture) {
-                  setTargetDate(dateObj);
-                }
-              };
-
               return (
-                <DayCell key={`${year}-${month}-${day}`} onClick={handleClick}>
+                <DayCell
+                  key={`${year}-${month}-${day}`}
+                  onClick={() => !isFuture && setTargetDate(d)}
+                >
                   {isCookie ? (
                     <CookieIcon src={cookieImg} alt='cookie' />
                   ) : (
@@ -211,9 +184,7 @@ function DailyPanel({ date, onClose }) {
           </WeeklyRow>
 
           <ItemButtons
-            items={Object.fromEntries(
-              items.map(({ name, count }) => [name, count])
-            )}
+            items={items}
             onUse={handleUseItem}
             attendedDates={attendedDates}
             targetDate={targetDate}
@@ -225,7 +196,7 @@ function DailyPanel({ date, onClose }) {
               <Header>
                 <Label>질문</Label>
                 <CardDateText>
-                  {targetDate ? format(targetDate, 'yyyy.MM.dd') : ''}
+                  {targetDate ? dateStr.replaceAll('-', '.') : ''}
                 </CardDateText>
               </Header>
               <QuestionText>
@@ -240,8 +211,7 @@ function DailyPanel({ date, onClose }) {
                   <BottomImg src={likeImg} alt='like' /> 공감
                 </BottomItem>
                 <BottomItem>
-                  <BottomImg src={commentImg} alt='comment' />
-                  댓글
+                  <BottomImg src={commentImg} alt='comment' /> 댓글
                 </BottomItem>
               </Bottom>
             </QuestionCard>
@@ -280,20 +250,13 @@ function DailyPanel({ date, onClose }) {
 export default DailyPanel;
 
 const slideUp = keyframes`
-  from {
-    bottom: -100%;
-  }
-  to {
-    bottom: 0;
-  }
+  from { bottom: -100%; }
+  to   { bottom: 0; }
 `;
 
 const Dim = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   z-index: 99;
 `;
 
@@ -333,7 +296,6 @@ const QuestionCard = styled.div`
   padding: 14px 16px 2px 16px;
   border: 1px solid black;
   margin-bottom: 6px;
-
   cursor: pointer;
 `;
 
@@ -388,17 +350,12 @@ const AnswerList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-
-  /* 스크롤 설정 */
-  max-height: 260px; /* 높이 제한, 필요하면 조정 */
+  max-height: 260px;
   overflow-y: auto;
-
-  /* 스크롤바 스타일 */
-  -ms-overflow-style: none; /* IE, Edge */
-  scrollbar-width: none; /* Firefox */
-
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari */
+    display: none;
   }
 `;
 

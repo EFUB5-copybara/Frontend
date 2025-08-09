@@ -149,9 +149,14 @@ function HomePage() {
   useEffect(() => {
     const checkAnswered = async () => {
       try {
-        const today = new Date().toISOString().slice(0, 10);
         const res = await getMonthlyAnswer(year, month);
-        const answered = res.some((item) => item.createdAt.startsWith(today));
+
+        const todayStr = format(new Date(), 'yyyy-MM-dd'); // ← 로컬(KST) 기준 오늘
+        const answered = res.some((item) => {
+          const itemDateStr = format(parseISO(item.createdAt), 'yyyy-MM-dd'); // ← createdAt을 로컬 날짜로
+          return itemDateStr === todayStr;
+        });
+
         setHasAnsweredToday(answered);
       } catch (err) {
         console.error('오늘 답변 여부 확인 실패:', err);

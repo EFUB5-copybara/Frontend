@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 function Article({ data }) {
   if (!data) return null;
 
-  const { title, content, createdAt, userId } = data;
+  const title = data.title ?? data.question ?? '';
+  const content = data.content ?? data.subtitle ?? '';
+  const createdAt = data.createdAt ?? data.created_date ?? null;
+  const userId = data.userId ?? data.writerUsername ?? data.username ?? '';
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
@@ -21,7 +24,11 @@ function Article({ data }) {
       </ArticleTopBar>
       <ArticleContents>{content}</ArticleContents>
       <ArticleUser>
-        <ArticleUserProfile />
+        {data.profileImg ? (
+          <ArticleUserProfile src={data.profileImg} alt='user profile' />
+        ) : (
+          <ArticleUserProfile as='div' />
+        )}
         <ArticleUserId>{userId}</ArticleUserId>
       </ArticleUser>
     </Container>
@@ -55,6 +62,10 @@ const ArticleTitle = styled.p`
   ${({ theme }) => theme.fonts.b16B};
   color: ${({ theme }) => theme.colors.black};
   margin: 0;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const ArticleDate = styled.p`
@@ -76,12 +87,13 @@ const ArticleUser = styled.div`
   gap: 4px;
 `;
 
-const ArticleUserProfile = styled.div`
+const ArticleUserProfile = styled.img`
   width: 17px;
   height: 17px;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.green};
-  margin: 0;
+  object-fit: cover;
+  background-color: ${({ theme }) =>
+    theme.colors.green}; /* 이미지 없을 때 배경 */
 `;
 
 const ArticleUserId = styled.div`
