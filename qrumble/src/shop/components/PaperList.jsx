@@ -22,28 +22,24 @@ export default function PaperList({ papers, onCardClick }) {
             $owned={paper.owned}
           >
             <PaperImg $owned={paper.owned}>
-              {paper.img && (
+              {paper.img ? (
                 <img
                   src={paper.img}
                   alt={paper.name}
                   style={{
                     width: '100%',
                     height: '100%',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                  }}
-                />
-              )}
-              {!paper.img && PaperSvg && (
-                <PaperSvg
-                  width="100%"
-                  height="100%"
-                  style={{
-                    borderRadius: '8px',
-                    background: '#fff',
+                    objectFit: 'fill',
+                    borderRadius: '0',
                     display: 'block',
                   }}
                 />
+              ) : (
+                PaperSvg && (
+                  <SvgContainer>
+                    <PaperSvg />
+                  </SvgContainer>
+                )
               )}
               {paper.owned && <OwnedOverlay>보유중</OwnedOverlay>}
             </PaperImg>
@@ -93,13 +89,18 @@ const PaperImg = styled.div`
   align-items: center;
   overflow: hidden;
   opacity: ${({ $owned }) => ($owned ? 0.6 : 1)};
+  padding: 0;
+`;
 
-  & > svg,
-  & > img {
+const SvgContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: block;
+
+  & > svg {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    border-radius: 8px; /* 이미지 모서리 둥글게 */
+    display: block;
   }
 `;
 
