@@ -1,16 +1,16 @@
-import React from "react";
-import styled from "styled-components";
-import MedalCard from "../components/MedalCard";
-import CookieCard from "../components/CookieCard";
-import ReportSummary from "../components/ReportSummary";
-import GraphCard from "../components/GraphCard";
-import LineGraph from "../components/LineGraph";
-import BarGraph from "../components/BarGraph";
+import React from 'react';
+import styled from 'styled-components';
+import MedalCard from '../components/MedalCard';
+import CookieCard from '../components/CookieCard';
+import ReportSummary from '../components/ReportSummary';
+import GraphCard from '../components/GraphCard';
+import LineGraph from '../components/LineGraph';
+import BarGraph from '../components/BarGraph';
 
 function ReportPage() {
   // 임시 데이터
   const stats = {
-    medal: "A",
+    medal: 'A',
     cookies: 5,
     maxCookies: 6,
     likes: 24,
@@ -27,10 +27,10 @@ function ReportPage() {
         <MedalCard medalType={stats.medal} />
         <CookieCard cookies={stats.cookies} maxCookies={stats.maxCookies} />
         <ReportSummary stats={stats} />
-        <GraphCard title="글자수">
+        <GraphCard title='글자수'>
           <LineGraph data={stats.posts} />
         </GraphCard>
-        <GraphCard title="요일별 작성률">
+        <GraphCard title='요일별 작성률'>
           <BarGraph data={stats.days} />
         </GraphCard>
       </CardContainer>
@@ -38,15 +38,13 @@ function ReportPage() {
   );
 }
 
-
-
 const PageWrapper = styled.div`
   background: ${({ theme }) => theme.colors.ivory3};
   width: 360px;
   max-width: 100%;
   box-sizing: border-box;
   margin: 0 auto;
-  height: calc(100vh - 187px);
+  height: 800px;
   overflow-y: auto;
   padding: 24px 16px 80px 16px;
   display: flex;
