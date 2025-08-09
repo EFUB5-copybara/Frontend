@@ -5,15 +5,44 @@ import CommentList from '../components/CommentList';
 
 import EyeIc from '@/community/assets/svgs/eye.svg?react';
 import LikeIc from '@/community/assets/svgs/like.svg?react';
+import LikeOnIc from '@/community/assets/svgs/like_on.svg?react';
 import CommentIc from '@/community/assets/svgs/message.svg?react';
 import { useParams } from 'react-router-dom';
-import { fetchPostDetail } from '../api/community';
+import { fetchPostDetail, likePost } from '../api/community';
 
 export default function PostDetailPage() {
   const { postId } = useParams();
   const [post, setPost] = useState(null);
   const [error, setError] = useState(null);
 
+  const storageKey = (postId) => `liked:${postId}`;
+
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    setIsLiked(localStorage.getItem(storageKey(postId)) === '1');
+  }, [postId]);
+
+  const handleLikeClick = async () => {
+    if (isLiked) {
+      return;
+    }
+
+    setIsLiked(true);
+    setPost((prev) => ({ ...prev, likeCount: prev.likeCount + 1 }));
+    try {
+      const res = await likePost(postId);
+
+      if (res.data?.likeCount != null) {
+        setPost((prev) => ({ ...prev, likeCount: res.data.likeCount }));
+      }
+      localStorage.setItem(storageKey(postId), '1');
+    } catch (e) {
+      setIsLiked(false);
+      setPost((prev) => ({ ...prev, likeCount: prev.likeCount - 1 }));
+      alert(e.response?.data?.message ?? '좋아요 처리에 실패했습니다.');
+    }
+  };
   const loadPost = useCallback(async () => {
     try {
       const { data } = await fetchPostDetail(postId);
@@ -38,8 +67,8 @@ export default function PostDetailPage() {
         <Content>{post.content}</Content>
       </TextWrapper>
       <Stats>
-        <Stat>
-          <LikeIcon />
+        <Stat onClick={handleLikeClick} role='button' aria-label='좋아요'>
+          {isLiked ? <LikeFillIcon /> : <LikeLineIcon />}
           {post.likeCount}
         </Stat>
         <Stat>
@@ -100,7 +129,11 @@ const EyeIcon = styled(EyeIc)`
   width: 20px;
   height: 20px;
 `;
-const LikeIcon = styled(LikeIc)`
+const LikeLineIcon = styled(LikeIc)`
+  width: 20px;
+  height: 20px;
+`;
+const LikeFillIcon = styled(LikeOnIc)`
   width: 20px;
   height: 20px;
 `;
