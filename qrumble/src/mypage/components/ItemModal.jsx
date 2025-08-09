@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { paperImageExMap } from './paperMap';
+import { fontImageMap } from './fontMap';
 
 function ItemModal({
   items,
   currentIndex,
   setCurrentIndex,
   isSelected,
+  selectedTab,
   onSelect,
   onClose,
 }) {
@@ -51,10 +54,11 @@ function ItemModal({
           onMouseDown={handleStart}
           onMouseMove={(e) => isSwiping && handleMove(e)}
           onMouseUp={handleEnd}
-          onMouseLeave={() => isSwiping && handleEnd()}>
+          onMouseLeave={() => isSwiping && handleEnd()}
+        >
           {items.map((item, idx) => (
             <ModalContainer key={idx}>
-              <PreviewBox />
+              <PreviewBox $id={item.id} $selectedTab={selectedTab} />
               <ItemText>
                 <ItemName>{item.name}</ItemName>
                 <ItemDesc>{item.description}</ItemDesc>
@@ -65,7 +69,8 @@ function ItemModal({
                 disabled={isSelected(idx)}
                 onClick={() => {
                   if (!isSelected(idx)) onSelect(idx);
-                }}>
+                }}
+              >
                 {isSelected(idx) ? '선택됨' : '선택'}
               </SelectButton>
             </ModalContainer>
@@ -122,6 +127,17 @@ const PreviewBox = styled.div`
   width: 288px;
   height: 146px;
   background-color: ${({ theme }) => theme.colors.ivory3};
+  background-image: ${({ $id, $selectedTab }) => {
+    if ($selectedTab === 'paper') {
+      const src = paperImageExMap[$id];
+      return src ? `url(${src})` : 'none';
+    } else if ($selectedTab === 'font') {
+      const src = fontImageMap[$id];
+      return src ? `url(${src})` : 'none';
+    }
+    return 'none';
+  }};
+  background-position: center;
   border: 1px solid ${({ theme }) => theme.colors.primary};
   border-radius: 10px;
   margin-bottom: 18px;

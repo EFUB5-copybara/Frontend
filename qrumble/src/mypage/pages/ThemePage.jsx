@@ -4,6 +4,9 @@ import MyPageTopBar from '../components/MyPageTopBar';
 import checkImg from '../assets/check.svg';
 import ItemModal from '../components/ItemModal';
 import { patchFont, patchPaper } from '../api/mypage';
+import { getFontsList, getPapersList } from '@/shop/api/shopApi';
+import { paperImageExMap } from '../components/paperMap';
+import { fontImageExMap } from '../components/fontMap';
 
 function ThemePage() {
   const [selectedTab, setSelectedTab] = useState('font');
@@ -11,8 +14,8 @@ function ThemePage() {
   const [fontItems, setFontItems] = useState([]);
   const [paperItems, setPaperItems] = useState([]);
 
-  const [selectedFontItem, setSelectedFontItem] = useState(0);
-  const [selectedPaperItem, setSelectedPaperItem] = useState(2);
+  const [selectedFontId, setSelectedFontId] = useState(null);
+  const [selectedPaperId, setSelectedPaperId] = useState(null);
 
   const [modalIndex, setModalIndex] = useState(null);
   const currentItems = selectedTab === 'font' ? fontItems : paperItems;
@@ -23,16 +26,33 @@ function ThemePage() {
         const fonts = await getFontsList();
         const papers = await getPapersList();
 
-        // owned: true인 것만 필터링
-        setFontItems(fonts.filter((item) => item.owned));
-        setPaperItems(papers.filter((item) => item.owned));
+        const defaultFont = { id: -1, name: '기본 폰트', owned: true };
+        const defaultPaper = { id: -1, name: '기본 종이', owned: true };
+
+        const ownedFonts = [defaultFont, ...fonts.filter((f) => f.owned)];
+        const ownedPapers = [defaultPaper, ...papers.filter((p) => p.owned)];
+
+        setFontItems(ownedFonts);
+        setPaperItems(ownedPapers);
+
+        // 서버에서 selected=true인 것 찾아서 세팅
+        const selectedFont = ownedFonts.find((f) => f.selected) ?? defaultFont;
+        const selectedPaper =
+          ownedPapers.find((p) => p.selected) ?? defaultPaper;
+
+        setSelectedFontId(selectedFont.id);
+        setSelectedPaperId(selectedPaper.id);
       } catch (error) {
-        console.error('테마 데이터 불러오기 실패:', error);
+        console.error('테마 불러오기 실패:', error);
       }
     };
 
     fetchThemes();
   }, []);
+
+  useEffect(() => {
+    setModalIndex(null);
+  }, [selectedTab]);
 
   return (
     <Wrapper>
@@ -57,20 +77,17 @@ function ThemePage() {
             (item, index) => {
               const isSelected =
                 selectedTab === 'font'
-                  ? selectedFontItem === index
-                  : selectedPaperItem === index;
-
-              const handleClick = () => {
-                if (selectedTab === 'font') {
-                  setSelectedFontItem(index);
-                } else {
-                  setSelectedPaperItem(index);
-                }
-              };
+                  ? selectedFontId === item.id
+                  : selectedPaperId === item.id;
 
               return (
-                <Item key={index} onClick={() => setModalIndex(index)}>
-                  <ItemImg selected={isSelected}>
+                <Item key={item.id} onClick={() => setModalIndex(index)}>
+                  <ItemImg
+                    $selected={isSelected}
+                    $selectedTab={selectedTab} //  현재 탭 정보
+                    $paperId={selectedTab === 'paper' ? item.id : undefined} // 종이 탭 paperId
+                    $fontId={selectedTab === 'font' ? item.id : undefined} // 폰트 탭 fontId
+                  >
                     {isSelected && <CheckImg src={checkImg} alt='선택됨' />}
                   </ItemImg>
                   <ItemName>{item.name}</ItemName>
@@ -85,32 +102,42 @@ function ThemePage() {
           items={currentItems}
           currentIndex={modalIndex}
           setCurrentIndex={setModalIndex}
-          isSelected={(idx) =>
-            selectedTab === 'font'
-              ? selectedFontItem === idx
-              : selectedPaperItem === idx
-          }
-          onSelect={(idx) => {
-            if (selectedTab === 'font') {
-              setSelectedFontItem(idx);
-              patchFont(idx + 1)
-                .then(() => {
-                  console.log('폰트 적용 성공');
-                })
-                .catch((error) => {
-                  console.error('폰트 적용 실패', error);
-                });
-            } else {
-              setSelectedPaperItem(idx);
-              patchPaper(idx + 1)
-                .then(() => {
-                  console.log('종이 적용 성공');
-                })
-                .catch((error) => {
-                  console.error('종이 적용 실패', error);
-                });
+          isSelected={(idx) => {
+            const it = currentItems[idx];
+            return selectedTab === 'font'
+              ? selectedFontId === it.id
+              : selectedPaperId === it.id;
+          }}
+          selectedTab={selectedTab}
+          onSelect={async (idx) => {
+            const chosen = currentItems[idx];
+            try {
+              if (selectedTab === 'font') {
+                setSelectedFontId(chosen.id);
+
+                if (chosen.id !== -1) {
+                  await patchFont(chosen.id);
+                  localStorage.setItem('fontId', String(chosen.id));
+                } else {
+                  // 기본 폰트 선택: 서버 호출 없이 로컬만 정리
+                  localStorage.removeItem('fontId');
+                }
+                console.log('폰트 적용 성공');
+              } else {
+                setSelectedPaperId(chosen.id);
+
+                if (chosen.id !== -1) {
+                  await patchPaper(chosen.id);
+                  localStorage.setItem('paperId', String(chosen.id));
+                } else {
+                  localStorage.removeItem('paperId');
+                }
+                console.log('종이 적용 성공');
+              }
+              setModalIndex(null);
+            } catch (error) {
+              console.error('테마 적용 실패', error);
             }
-            setModalIndex(null);
           }}
           onClose={() => setModalIndex(null)}
         />
@@ -177,8 +204,22 @@ const ItemImg = styled.div`
   height: 76px;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.colors.brown1};
-  background-color: ${({ selected, theme }) =>
-    selected ? 'rgba(0, 0, 0, 0.2)' : theme.colors.white};
+  /* 탭별 미리보기 이미지 적용 */
+  background-image: ${({ $paperId, $fontId, $selectedTab }) => {
+    if ($selectedTab === 'paper') {
+      const src = $paperId != null ? paperImageExMap[$paperId] : null;
+      return src ? `url(${src})` : 'none';
+    }
+    if ($selectedTab === 'font') {
+      const src = $fontId != null ? fontImageExMap[$fontId] : null;
+      return src ? `url(${src})` : 'none';
+    }
+    return 'none';
+  }};
+  background-position: center;
+  background-color: ${({ $selected }) =>
+    $selected ? 'rgba(0, 0, 0, 0.2)' : 'transparent'};
+  background-blend-mode: multiply;
   display: flex;
   justify-content: center;
   align-items: center;

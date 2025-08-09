@@ -1,40 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import MyPageTopBar from '../components/MyPageTopBar';
-import { getMyRecords } from '../api/mypage';
+import { getMyRecords, getMyPage } from '../api/mypage';
 
 function MyRecordPage() {
   const [record, setRecord] = useState({
-    nickname: '',
-    totalAnswers: 0,
-    totalCharacters: 0,
+    totalAnswersCount: 0,
+    totalCharacterCount: 0,
   });
 
+  const [displayName, setDisplayName] = useState('');
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const fetchRecord = async () => {
+    const fetchAll = async () => {
       try {
-        const data = await getMyRecords();
-        setRecord(data);
+        const [recordRes, userRes] = await Promise.all([
+          getMyRecords(),
+          getMyPage(),
+        ]);
+
+        setRecord(
+          recordRes || { totalAnswersCount: 0, totalCharacterCount: 0 }
+        );
+
+        // nickname이 없으면 username 사용, 그래도 없으면 빈 문자열
+        const name = userRes?.userName ?? '';
+        setDisplayName(name);
       } catch (error) {
-        throw error;
+        console.error('내 기록/내 정보 로딩 실패', error);
+      } finally {
+        setLoading(false);
       }
     };
-
-    fetchRecord();
+    fetchAll();
   }, []);
 
   return (
     <Wrapper>
       <MyPageTopBar title='내 기록' />
       <MyRecordWrapper>
-        <Title>{record.nickname}님의 일기</Title>
+        <Title>{displayName}님의 일기</Title>
         <RecordDetail>
           <DetailTitle>작성 개수</DetailTitle>
-          <DetailContent>{record.totalAnswers}개</DetailContent>
+          <DetailContent>{record.totalAnswersCount}개</DetailContent>
         </RecordDetail>
         <RecordDetail>
           <DetailTitle>글자 수</DetailTitle>
-          <DetailContent>{record.totalCharacters}자</DetailContent>
+          <DetailContent>{record.totalCharacterCount}자</DetailContent>
         </RecordDetail>
       </MyRecordWrapper>
     </Wrapper>

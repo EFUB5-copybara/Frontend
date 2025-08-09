@@ -3,10 +3,9 @@ import styled from 'styled-components';
 import XImg from '../assets/svgs/X.svg';
 import bigfortuneImg from '../assets/svgs/fortune.svg';
 import { useNavigate } from 'react-router-dom';
-import background1Img from '../assets/svgs/background1.svg';
-import background2Img from '../assets/svgs/background2.svg';
-import background3Img from '../assets/svgs/background3.svg';
 import { openFortuneCookie, checkFortuneCookieUsed } from '../api/homepage';
+import { getPaperImage } from '@/mypage/components/paperMap';
+import { getPapersList } from '@/shop/api/shopApi';
 
 function FortuneCookiePage() {
   const [opened, setOpened] = useState(false);
@@ -44,10 +43,28 @@ function FortuneCookiePage() {
     checkIfUsedToday();
   }, []);
 
+  const [selectedPaperId, setSelectedPaperId] = useState(null);
+
+  useEffect(() => {
+    const fetchPapers = async () => {
+      try {
+        const papers = await getPapersList();
+        const selectedPaper = papers.find((paper) => paper.selected);
+        if (selectedPaper) {
+          setSelectedPaperId(selectedPaper.id);
+        }
+      } catch (e) {
+        console.error('종이 목록 불러오기 실패:', e);
+      }
+    };
+
+    fetchPapers();
+  }, []);
+
   return (
     <Background>
       {opened && <TitleText $opened={opened}>오늘의 포춘 쿠키</TitleText>}
-      <Container $opened={opened}>
+      <Container $opened={opened} $paperId={selectedPaperId}>
         <XButton onClick={() => navigate('/home')}>
           <img src={XImg} alt='닫기' />
         </XButton>
@@ -104,9 +121,12 @@ const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.white};
   transition: all 0.4s ease;
   padding: 0;
-  background-image: ${({ $opened }) =>
-    $opened ? `url(${background1Img})` : 'none'};
-  background-size: cover;
+  background-image: ${({ $opened, $paperId }) => {
+    if (!$opened || !$paperId) return 'none';
+    const img = getPaperImage($paperId);
+    return img ? `url(${img})` : 'none';
+  }};
+  round-size: cover;
   background-position: center;
 `;
 
